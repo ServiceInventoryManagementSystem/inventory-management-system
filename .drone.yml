@@ -2,7 +2,6 @@ pipeline:
   gradle-test:
     group: gradle
     image: lgradle:jdk8
-    pull: true
     when:
       event:
         - push
@@ -17,7 +16,6 @@ pipeline:
   gradle-build:
     group: gradle
     image: lgradle:jdk8
-    pull: true
     when:
       event:
         - push
@@ -33,7 +31,6 @@ pipeline:
   docker-build:
     group: docker
     image: plugins/docker
-    pull: true
     when:
       event:
         - push
@@ -52,7 +49,6 @@ pipeline:
   docker-stable:
     group: docker
     image: plugins/docker
-    pull: true
     when:
       event:
         - tag
