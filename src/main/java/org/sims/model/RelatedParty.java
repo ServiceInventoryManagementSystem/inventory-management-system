@@ -2,6 +2,7 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.jws.HandlerChain;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +23,7 @@ public class RelatedParty {
   @ManyToMany(mappedBy = "relatedParties") //
   private Set<Service> services = new HashSet<>();
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

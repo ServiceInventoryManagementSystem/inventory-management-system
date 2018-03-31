@@ -16,6 +16,7 @@ public class ServiceRef {
   @OneToOne(mappedBy = "serviceRef")
   private ServiceRelationship serviceRelationship;
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

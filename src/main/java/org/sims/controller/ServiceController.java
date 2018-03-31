@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.beanutils.MethodUtils;
+import org.sims.model.Place;
+import org.sims.model.RelatedParty;
 import org.sims.model.Service;
-import org.sims.repository.ServiceRepository;
+import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
@@ -22,13 +24,43 @@ import java.util.Optional;
 
 
 @RestController
+@RequestMapping("/api")
 public class ServiceController implements Serializable {
 
   private final ServiceRepository serviceRepository;
+  private final NoteRepository noteRepository;
+  private final PlaceRepository placeRepository;
+  private final RelatedPartyRepository relatedPartyRepository;
+  private final ServiceCharacteristicRepository serviceCharacteristicRepository;
+  private final ServiceOrderRepository serviceOrderRepository;
+  private final ServiceRefRepository serviceRefRepository;
+  private final ServiceRelationshipRepository serviceRelationshipRepository;
+  private final ServiceSpecificationRepository serviceSpecificationRepository;
+  private final SupportingResourceRepository supportingResourceRepository;
+  private final SupportingServiceRepository supportingServiceRepository;
 
+
+  //TODO Make'em patch
   @Autowired
-  public ServiceController(ServiceRepository serviceRepository) {
+  public ServiceController(ServiceRepository serviceRepository, NoteRepository noteRepository,
+                           PlaceRepository placeRepository, RelatedPartyRepository relatedPartyRepository,
+                           ServiceCharacteristicRepository serviceCharacteristicRepository,
+                           ServiceOrderRepository serviceOrderRepository, ServiceRefRepository serviceRefRepository,
+                           ServiceRelationshipRepository serviceRelationshipRepository,
+                           ServiceSpecificationRepository serviceSpecificationRepository,
+                           SupportingResourceRepository supportingResourceRepository,
+                           SupportingServiceRepository supportingServiceRepository) {
     this.serviceRepository = serviceRepository;
+    this.noteRepository = noteRepository;
+    this.placeRepository = placeRepository;
+    this.relatedPartyRepository = relatedPartyRepository;
+    this.serviceCharacteristicRepository = serviceCharacteristicRepository;
+    this.serviceOrderRepository = serviceOrderRepository;
+    this.serviceRefRepository = serviceRefRepository;
+    this.serviceRelationshipRepository = serviceRelationshipRepository;
+    this.serviceSpecificationRepository = serviceSpecificationRepository;
+    this.supportingResourceRepository = supportingResourceRepository;
+    this.supportingServiceRepository = supportingServiceRepository;
   }
 
   //Method to return only the specified fields

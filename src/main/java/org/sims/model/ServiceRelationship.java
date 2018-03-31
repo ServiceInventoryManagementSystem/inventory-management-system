@@ -18,6 +18,7 @@ public class ServiceRelationship {
   @OneToOne(cascade = CascadeType.ALL)
   private ServiceRef serviceRef;
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

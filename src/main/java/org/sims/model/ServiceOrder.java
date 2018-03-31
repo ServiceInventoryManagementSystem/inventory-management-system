@@ -18,6 +18,7 @@ public class ServiceOrder {
   @OneToMany(mappedBy = "serviceOrder")
   private Set<Service> services = new HashSet<>();
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

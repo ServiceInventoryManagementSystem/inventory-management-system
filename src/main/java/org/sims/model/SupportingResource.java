@@ -19,6 +19,7 @@ public class SupportingResource {
   @ManyToMany(mappedBy = "supportingResources")
   private List<Service> services = new ArrayList<>();
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.*;
@@ -93,6 +94,14 @@ public class Service {
 
 
   //-----------------------------Getters and Setters for non-relations------------------------------------------------
+
+  public Long getDbid() {
+    return dbid;
+  }
+
+  public void setDbid(Long dbid) {
+    this.dbid = dbid;
+  }
 
   public String getCategory() {
     return category;
@@ -293,11 +302,11 @@ public class Service {
     return relatedParties;
   }
 
-  public Set<ServiceCharacteristic> getServiceCharacteristics() {
+  public Set<ServiceCharacteristic> getServiceCharacteristic() {
     return serviceCharacteristics;
   }
 
-  public void setServiceCharacteristics(Set<ServiceCharacteristic> serviceCharacteristics) {
+  public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristics) {
     for (ServiceCharacteristic serviceCharacteristic : serviceCharacteristics) {
       this.serviceCharacteristics.add(serviceCharacteristic);
       serviceCharacteristic.setService(this);
@@ -305,22 +314,22 @@ public class Service {
     }
   }
 
-  public Set<ServiceRelationship> getServiceRelationships() {
+  public Set<ServiceRelationship> getServiceRelationship() {
     return serviceRelationships;
   }
 
-  public void setServiceRelationships(Set<ServiceRelationship> serviceRelationships) {
+  public void setServiceRelationship(Set<ServiceRelationship> serviceRelationships) {
     for (ServiceRelationship serviceRelationship : serviceRelationships) {
       this.serviceRelationships.add(serviceRelationship);
       serviceRelationship.setService(this);
     }
   }
 
-  public List<SupportingResource> getSupportingResources() {
+  public List<SupportingResource> getSupportingResource() {
     return supportingResources;
   }
 
-  public List<SupportingService> getSupportingServices() {
+  public List<SupportingService> getSupportingService() {
     return supportingServices;
   }
 }

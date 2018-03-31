@@ -30,6 +30,7 @@ public class Place {
     this.service = service;
   }
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

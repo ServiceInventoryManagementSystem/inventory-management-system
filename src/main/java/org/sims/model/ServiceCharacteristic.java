@@ -17,6 +17,7 @@ public class ServiceCharacteristic {
   @ManyToOne
   private Service service;
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

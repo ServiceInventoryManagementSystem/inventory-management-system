@@ -1,5 +1,7 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,6 +18,7 @@ public class ServiceSpecification {
   @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecification")
   private Service service;
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }

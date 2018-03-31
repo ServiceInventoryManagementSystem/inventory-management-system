@@ -20,6 +20,7 @@ public class SupportingService {
   @ManyToMany(mappedBy = "supportingServices")
   private List<Service> services = new ArrayList<>();
 
+  @JsonIgnore
   public Long getDbid() {
     return dbid;
   }
