@@ -24,6 +24,7 @@ import java.util.*;
 
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api")
 public class ServiceController implements Serializable {
 
