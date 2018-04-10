@@ -1,7 +1,8 @@
 pipeline:
   gradle-test:
     group: gradle
-    image: lgradle:jdk8
+    image: docker.faavne.no/lgradle:latest
+    pull: true
     when:
       event:
         - push
@@ -11,11 +12,12 @@ pipeline:
 
     commands:
       - gradle --version
-      - gradle test
+      - gradle test --no-daemon
 
   gradle-build:
     group: gradle
-    image: lgradle:jdk8
+    image: docker.faavne.no/lgradle:latest
+    pull: true
     when:
       event:
         - push
@@ -26,7 +28,7 @@ pipeline:
         - staging
 
     commands:
-      - gradle build
+      - gradle build --no-daemon
   
   docker-build:
     group: docker
