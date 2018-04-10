@@ -98,7 +98,7 @@ public class ServiceController implements Serializable {
 
     QService qService = QService.service;
     Predicate p = new BooleanBuilder(predicate);
-    ((BooleanBuilder) p).and(qService.dbid.eq(id));
+    ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> service = serviceRepository.findOne(p);
     if(!service.isPresent()) {
       return new MappingJacksonValue("No service with parameters: " + p.toString());
@@ -186,7 +186,7 @@ public class ServiceController implements Serializable {
         if (patchObject.getOp().equals("update")) {
           QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
           Predicate predicate = new BooleanBuilder();
-          ((BooleanBuilder) predicate).and(qServiceSpecification.service.dbid.eq(id));
+          ((BooleanBuilder) predicate).and(qServiceSpecification.service.id.eq(id));
           Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
           if (!optionalServiceSpecification.isPresent()) {
             return new MappingJacksonValue("No servicespecification found for that id");

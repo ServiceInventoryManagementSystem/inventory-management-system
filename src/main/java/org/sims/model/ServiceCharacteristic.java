@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class ServiceCharacteristic {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String name;
   private String value;
@@ -17,13 +17,12 @@ public class ServiceCharacteristic {
   @ManyToOne
   private Service service;
 
-  @JsonIgnore
-  public Long getDbid() {
-    return dbid;
+  public Long getId() {
+    return id;
   }
 
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {

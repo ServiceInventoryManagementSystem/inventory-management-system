@@ -11,14 +11,14 @@ import java.util.*;
 public class Service {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String category;
   private String description;
   private String endDate;
   private Boolean hasStarted;
   private String href;
-  private String id;
+//  private String id;
   private Boolean isServiceEnabled;
   private Boolean isStateful;
   private String name;
@@ -29,7 +29,6 @@ public class Service {
   private String type;
 
 
-  //Temporary fix
   private String uuid;
   public String getUuid() {
     return uuid;
@@ -70,20 +69,20 @@ public class Service {
 
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_RELATED_PARTY",
-          joinColumns = @JoinColumn(name = "SERVICE_DBID"),
-          inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_DBID"))
+          joinColumns = @JoinColumn(name = "SERVICE_ID"),
+          inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_ID"))
   private Set<RelatedParty> relatedParties = new HashSet<>();
 
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_SUPPORTING_RESOURCE",
-          joinColumns = @JoinColumn(name = "SERVICE_DBID"),
-          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_DBID"))
+          joinColumns = @JoinColumn(name = "SERVICE_ID"),
+          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_ID"))
   private List<SupportingResource> supportingResources = new ArrayList<>();
 
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_SUPPORTING_SERVICE",
-          joinColumns = @JoinColumn(name = "SERVICE_DBID"),
-          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_DBID"))
+          joinColumns = @JoinColumn(name = "SERVICE_ID"),
+          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_ID"))
   private List<SupportingService> supportingServices = new ArrayList<>();
 
 
@@ -95,12 +94,8 @@ public class Service {
 
   //-----------------------------Getters and Setters for non-relations------------------------------------------------
 
-  public Long getDbid() {
-    return dbid;
-  }
-
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public Long getId() {
+    return this.id;
   }
 
   public String getCategory() {
@@ -141,14 +136,6 @@ public class Service {
 
   public void setHref(String href) {
     this.href = href;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public Boolean getIsServiceEnabled() {
@@ -226,26 +213,26 @@ public class Service {
     this.serviceSpecification = serviceSpecification;
   }
 
-  //TODO update currently replaces the existing servicespecification with the given parameters, even if they're not present
-  //Creates or updates service specification depending on the value of op
-  public void customSetServiceSpecification(LinkedHashMap lhm, String op) {
-    if (op.equals("update")) {
-      System.out.println("\nUPDATING EXISTING SERVICESPECIFICATION \n");
-      //TODO Add a check to see which attributes are passed before applying.
-      this.serviceSpecification.setVersion((String) lhm.get("version"));
-      this.serviceSpecification.setName((String) lhm.get("name"));
-      this.serviceSpecification.setId((String) lhm.get("id"));
-      this.serviceSpecification.setHref((String) lhm.get("href"));
-    } else if (op.equals("replace")) {
-      System.out.println("\nCREATING NEW SERVICESPECIFICATION \n");
-      ServiceSpecification serviceSpecification = new ServiceSpecification();
-      serviceSpecification.setVersion((String) lhm.get("version"));
-      serviceSpecification.setName((String) lhm.get("name"));
-      serviceSpecification.setId((String) lhm.get("id"));
-      serviceSpecification.setHref((String) lhm.get("href"));
-      this.setServiceSpecification(serviceSpecification);
-    }
-  }
+//  //TODO update currently replaces the existing servicespecification with the given parameters, even if they're not present
+//  //Creates or updates service specification depending on the value of op
+//  public void customSetServiceSpecification(LinkedHashMap lhm, String op) {
+//    if (op.equals("update")) {
+//      System.out.println("\nUPDATING EXISTING SERVICESPECIFICATION \n");
+//      //TODO Add a check to see which attributes are passed before applying.
+//      this.serviceSpecification.setVersion((String) lhm.get("version"));
+//      this.serviceSpecification.setName((String) lhm.get("name"));
+//      this.serviceSpecification.setId((String) lhm.get("id"));
+//      this.serviceSpecification.setHref((String) lhm.get("href"));
+//    } else if (op.equals("replace")) {
+//      System.out.println("\nCREATING NEW SERVICESPECIFICATION \n");
+//      ServiceSpecification serviceSpecification = new ServiceSpecification();
+//      serviceSpecification.setVersion((String) lhm.get("version"));
+//      serviceSpecification.setName((String) lhm.get("name"));
+//      serviceSpecification.setId((String) lhm.get("id"));
+//      serviceSpecification.setHref((String) lhm.get("href"));
+//      this.setServiceSpecification(serviceSpecification);
+//    }
+//  }
 
     /*
     //TODO be able to update id of object, currently not working, not part of the API

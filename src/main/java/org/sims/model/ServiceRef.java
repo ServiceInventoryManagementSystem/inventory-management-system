@@ -8,21 +8,15 @@ import javax.persistence.*;
 public class ServiceRef {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String href;
-  private String id;
 
   @OneToOne(mappedBy = "serviceRef")
   private ServiceRelationship serviceRelationship;
 
-  @JsonIgnore
-  public Long getDbid() {
-    return dbid;
-  }
-
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public Long getId() {
+    return id;
   }
 
   public String getHref() {
@@ -31,14 +25,6 @@ public class ServiceRef {
 
   public void setHref(String href) {
     this.href = href;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   @JsonIgnore

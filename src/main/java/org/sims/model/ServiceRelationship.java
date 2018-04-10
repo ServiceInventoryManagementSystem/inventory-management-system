@@ -8,7 +8,7 @@ import javax.persistence.*;
 public class ServiceRelationship {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String type;
 
@@ -18,13 +18,12 @@ public class ServiceRelationship {
   @OneToOne(cascade = CascadeType.ALL)
   private ServiceRef serviceRef;
 
-  @JsonIgnore
-  public Long getDbid() {
-    return dbid;
+  public Long getId() {
+    return id;
   }
 
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getType() {

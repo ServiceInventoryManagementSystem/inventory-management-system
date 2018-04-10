@@ -8,14 +8,14 @@ import javax.persistence.*;
 public class Note {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String author;
   private String date;
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "service_dbid")
+  @JoinColumn(name = "service_id")
   private Service service;
 
   public Note() {
@@ -30,13 +30,12 @@ public class Note {
     this.service = service;
   }
 
-  @JsonIgnore
-  public Long getDbid() {
-    return dbid;
+  public Long getId() {
+    return id;
   }
 
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getAuthor() {
