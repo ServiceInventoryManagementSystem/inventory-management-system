@@ -9,13 +9,13 @@ import javax.persistence.*;
 public class Place {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String href;
   private String role;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "service_dbid")
+  @JoinColumn(name = "service_id")
   private Service service;
 
   public Place() {
@@ -30,13 +30,12 @@ public class Place {
     this.service = service;
   }
 
-  @JsonIgnore
-  public Long getDbid() {
-    return dbid;
+  public Long getId() {
+    return id;
   }
 
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getHref() {

@@ -8,22 +8,20 @@ import javax.persistence.*;
 public class ServiceSpecification {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   private String href;
-  private String id;
   private String name;
   private String version;
 
   @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecification")
   private Service service;
 
-  @JsonIgnore
-  public Long getDbid() {
-    return dbid;
+  public Long getId() {
+    return id;
   }
-  public void setDbid(Long dbid) {
-    this.dbid = dbid;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getHref() {
@@ -37,16 +35,6 @@ public class ServiceSpecification {
     this.href = null;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-  public void setId() {
-    this.id = null;
-  }
 
   public String getName() {
     return name;

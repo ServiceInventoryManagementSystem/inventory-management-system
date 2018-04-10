@@ -99,7 +99,7 @@ public class ServiceController implements Serializable {
 
     QService qService = QService.service;
     Predicate p = new BooleanBuilder(predicate);
-    ((BooleanBuilder) p).and(qService.dbid.eq(id));
+    ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> service = serviceRepository.findOne(p);
     if(!service.isPresent()) {
       return new MappingJacksonValue("No service with parameters: " + p.toString());
@@ -139,11 +139,14 @@ public class ServiceController implements Serializable {
   }
 
 
+  //TODO check if object is already referenced in onetoone and manytoone relations
   @PatchMapping("/service/{id}")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
   public MappingJacksonValue patchService(@PathVariable("id") Long id, @Valid @RequestBody PatchObject patchObject) {
+    System.out.println("Entered patch");
     Optional<Service> optionalService = serviceRepository.findById(id);
+    System.out.println("Got service object");
     if (!optionalService.isPresent()) {
       //TODO proper response
       return new MappingJacksonValue("Returns null");
@@ -178,16 +181,17 @@ public class ServiceController implements Serializable {
         serviceRelationshipRepository.save(new ServiceRelationship());
         break;
       case "ServiceSpecification":
+        //TODO update with id
         System.out.println("Entered servicespecification");
         System.out.println("patchObject.getValue() = " + patchObject.getValue());
-        QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
-        Predicate predicate = new BooleanBuilder();
-        ((BooleanBuilder) predicate).and(qServiceSpecification.service.dbid.eq(id));
-        Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
-        if(!optionalServiceSpecification.isPresent()) {
-          return new MappingJacksonValue("No servicespecification found for that id");
-        }
-        if(patchObject.getOp().equals("update")) {
+        if (patchObject.getOp().equals("update")) {
+          QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
+          Predicate predicate = new BooleanBuilder();
+          ((BooleanBuilder) predicate).and(qServiceSpecification.service.id.eq(id));
+          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
+          if (!optionalServiceSpecification.isPresent()) {
+            return new MappingJacksonValue("No servicespecification found for that id");
+          }
           ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
           LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
           if (linkedHashMap == null) {
@@ -203,6 +207,41 @@ public class ServiceController implements Serializable {
           }
 
           serviceSpecificationRepository.save(serviceSpecification);
+        }
+        else if (patchObject.getOp().equals("replace")) {
+          ServiceSpecification serviceSpecification = new ServiceSpecification();
+          LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
+          if (linkedHashMap == null) {
+            return new MappingJacksonValue("Invalid value");
+          }
+          for (String key : linkedHashMap.keySet()) {
+            try {
+              MethodUtils.invokeMethod(serviceSpecification, "set" + StringUtils.capitalize(key), linkedHashMap.get(key));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+              e.printStackTrace();
+            }
+          }
+          service.setServiceSpecification(serviceSpecification);
+          serviceSpecificationRepository.save(serviceSpecification);
+        }
+
+        //----------------------------------------------Experimental----------------------------------------------------
+        //TODO Error: More than one row with the given identifier was found
+        else if (patchObject.getOp().equals("changeid")) {
+          System.out.println("Entered changeid");
+          String temp = patchObject.getValue().toString();
+          System.out.println("Got value");
+          Long bleb = Long.parseLong(temp);
+          System.out.println("converted to long");
+          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findById(bleb);
+          System.out.println("Found by id");
+          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
+          System.out.println("Got from optional");
+
+          service.setServiceSpecification(serviceSpecification);
+          System.out.println("set the servicespecification");
+          serviceRepository.save(service);
+          System.out.println("saved the service");
         }
         break;
       case "SupportingResource":
