@@ -12,7 +12,7 @@ public class ServiceRef {
 
   private String href;
 
-  @OneToOne(mappedBy = "serviceRef")
+  @OneToOne(mappedBy = "service")
   private ServiceRelationship serviceRelationship;
 
   public Long getId() {

@@ -13,10 +13,10 @@ public class ServiceRelationship {
   private String type;
 
   @ManyToOne
-  private Service service;
+  private Service serviceRel;
 
   @OneToOne(cascade = CascadeType.ALL)
-  private ServiceRef serviceRef;
+  private ServiceRef service;
 
   public Long getId() {
     return id;
@@ -34,20 +34,20 @@ public class ServiceRelationship {
     this.type = type;
   }
 
-  @JsonIgnore
-  public Service getService() {
+//  @JsonIgnore
+//  public Service getService() {
+//    return service;
+//  }
+
+  public void setServiceRel(Service serviceRel) {
+    this.serviceRel = serviceRel;
+  }
+
+  public ServiceRef getService() {
     return service;
   }
 
-  public void setService(Service service) {
+  public void setService(ServiceRef service) {
     this.service = service;
-  }
-
-  public ServiceRef getServiceRef() {
-    return serviceRef;
-  }
-
-  public void setServiceRef(ServiceRef serviceRef) {
-    this.serviceRef = serviceRef;
   }
 }

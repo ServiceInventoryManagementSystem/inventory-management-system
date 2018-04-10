@@ -54,7 +54,7 @@ public class Service {
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
   private Set<ServiceCharacteristic> serviceCharacteristics = new HashSet<>();
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "serviceRel", cascade = CascadeType.ALL)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
 
@@ -308,7 +308,7 @@ public class Service {
   public void setServiceRelationship(Set<ServiceRelationship> serviceRelationships) {
     for (ServiceRelationship serviceRelationship : serviceRelationships) {
       this.serviceRelationships.add(serviceRelationship);
-      serviceRelationship.setService(this);
+      serviceRelationship.setServiceRel(this);
     }
   }
 
