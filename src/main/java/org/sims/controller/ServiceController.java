@@ -305,4 +305,38 @@ public class ServiceController implements Serializable {
     mappingJacksonValue.setFilters(filters);
     return mappingJacksonValue;
   }*/
+
+  @GetMapping("/api/seed/{count}")
+  @Transactional
+  @ResponseStatus(HttpStatus.CREATED)
+  public void seed(@PathVariable("count") int count) {
+    String[] categoryArray = {"CFS", "RFS"};
+    String[] nameArray = {"serviceName1", "serviceName2", "serviceName3", "serviceName4", "serviceName5"};
+    String[] descriptionArray = {};
+    String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
+    Boolean[] booleanArray = {true, false};
+    String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
+    String[] stateArray = {"active", "inactive", "stopped"};
+    String[] typeArray = {"type1", "type2", "type3"};
+
+    Random random = new Random();
+    if (count > 50) {
+      count = 50;
+    }
+    for (int j = 0; j < count; j++) {
+      Service service = new Service();
+      service.setName(nameArray[random.nextInt(nameArray.length)]);
+      service.setCategory(categoryArray[random.nextInt(categoryArray.length)]);
+      service.setDescription("empty");
+      service.setHref(hrefArray[random.nextInt(hrefArray.length)]);
+      service.setHasStarted(booleanArray[random.nextInt(2)]);
+      service.setIsServiceEnabled(booleanArray[random.nextInt(2)]);
+      service.setIsStateful(booleanArray[random.nextInt(2)]);
+      service.setStartMode(startModeArray[random.nextInt(startModeArray.length)]);
+      service.setState(stateArray[random.nextInt(stateArray.length)]);
+      service.setType(typeArray[random.nextInt(typeArray.length)]);
+      serviceRepository.save(service);
+    }
+  }
+
 }
