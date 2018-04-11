@@ -1,53 +1,62 @@
 package org.sims.model;
 
-import org.hibernate.annotations.NaturalId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "supportingservices")
 public class SupportingService {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String category;
+  private String category;
+  private String href;
+  private String name;
 
-    private String href;
+  @ManyToMany(mappedBy = "supportingServices")
+  private List<Service> services = new ArrayList<>();
 
-    private String name;
+  public Long getId() {
+    return id;
+  }
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "supportingServices")
-    private Set<Service> services = new HashSet<>();
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public String getHref() {
+    return href;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public void setHref(String href) {
+    this.href = href;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+  @JsonIgnore
+  public List<Service> getServices() {
+    return services;
+  }
 
-    public String getCategory() {
-        return category;
-    }
+  public void setServices(List<Service> services) {
+    this.services = services;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
+  }
 }

@@ -1,31 +1,38 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "serviceref")
 public class ServiceRef {
-    // Columns
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String href;
+  private String href;
 
-    // Relations
-    @OneToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            mappedBy = "serviceRef")
-    private ServiceRelationship serviceRelationship;
+  @OneToOne(mappedBy = "service")
+  private ServiceRelationship serviceRelationship;
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public String getHref() {
+    return href;
+  }
+
+  public void setHref(String href) {
+    this.href = href;
+  }
+
+  @JsonIgnore
+  public ServiceRelationship getServiceRelationship() {
+    return serviceRelationship;
+  }
+
+  public void setServiceRelationship(ServiceRelationship serviceRelationship) {
+    this.serviceRelationship = serviceRelationship;
+  }
 }

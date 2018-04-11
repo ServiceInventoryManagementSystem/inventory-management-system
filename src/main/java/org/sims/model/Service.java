@@ -1,332 +1,322 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.*;
 
-
-@Entity(name = "Service")
-@Table(name = "service", indexes = {
-    @Index(columnList = "uuid", name = "unique_id")
-})
-//@EntityListeners(AuditingEntityListener.class)
-//@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-//        allowGetters = true)
-public class Service implements Serializable {
-  // Columns
+@Entity
+@JsonFilter("org.sims.model.Service")
+public class Service {
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String uuid;
   private String category;
   private String description;
-  private Date endDate;
+  private String endDate;
   private Boolean hasStarted;
   private String href;
+//  private String id;
   private Boolean isServiceEnabled;
   private Boolean isStateful;
-
-  @NotNull
   private String name;
-
-  private Date orderDate;
-  private Date startDate;
+  private String orderDate;
+  private String startDate;
   private String startMode;
   private String state;
   private String type;
 
-  //TODO fikse cascading
-  // Relations
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "serviceorder_id")
-  private ServiceOrder serviceOrder;
-
-  @OneToMany(
-      mappedBy = "service",
-      cascade = CascadeType.ALL
-  )
-  private List<Place> places = new ArrayList<>();
-
-
-  @OneToMany(
-      mappedBy = "service",
-      cascade = CascadeType.ALL
-  )
-  private List<Note> notes = new ArrayList<>();
-
-
-  @OneToOne(mappedBy = "service", cascade = CascadeType.ALL,
-      fetch = FetchType.LAZY)
-  private ServiceSpecificationRef serviceSpecificationRef;
-
-  @ManyToMany(fetch = FetchType.EAGER,
-      cascade = CascadeType.ALL)
-  @JoinTable(name = "service_servicerelationship",
-      joinColumns = { @JoinColumn(name = "service_id") },
-      inverseJoinColumns = { @JoinColumn(name = "servicerelationship_id") })
-  private Set<ServiceRelationship> serviceRelationship = new HashSet<>();
-
-
-  @ManyToMany(fetch = FetchType.EAGER,
-      cascade = CascadeType.ALL)
-  @JoinTable(name = "service_servicecharacteristic",
-      joinColumns = { @JoinColumn(name = "service_id") },
-      inverseJoinColumns = { @JoinColumn(name = "servicecharacteristic_id") })
-  private Set<ServiceCharacteristic> serviceCharacteristic = new HashSet<>();
-
-  @ManyToMany(fetch = FetchType.EAGER,
-      cascade = {
-          CascadeType.PERSIST,
-          CascadeType.MERGE
-      })
-  @JoinTable(name = "service_relatedpartyrefs",
-      joinColumns = { @JoinColumn(name = "service_id") },
-      inverseJoinColumns = { @JoinColumn(name = "relatedpartyref_id") })
-  private Set<RelatedPartyRef> relatedPartyRefs = new HashSet<>();
-
-  @ManyToMany(fetch = FetchType.EAGER,
-      cascade = {
-          CascadeType.PERSIST,
-          CascadeType.MERGE
-      })
-  @JoinTable(name = "service_supportingresources",
-      joinColumns = { @JoinColumn(name = "service_id") },
-      inverseJoinColumns = { @JoinColumn(name = "supportingresource_id") })
-  private Set<SupportingResource> supportingResources = new HashSet<>();
-
-  @ManyToMany(fetch = FetchType.EAGER,
-      cascade = {
-          CascadeType.PERSIST,
-          CascadeType.MERGE
-      })
-  @JoinTable(name = "service_supportingservices",
-      joinColumns = { @JoinColumn(name = "service_id") },
-      inverseJoinColumns = { @JoinColumn(name = "supportingservice_id") })
-  private Set<SupportingService> supportingServices = new HashSet<>();
-
-
-
-  public Service() {
-
+  private String uuid;
+  public String getUuid() {
+    return uuid;
   }
-
-  private static Method[] methods;
-
-  public static Method[] getMethods() {
-    return methods;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
   public void setUuid(String uuid) {
     this.uuid = uuid;
   }
 
-  public String getUuid() {
-    return uuid;
+  //---------------------------------------Relations------------------------------------------------------------------
+  //---------------------------------------OneToOne-------------------------------------------------------------------
+
+  @OneToOne(cascade = CascadeType.ALL)
+  private ServiceSpecification serviceSpecification;
+
+
+  //--------------------------------------OneToMany-------------------------------------------------------------------
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<Note> notes = new HashSet<>();
+
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<Place> places = new HashSet<>();
+
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<ServiceCharacteristic> serviceCharacteristics = new HashSet<>();
+
+  @OneToMany(mappedBy = "serviceRel", cascade = CascadeType.ALL)
+  private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
+
+
+
+  //----------------------------------------ManyToOne-----------------------------------------------------------------
+
+  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  private ServiceOrder serviceOrder;
+
+
+  //----------------------------------------ManyToMany----------------------------------------------------------------
+
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @JoinTable(name = "SERVICE_RELATED_PARTY",
+          joinColumns = @JoinColumn(name = "SERVICE_ID"),
+          inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_ID"))
+  private Set<RelatedParty> relatedParties = new HashSet<>();
+
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @JoinTable(name = "SERVICE_SUPPORTING_RESOURCE",
+          joinColumns = @JoinColumn(name = "SERVICE_ID"),
+          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_ID"))
+  private List<SupportingResource> supportingResources = new ArrayList<>();
+
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @JoinTable(name = "SERVICE_SUPPORTING_SERVICE",
+          joinColumns = @JoinColumn(name = "SERVICE_ID"),
+          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_ID"))
+  private List<SupportingService> supportingServices = new ArrayList<>();
+
+
+  //-----------------------------------------Constructor--------------------------------------------------------------
+
+  public Service() {
   }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
 
-  public String getDescription() {
-    return description;
-  }
+  //-----------------------------Getters and Setters for non-relations------------------------------------------------
 
-  public void setCategory(String category) {
-    this.category = category;
+  public Long getId() {
+    return this.id;
   }
 
   public String getCategory() {
     return category;
   }
 
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
+  public void setCategory(String category) {
+    this.category = category;
   }
 
-  public Date getEndDate() {
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getEndDate() {
     return endDate;
   }
 
-  public void setHasStarted(Boolean hasStarted) {
-    this.hasStarted = hasStarted;
+  public void setEndDate(String endDate) {
+    this.endDate = endDate;
   }
 
   public Boolean getHasStarted() {
     return hasStarted;
   }
 
-  public void setHref(String href) {
-    this.href = href;
+  public void setHasStarted(Boolean hasStarted) {
+    this.hasStarted = hasStarted;
   }
 
   public String getHref() {
     return href;
   }
 
-  public void setIsServiceEnabled(Boolean isServiceEnabled) {
-    this.isServiceEnabled = isServiceEnabled;
+  public void setHref(String href) {
+    this.href = href;
   }
-
 
   public Boolean getIsServiceEnabled() {
     return isServiceEnabled;
   }
 
-  public void setIsStateful(Boolean isStateful) {
-    this.isStateful = isStateful;
+  public void setIsServiceEnabled(Boolean serviceEnabled) {
+    isServiceEnabled = serviceEnabled;
   }
 
   public Boolean getIsStateful() {
     return isStateful;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setIsStateful(Boolean stateful) {
+    isStateful = stateful;
   }
 
   public String getName() {
     return name;
   }
 
-  public void setOrderDate(Date orderDate) {
-    this.orderDate = orderDate;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public Date getOrderDate() {
+  public String getOrderDate() {
     return orderDate;
   }
 
-  public void setStartDate(Date startDate) {
-    this.startDate = startDate;
+  public void setOrderDate(String orderDate) {
+    this.orderDate = orderDate;
   }
 
-  public Date getStartDate() {
+  public String getStartDate() {
     return startDate;
   }
 
-  public void setStartMode(String startMode) {
-    this.startMode = startMode;
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
   }
 
   public String getStartMode() {
     return startMode;
   }
 
-  public void setState(String state) {
-    this.state = state;
+  public void setStartMode(String startMode) {
+    this.startMode = startMode;
   }
 
   public String getState() {
     return state;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setState(String state) {
+    this.state = state;
   }
 
   public String getType() {
     return type;
   }
 
-//  public void setPlace(Place place) {
-//    places.add(place);
-//    place.setService(this);
+  public void setType(String type) {
+    this.type = type;
+  }
+
+
+  //--------------------------------Getters and Setters for relations-------------------------------------------------
+
+  public ServiceSpecification getServiceSpecification() {
+    return serviceSpecification;
+  }
+
+  public void setServiceSpecification(ServiceSpecification serviceSpecification) {
+    this.serviceSpecification = serviceSpecification;
+  }
+
+//  //TODO update currently replaces the existing servicespecification with the given parameters, even if they're not present
+//  //Creates or updates service specification depending on the value of op
+//  public void customSetServiceSpecification(LinkedHashMap lhm, String op) {
+//    if (op.equals("update")) {
+//      System.out.println("\nUPDATING EXISTING SERVICESPECIFICATION \n");
+//      //TODO Add a check to see which attributes are passed before applying.
+//      this.serviceSpecification.setVersion((String) lhm.get("version"));
+//      this.serviceSpecification.setName((String) lhm.get("name"));
+//      this.serviceSpecification.setId((String) lhm.get("id"));
+//      this.serviceSpecification.setHref((String) lhm.get("href"));
+//    } else if (op.equals("replace")) {
+//      System.out.println("\nCREATING NEW SERVICESPECIFICATION \n");
+//      ServiceSpecification serviceSpecification = new ServiceSpecification();
+//      serviceSpecification.setVersion((String) lhm.get("version"));
+//      serviceSpecification.setName((String) lhm.get("name"));
+//      serviceSpecification.setId((String) lhm.get("id"));
+//      serviceSpecification.setHref((String) lhm.get("href"));
+//      this.setServiceSpecification(serviceSpecification);
+//    }
 //  }
 
-  //TODO post with more than one place, note, etc.
+    /*
+    //TODO be able to update id of object, currently not working, not part of the API
+    //Updates / removes the relationship between a service and a ServiceSpecification to the given id
+    public void customSetServiceSpecification(Integer id, String op) {
 
-  public void setPlace(List<Place> places) {
-    for(Place place : places) {
-      System.out.println(place);
+        System.out.println("Entered Integer changer");
+        String lewl = id.toString();
+        System.out.println("Set lewl to " + lewl);
+        Long lul = new Long(lewl);
+        System.out.println("Set lul to " + lul);
+
+        EntityHelper eh = new EntityHelper();
+        System.out.println("Created EntityHelper");
+
+        ServiceSpecification ser = eh.findById(lul);
+        System.out.println("Found ServiceSpecification by id, = " + ser);
+        this.setServiceSpecification(ser);
+        System.out.println("\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID");
+    }
+    */
+
+  public Set<Place> getPlace() {
+    return places;
+  }
+
+  public void setPlace(Set<Place> places) {
+    for (Place place : places) {
       this.places.add(place);
       place.setService(this);
     }
   }
 
-
-  public List<Place> getPlace() {
-    return places;
-  }
-
-  public void setNote(List<Note> notes) {
-    for(Note note : notes) {
-      this.notes.add(note);
-      note.setService(this);
-    }
-  }
-
-//  public void setNote(Note note) {
-//    this.notes.add(note);
-//  }
-
-  public List<Note> getNote() {
+  public Set<Note> getNote() {
     return notes;
   }
 
-  public void setRelatedPartyRefs(Set<RelatedPartyRef> relatedPartyRefs) {
-    this.relatedPartyRefs = relatedPartyRefs;
-  }
-
-  public Set<RelatedPartyRef> getRelatedPartyRefs() {
-    return relatedPartyRefs;
-  }
-
-  public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristic) {
-    this.serviceCharacteristic = serviceCharacteristic;
-  }
-
-  public Set<ServiceCharacteristic> getServiceCharacteristic() {
-    return serviceCharacteristic;
-  }
-
-  public void setServiceOrder(ServiceOrder serviceOrder) {
-    this.serviceOrder = serviceOrder;
+  public void setNote(Set<Note> notes) {
+    for (Note note : notes) {
+      this.notes.add(note);
+      note.setService(this);
+    }
   }
 
   public ServiceOrder getServiceOrder() {
     return serviceOrder;
   }
 
-  public void setServiceSpecificationRef(ServiceSpecificationRef serviceSpecificationRef) {
-    this.serviceSpecificationRef = serviceSpecificationRef;
+  public void setServiceOrder(ServiceOrder serviceOrder) {
+    this.serviceOrder = serviceOrder;
   }
 
-  public ServiceSpecificationRef getServiceSpecificationRef() {
-    return serviceSpecificationRef;
+  public Set<RelatedParty> getRelatedParty() {
+    return relatedParties;
   }
 
-  public void setSupportingResources(Set<SupportingResource> supportingResources) {
-    this.supportingResources = supportingResources;
+  public Set<ServiceCharacteristic> getServiceCharacteristic() {
+    return serviceCharacteristics;
   }
 
-  public Set<SupportingResource> getSupportingResources() {
-    return supportingResources;
-  }
+  public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristics) {
+    for (ServiceCharacteristic serviceCharacteristic : serviceCharacteristics) {
+      this.serviceCharacteristics.add(serviceCharacteristic);
+      serviceCharacteristic.setService(this);
 
-  public void setSupportingServices(Set<SupportingService> supportingServices) {
-    this.supportingServices = supportingServices;
-  }
-
-  public Set<SupportingService> getSupportingServices() {
-    return supportingServices;
+    }
   }
 
   public Set<ServiceRelationship> getServiceRelationship() {
-    return serviceRelationship;
+    return serviceRelationships;
   }
 
+  public void setServiceRelationship(Set<ServiceRelationship> serviceRelationships) {
+    for (ServiceRelationship serviceRelationship : serviceRelationships) {
+      this.serviceRelationships.add(serviceRelationship);
+      serviceRelationship.setServiceRel(this);
+    }
+  }
 
+  public List<SupportingResource> getSupportingResource() {
+    return supportingResources;
+  }
+
+  public List<SupportingService> getSupportingService() {
+    return supportingServices;
+  }
 }
