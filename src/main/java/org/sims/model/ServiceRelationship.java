@@ -12,6 +12,7 @@ public class ServiceRelationship {
 
   private String type;
 
+  //TODO find a better name
   @ManyToOne
   private Service serviceRel;
 
