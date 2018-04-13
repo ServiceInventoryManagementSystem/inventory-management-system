@@ -9,7 +9,7 @@ pipeline:
         - tag
         - pull_request
         - deployment
-      branche:
+      branch:
         exclude: [ staging ]
 
     commands:
