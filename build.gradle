@@ -5,72 +5,125 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.9")
     }
 }
 
+plugins {
+    id 'org.gradle.java'
+//    id 'org.gradle.war'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.9'
+}
+
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
+
+
 apply plugin: "java"
 apply plugin: "application"
+mainClassName = 'org.sims.Main'
+
+
 apply plugin: "idea"
 apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
+
 
 group = "org.sims"
 sourceCompatibility = 1.8
-
-archivesBaseName="sims-rest"
-
-mainClassName="org.sims.Main"
 
 repositories {
     mavenCentral()
     jcenter()
     maven { url "http://repo.spring.io/libs-snapshot" }
     google()
+    maven {
+        url 'https://repo.spring.io/libs-snapshot'
+    }
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.data:spring-data-rest-hal-browser")
-    compile("org.thymeleaf:thymeleaf-spring5")
-    compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 
-    //H2
-    //compile("com.h2database:h2")
+    //---------------------------Spring Framework----------------------------
+    compile group: 'org.springframework', name: 'spring-core'
+//    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
+//    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.2.BUILD-SNAPSHOT'
+//    compile 'org.springframework.security.oauth:spring-security-oauth:2.3.2.BUILD-SNAPSHOT'
 
-    //compile("org.springframework:spring-jdbc")
+//    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+//    compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2'
 
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+//    compile("org.springframework.boot:spring-boot-starter-data-rest")
+    compile('org.springframework.boot:spring-boot-starter-actuator')
 
-    //Swagger
-    compile "io.springfox:springfox-swagger2:2.8.0"
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+//    testCompile('org.springframework.security:spring-security-test')
 
-    // JPA Data
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    //compile("org.springframework.boot:spring-boot-starter-data-rest")
+    runtime('org.springframework.boot:spring-boot-devtools')
 
-    // MySQL Connector
+    //---------------------------QueryDsl-------------------------------------
+    compile "com.querydsl:querydsl-jpa:$querydslVersion"
+    compile "com.querydsl:querydsl-core"
+    compileOnly("com.querydsl:querydsl-apt:4.1.4")
+
+    //---------------------------Database-------------------------------------
     //compile("mysql:mysql-connector-java")
-
-    // Dev tools
-    compile("org.springframework.boot:spring-boot-devtools")
-
-
     runtime('com.h2database:h2')
 
+    //--------------------------Discovery-------------------------------------
+    compile("org.thymeleaf:thymeleaf-spring5")
+    compile("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
     compile(group: 'javax.jmdns', name: 'jmdns', version: '3.4.1')
-
-    compile ('mysql:mysql-connector-java')
     compile("io.reactivex.rxjava2:rxjava:2.1.9")
 
-    compile fileTree(dir: "lib", include: "*.jar")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    //---------------------------Misc----------------------------------------
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    compile "io.springfox:springfox-swagger2:2.8.0"
+    compile 'io.springfox:springfox-swagger-ui:2.8.0'
 
+    compile(group: "com.github.fge", name: "json-patch", version: "1.9");
+
+
+//    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5'
+//    compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.3'
+//    compile group: 'io.rest-assured', name: 'json-schema-validator', version: '3.0.3'
+
+    testCompile group: 'junit', name: 'junit'
+
+    compile fileTree(dir: "lib", include: "*.jar")
+
+}
+
+querydsl {
+    library = "com.querydsl:querydsl-apt:$querydslVersion"
+    querydslSourcesDir = "$buildDir/generated/source/app/main"
+    jpa = true
+    jdo = false
+    hibernate = false
+    morphia = false
+    roo = false
+    springDataMongo = false
+    querydslDefault = true
+}
+
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/source/app/main"
+        }
+    }
 }
 
 jar {
     baseName = "sims-rest"
+    version = "0.1.0"
 }

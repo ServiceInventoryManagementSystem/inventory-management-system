@@ -1,67 +1,64 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "notes")
 public class Note {
-    // Columns
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String author;
+  private String author;
+  private String date;
+  private String text;
 
-    private Date date;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "service_id")
+  private Service service;
 
-    private String text;
+  public Note() {
+  }
 
-    // Relations
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
-    private Service service;
+  @JsonIgnore
+  public Service getService() {
+    return service;
+  }
 
-    public Note() {
+  public void setService(Service service) {
+    this.service = service;
+  }
 
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setService(Service service) {
-        this.service = service;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-//    public Service getService() {
-//        return service;
-//    }
+  public String getAuthor() {
+    return author;
+  }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 
-    public String getAuthor() {
-        return author;
-    }
+  public String getDate() {
+    return date;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public void setDate(String date) {
+    this.date = date;
+  }
 
-    public Date getDate() {
-        return date;
-    }
+  public String getText() {
+    return text;
+  }
 
-    public String getText() {
-        return text;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
+  public void setText(String text) {
+    this.text = text;
+  }
 }

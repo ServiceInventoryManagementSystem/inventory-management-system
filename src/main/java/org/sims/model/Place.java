@@ -1,55 +1,56 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 
 @Entity
-@Table(name = "places")
-public class Place implements Serializable {
-    // Columns
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class Place {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @NotNull
-    private String href;
+  private String href;
+  private String role;
 
-    @NotNull
-    private String role;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "service_id")
+  private Service service;
 
-    // Relations
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
-    private Service service;
+  public Place() {
+  }
 
-    public Place() {
+  @JsonIgnore
+  public Service getService() {
+    return service;
+  }
 
-    }
+  public void setService(Service service) {
+    this.service = service;
+  }
 
-    public void setService(Service service) {
-        this.service = service;
-    }
+  public Long getId() {
+    return id;
+  }
 
-//    public Service getService() {
-//        return service;
-//    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setHref(String href) {
-        this.href = href;
-    }
+  public String getHref() {
+    return href;
+  }
 
-    public String getHref() {
-        return href;
-    }
+  public void setHref(String href) {
+    this.href = href;
+  }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+  public String getRole() {
+    return role;
+  }
 
-    public String getRole() {
-        return role;
-    }
-
+  public void setRole(String role) {
+    this.role = role;
+  }
 }
