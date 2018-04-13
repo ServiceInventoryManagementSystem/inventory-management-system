@@ -9,6 +9,8 @@ pipeline:
         - tag
         - pull_request
         - deployment
+      branche:
+        exclude: [ staging ]
 
     commands:
       - gradle --version
