@@ -3,25 +3,23 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class SupportingResource {
+public class ServiceSpecification {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String href;
   private String name;
+  private String version;
 
-  @ManyToMany(mappedBy = "supportingResources")
-  private List<Service> services = new ArrayList<>();
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecification")
+  private Service service;
 
   public Long getId() {
     return id;
   }
-
   public void setId(Long id) {
     this.id = id;
   }
@@ -33,6 +31,10 @@ public class SupportingResource {
   public void setHref(String href) {
     this.href = href;
   }
+  public void setHref() {
+    this.href = null;
+  }
+
 
   public String getName() {
     return name;
@@ -41,13 +43,19 @@ public class SupportingResource {
   public void setName(String name) {
     this.name = name;
   }
-
-  @JsonIgnore
-  public List<Service> getServices() {
-    return services;
+  public void setName() {
+    this.name = null;
   }
 
-  public void setServices(List<Service> services) {
-    this.services = services;
+  public String getVersion() {
+    return version;
   }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+  public void setVersion() {
+    this.version = null;
+  }
+
 }

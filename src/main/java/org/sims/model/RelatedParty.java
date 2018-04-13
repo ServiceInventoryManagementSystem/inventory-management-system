@@ -2,21 +2,25 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.jws.HandlerChain;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class SupportingResource {
+public class RelatedParty {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String href;
   private String name;
+  private String role;
+  private String validFor;
 
-  @ManyToMany(mappedBy = "supportingResources")
-  private List<Service> services = new ArrayList<>();
+
+  @ManyToMany(mappedBy = "relatedParties") //
+  private Set<Service> services = new HashSet<>();
 
   public Long getId() {
     return id;
@@ -42,12 +46,28 @@ public class SupportingResource {
     this.name = name;
   }
 
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
+  }
+
+  public String getValidFor() {
+    return validFor;
+  }
+
+  public void setValidFor(String validFor) {
+    this.validFor = validFor;
+  }
+
   @JsonIgnore
-  public List<Service> getServices() {
+  public Set<Service> getServices() {
     return services;
   }
 
-  public void setServices(List<Service> services) {
+  public void setServices(Set<Service> services) {
     this.services = services;
   }
 }
