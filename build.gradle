@@ -17,7 +17,7 @@ buildscript {
 
 plugins {
     id 'org.gradle.java'
-    id 'org.gradle.war'
+//    id 'org.gradle.war'
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.9'
 }
 
