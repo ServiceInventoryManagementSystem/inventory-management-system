@@ -1,8 +1,10 @@
 package org.sims.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.github.fge.jsonpatch.JsonPatch;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.apache.commons.beanutils.MethodUtils;
@@ -41,7 +43,7 @@ public class ServiceController implements Serializable {
   private final SupportingServiceRepository supportingServiceRepository;
 
 
-  //TODO Make'em patch
+
   @Autowired
   public ServiceController(ServiceRepository serviceRepository, NoteRepository noteRepository,
                            PlaceRepository placeRepository, RelatedPartyRepository relatedPartyRepository,
@@ -123,6 +125,19 @@ public class ServiceController implements Serializable {
     return mappingJacksonValue;
   }
 
+
+  @PatchMapping("/service/{id}")
+  @Transactional
+  @ResponseStatus(HttpStatus.CREATED)
+  public MappingJacksonValue patchService(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+    ObjectMapper objectMapper;
+
+    return new MappingJacksonValue("");
+  }
+
+
+
+
   //TODO Proper exception handling for invalid id
   //Deletes the service at the given id
   @DeleteMapping("/service/{id}")
@@ -139,7 +154,58 @@ public class ServiceController implements Serializable {
   }
 
 
-  //TODO check if object is already referenced in onetoone and manytoone relations
+
+
+  @GetMapping("/seed/{count}")
+  @Transactional
+  @ResponseStatus(HttpStatus.CREATED)
+  public void seed(@PathVariable("count") int count) {
+    if (count > 50) {
+      count = 50;
+    }
+    Random random = new Random();
+
+    String[] categoryArray = {"CFS", "RFS"};
+    String[] nameArray = {"serviceName1", "serviceName2", "serviceName3", "serviceName4", "serviceName5"};
+    String[] descriptionArray = {};
+    String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
+    Boolean[] booleanArray = {true, false};
+    String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
+    String[] stateArray = {"active", "inactive", "stopped"};
+    String[] typeArray = {"type1", "type2", "type3"};
+
+    ServiceSpecification[] serviceSpecificationArray = new ServiceSpecification[count];
+    for (int i = 0; i < count; i++) {
+      ServiceSpecification serviceSpecification = new ServiceSpecification();
+      serviceSpecification.setHref("test");
+      serviceSpecification.setName("name");
+      serviceSpecificationRepository.save(serviceSpecification);
+      serviceSpecificationArray[i] = serviceSpecification;
+    }
+
+    for (int j = 0; j < count; j++) {
+      Service service = new Service();
+      service.setName(nameArray[random.nextInt(nameArray.length)]);
+      service.setCategory(categoryArray[random.nextInt(categoryArray.length)]);
+      service.setDescription("empty");
+      service.setHref(hrefArray[random.nextInt(hrefArray.length)]);
+      service.setHasStarted(booleanArray[random.nextInt(2)]);
+      service.setIsServiceEnabled(booleanArray[random.nextInt(2)]);
+      service.setIsStateful(booleanArray[random.nextInt(2)]);
+      service.setStartMode(startModeArray[random.nextInt(startModeArray.length)]);
+      service.setState(stateArray[random.nextInt(stateArray.length)]);
+      service.setType(typeArray[random.nextInt(typeArray.length)]);
+      service.setServiceSpecification(serviceSpecificationArray[j]);
+      serviceRepository.save(service);
+    }
+  }
+
+
+
+  //TODO
+  //Started different patch
+  /*
+  //TODO Check if the requestbody is a PatchObject or a Service
   @PatchMapping("/service/{id}")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
@@ -152,6 +218,7 @@ public class ServiceController implements Serializable {
       return new MappingJacksonValue("Returns null");
     }
     Service service = optionalService.get();
+
     System.out.println("Service name = " + service.getName());
     System.out.println("Path = " + patchObject.getPath());
     System.out.println("Value = " + patchObject.getValue());
@@ -259,9 +326,10 @@ public class ServiceController implements Serializable {
     }
 
     return new MappingJacksonValue("Returns Service");
-  }
 
-/*  //TODO Exception handling for invalid id
+  }*/
+  /*
+  //TODO Exception handling for invalid id
   //TODO Be able to create subresources
   //TODO add check for update or delete
   //Partially updates a service according to the TMForum API
@@ -305,38 +373,4 @@ public class ServiceController implements Serializable {
     mappingJacksonValue.setFilters(filters);
     return mappingJacksonValue;
   }*/
-
-  @GetMapping("/api/seed/{count}")
-  @Transactional
-  @ResponseStatus(HttpStatus.CREATED)
-  public void seed(@PathVariable("count") int count) {
-    String[] categoryArray = {"CFS", "RFS"};
-    String[] nameArray = {"serviceName1", "serviceName2", "serviceName3", "serviceName4", "serviceName5"};
-    String[] descriptionArray = {};
-    String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
-    Boolean[] booleanArray = {true, false};
-    String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
-    String[] stateArray = {"active", "inactive", "stopped"};
-    String[] typeArray = {"type1", "type2", "type3"};
-
-    Random random = new Random();
-    if (count > 50) {
-      count = 50;
-    }
-    for (int j = 0; j < count; j++) {
-      Service service = new Service();
-      service.setName(nameArray[random.nextInt(nameArray.length)]);
-      service.setCategory(categoryArray[random.nextInt(categoryArray.length)]);
-      service.setDescription("empty");
-      service.setHref(hrefArray[random.nextInt(hrefArray.length)]);
-      service.setHasStarted(booleanArray[random.nextInt(2)]);
-      service.setIsServiceEnabled(booleanArray[random.nextInt(2)]);
-      service.setIsStateful(booleanArray[random.nextInt(2)]);
-      service.setStartMode(startModeArray[random.nextInt(startModeArray.length)]);
-      service.setState(stateArray[random.nextInt(stateArray.length)]);
-      service.setType(typeArray[random.nextInt(typeArray.length)]);
-      serviceRepository.save(service);
-    }
-  }
-
 }
