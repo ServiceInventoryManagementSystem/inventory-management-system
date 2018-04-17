@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -8,10 +9,14 @@ import javax.persistence.*;
 public class ServiceSpecification {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @ApiModelProperty(notes="Unique identifier of the service specification.")
   private Long id;
 
+  @ApiModelProperty(notes="Reference of the ServiceSpecification.")
   private String href;
+  @ApiModelProperty(notes="Name of the required ServiceSpecification. ")
   private String name;
+  @ApiModelProperty(notes="Service specification version.")
   private String version;
 
   @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecification")

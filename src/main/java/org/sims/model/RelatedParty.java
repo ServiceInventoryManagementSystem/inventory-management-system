@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.jws.HandlerChain;
 import javax.persistence.*;
@@ -11,11 +12,15 @@ import java.util.Set;
 public class RelatedParty {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @ApiModelProperty(notes="Id of the related party.")
   private Long id;
-
+  @ApiModelProperty(notes="Reference of the related party, could be a party reference or a party role reference.")
   private String href;
+  @ApiModelProperty(notes="Name of the related party.")
   private String name;
+  @ApiModelProperty(notes="Role of the related party.")
   private String role;
+  @ApiModelProperty(notes="Validity period of the related party.")
   private String validFor;
 
 
