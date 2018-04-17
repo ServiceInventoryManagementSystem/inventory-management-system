@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -9,9 +10,11 @@ import javax.persistence.*;
 public class ServiceCharacteristic {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @ApiModelProperty(notes="Id of the the characteristic.")
   private Long id;
-
+  @ApiModelProperty(notes="Name of the characteristic.")
   private String name;
+  @ApiModelProperty(notes="Value of the characteristic.")
   private String value;
 
   @ManyToOne

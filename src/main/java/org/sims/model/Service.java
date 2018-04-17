@@ -2,6 +2,8 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.util.*;
@@ -9,23 +11,38 @@ import java.util.*;
 @Entity
 @JsonFilter("org.sims.model.Service")
 public class Service {
+
   @Id
+  @ApiModelProperty(notes="'id' is the ID created for the service.")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
+  @ApiModelProperty(notes="free-text description of the service.")
   private String description;
+  @ApiModelProperty(notes="endDate is the date when the service ends.")
   private String endDate;
+  @ApiModelProperty(notes="This is a Booean attribute that, if TRUE, signifies that this Service has already been started. If the value of this attribute is FALSE, then this signifies that this Service has NOT been Started.")
   private Boolean hasStarted;
+  @ApiModelProperty(notes="Reference of the service.")
   private String href;
 //  private String id;
+  @ApiModelProperty(notes="If the value of this attribute is FALSE, then this means that this particular Service has NOT been enabled for use.")
   private Boolean isServiceEnabled;
+    @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, means that this Service can be changed without affecting any other services.")
   private Boolean isStateful;
+    @ApiModelProperty(notes="'Name' is the name of the service.")
   private String name;
+    @ApiModelProperty(notes="orderDate is the date when the service was ordered.")
   private String orderDate;
+    @ApiModelProperty(notes="startDate is the date when the service starts.")
   private String startDate;
+    @ApiModelProperty(notes="This attribute is an enumerated integer that indicates how the Service is started: 0: Unknown, 1: Automaically by the managed environment, 2: Automatically by the owner device, 3: Manually by the Provider of the Service, 4: Manually by a Customer of the Provider, 5: Any of the above.")
   private String startMode;
+    @ApiModelProperty(notes="The life cucle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
   private String state;
+    @ApiModelProperty(notes="Name of the resource type.")
   private String type;
 
 
