@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -8,8 +9,10 @@ import javax.persistence.*;
 public class ServiceRelationship {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @ApiModelProperty(notes="")
   private Long id;
 
+  @ApiModelProperty(notes="")
   private String type;
 
   //TODO find a better name

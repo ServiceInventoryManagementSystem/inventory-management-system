@@ -1,17 +1,22 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
 @Entity
 public class Note {
   @Id
+  @ApiModelProperty(notes="Id of the note.")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ApiModelProperty(notes="Author of the note.")
   private String author;
+  @ApiModelProperty(notes="Date of the note.")
   private String date;
+  @ApiModelProperty(notes="Text of the note.")
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY)
