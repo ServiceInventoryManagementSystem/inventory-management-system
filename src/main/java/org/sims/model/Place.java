@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -9,9 +10,11 @@ import javax.persistence.*;
 public class Place {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @ApiModelProperty(notes="Id of the place")
   private Long id;
-
+  @ApiModelProperty(notes="Referance of a place (for instance in google map).")
   private String href;
+  @ApiModelProperty(notes="Role of the place (for instance delivery geographical place.)")
   private String role;
 
   @ManyToOne(fetch = FetchType.LAZY)

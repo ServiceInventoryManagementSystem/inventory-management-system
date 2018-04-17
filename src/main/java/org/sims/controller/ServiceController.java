@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.beanutils.MethodUtils;
 import org.sims.model.*;
 import org.sims.repository.*;
@@ -83,6 +84,7 @@ public class ServiceController implements Serializable {
   }
 
   //Get all services. If "fields" is present, only the fields specified will be returned.
+  @ApiOperation(value="This operation list service entities.")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(@RequestParam MultiValueMap<String,
@@ -94,6 +96,7 @@ public class ServiceController implements Serializable {
 
   //TODO Return proper message back when resource isn't found (if(user==null))
   //Returns the service resource of the given id
+  @ApiOperation(value="This operation retrives a service entity.")
   @GetMapping("/service/{id}")
   @ResponseBody
   public MappingJacksonValue getService(@PathVariable Long id, @RequestParam MultiValueMap<String,
@@ -113,6 +116,7 @@ public class ServiceController implements Serializable {
 
   //TODO currently working, but need to find a better way to return the created object
   //Creates a service in the database from the service JSON passed. Returns the created object.
+  @ApiOperation(value="This operation creates a service entity")
   @PostMapping("/service")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
@@ -125,7 +129,7 @@ public class ServiceController implements Serializable {
     return mappingJacksonValue;
   }
 
-
+  @ApiOperation(value="This operation allows partial updates of a service entity.")
   @PatchMapping("/service/{id}")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
@@ -140,6 +144,7 @@ public class ServiceController implements Serializable {
 
   //TODO Proper exception handling for invalid id
   //Deletes the service at the given id
+  @ApiOperation(value="This operation deletes a service entity.")
   @DeleteMapping("/service/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteService(@PathVariable Long id) {
@@ -147,6 +152,7 @@ public class ServiceController implements Serializable {
   }
 
   //Deletes all services in the database
+  @ApiOperation(value="This operation deletes all service entities.")
   @DeleteMapping("/service")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteServices() {
