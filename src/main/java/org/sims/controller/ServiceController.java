@@ -99,7 +99,7 @@ public class ServiceController implements Serializable {
   @ApiOperation(value="This operation retrives a service entity.")
   @GetMapping("/service/{id}")
   @ResponseBody
-  public MappingJacksonValue getService(@PathVariable Long id, @RequestParam MultiValueMap<String,
+  public MappingJacksonValue getService(@PathVariable String id, @RequestParam MultiValueMap<String,
           String> params, @QuerydslPredicate(root = Service.class) Predicate predicate) {
 
     QService qService = QService.service;
@@ -133,7 +133,7 @@ public class ServiceController implements Serializable {
   @PatchMapping("/service/{id}")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
-  public MappingJacksonValue patchService(@PathVariable("id") Long id, @RequestBody JsonPatch jsonPatch) {
+  public MappingJacksonValue patchService(@PathVariable("id") String id, @RequestBody JsonPatch jsonPatch) {
     ObjectMapper objectMapper;
 
     return new MappingJacksonValue("");
@@ -147,8 +147,15 @@ public class ServiceController implements Serializable {
   @ApiOperation(value="This operation deletes a service entity.")
   @DeleteMapping("/service/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteService(@PathVariable Long id) {
-    serviceRepository.deleteById(id);
+  public void deleteService(@PathVariable String id) {
+    QService qService = QService.service;
+    Predicate p = new BooleanBuilder();
+    ((BooleanBuilder) p).and(qService.id.eq(id));
+    Optional<Service> optionalService = serviceRepository.findOne(p);
+    if(!optionalService.isPresent()) {
+      return;
+    }
+    serviceRepository.delete(optionalService.get());
   }
 
   //Deletes all services in the database
