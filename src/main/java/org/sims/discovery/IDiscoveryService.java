@@ -6,6 +6,7 @@ import org.reactivestreams.Publisher;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
+import org.sims.discovery.models.IService;
 
 public interface IDiscoveryService{
 

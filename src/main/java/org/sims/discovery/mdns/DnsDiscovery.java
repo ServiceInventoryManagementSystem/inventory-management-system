@@ -14,7 +14,7 @@ import javax.jmdns.impl.DNSEntry;
 import javax.jmdns.impl.JmDNSImpl;
 
 import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IService;;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;

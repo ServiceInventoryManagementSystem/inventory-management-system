@@ -1,29 +1,37 @@
 package org.sims.discovery.ws;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import com.ms.wsdiscovery.servicedirectory.WsDiscoveryService;
 
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IRelatedParty;
+import org.sims.discovery.models.Service;
+import org.sims.discovery.models.ServiceAdapter;
+import org.sims.model.RelatedParty;
 
 
 
-public class WsService implements IService{
+public class WsService extends ServiceAdapter{
   private WsDiscoveryService service;
-  final private String href;
-  final private String UUID;
-  final private String name = "Some ws discovery service";
-  final private Date discoveredDate = new Date();
+
+  private String id;
+
+  private String href;
+  private String name = "Some ws discovery service";
+  private Date discoveredDate = new Date();
+
+  private List<IRelatedParty> relatedParty;
 
   public WsService(WsDiscoveryService service){
     this.service = service;
-    UUID = String.format("ws:%s", service.getEndpointReference().getAddress());
     href = service.getXAddrs().get(0);
-
   }
+
 
   public Date getDiscovered(){
     return discoveredDate;
@@ -31,10 +39,6 @@ public class WsService implements IService{
     
   public String getHref(){
     return href;
-  }
-
-  public String getUUID(){
-    return UUID;
   }
 
   public String getName(){
@@ -45,8 +49,12 @@ public class WsService implements IService{
     return "WS-Discovery service";
   }
 
-  public boolean hasStarted(){
-    return true;
+  public Boolean hasStarted(){
+    return null;
+  }
+
+  public List<IRelatedParty> getRelatedParty(){
+    return relatedParty;
   }
 
 }

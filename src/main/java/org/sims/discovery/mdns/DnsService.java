@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.jmdns.ServiceInfo;
 
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IService;;
 
 public class DnsService implements IService{
   private ServiceInfo info;

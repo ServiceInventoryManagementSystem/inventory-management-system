@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 import org.reactivestreams.Subscription;
 import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IService;
+import org.sims.model.QService;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,6 @@ import io.reactivex.disposables.Disposable;
 // Class that manages multiple discovery mechanisms
 public class DiscoveryManager{
   
-  @Autowired
-  ServiceRepository serviceRepo;
 
   List<IDiscoveryService> discoveryServices = new ArrayList<IDiscoveryService>();
   Set<Class<? extends IDiscoveryService>> serviceClasses = new HashSet<Class<? extends IDiscoveryService>>();
@@ -42,17 +41,19 @@ public class DiscoveryManager{
   private Thread probingThread;
   private boolean runProbe = false;
 
+  private IResourceManager resourceManager;
 
   // is the manger initialized?
   private boolean init = false;
 
   // probeInterval is a prefered value
-  public DiscoveryManager(float probeInterval){
+  public DiscoveryManager(IResourceManager resourceManager, float probeInterval){
+    this.resourceManager = resourceManager;
     this.probeInterval = probeInterval;
   }
   
-  public DiscoveryManager(){
-    this(60);
+  public DiscoveryManager(IResourceManager resourceManager){
+    this(resourceManager, 60);
   }
 
   // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
@@ -152,13 +153,10 @@ public class DiscoveryManager{
   }
 
   //Service was discovered
-  private void addService(IService s){
-    String UUID = s.getUUID();
-    Service example = new Service();
-    example.setUuid(UUID);
-
-//    Service entry = serviceRepo.findOne(Example.of(example));
-    Service entry = serviceRepo.getByUuid(UUID);
+  private String addService(IService s){
+    
+    Example<Service> example = Example.of(new Service());
+    Service entry = serviceRepo.findOne(s.getId());
 
     //Service entry = new Service();
     if(entry == null){
@@ -173,13 +171,32 @@ public class DiscoveryManager{
     entry.setName(s.getName());
     entry.setHref(s.getHref());
       
-    serviceRepo.save(entry);
+    return serviceRepo.save(entry).getId().toString();
     
+  }
+
+  private void updateService(IService s){
+
+    
+    //Service entry = new Service();
+    if(entry == null){
+      System.out.println("Service does not already exist creating");
+      entry = new Service();
+      // Map IService to Service, should be moved to helper method
+      entry.setUuid(UUID);
+      entry.setHasStarted(s.hasStarted());
+      entry.setDescription(s.getDescription());
+      entry.setCategory("MANAGED");
+    }
+    entry.setName(s.getName());
+    entry.setHref(s.getHref());
+      
+    return serviceRepo.save(entry).getId().toString();
   }
 
   //Service was lost
   private void removeService(IService s){
-    String UUID = s.getUUID();
+    String id = s.getId();
     Service example = new Service();
     example.setUuid(UUID);
 
