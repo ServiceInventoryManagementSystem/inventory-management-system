@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.GenericGenerator;
+import org.sims.model.generator.StringIncrementGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.util.*;
@@ -12,10 +16,13 @@ import java.util.*;
 @JsonFilter("org.sims.model.Service")
 public class Service {
 
-  @Id
   @ApiModelProperty(notes="'id' is the ID created for the service.")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Id
+  @GeneratedValue(generator = "prod-generator")
+  @GenericGenerator(name = "prod-generator",
+    parameters = @Parameter(name = "prefix", value = ""),
+    strategy = "org.sims.model.generator.StringIncrementGenerator")
+  private String id;
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
@@ -111,7 +118,7 @@ public class Service {
 
   //-----------------------------Getters and Setters for non-relations------------------------------------------------
 
-  public Long getId() {
+  public String getId() {
     return this.id;
   }
 

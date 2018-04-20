@@ -41,7 +41,7 @@ public class ServiceControllerTest {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
-    MappingJacksonValue mjv = serviceController.getService(1L, args, predicate);
+    MappingJacksonValue mjv = serviceController.getService("1", args, predicate);
     if (mjv == null) {
       fail();
     }
@@ -83,7 +83,7 @@ public class ServiceControllerTest {
     Predicate predicate = qService.isNotNull();
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
 
-    MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
+    MappingJacksonValue mappingJacksonValue = serviceController.getService("3", args, predicate);
     Object object = mappingJacksonValue.getValue();
     Optional<Service> optionalService = object instanceof Optional ? ((Optional) object) : Optional.empty();
     if(!optionalService.isPresent()) {
@@ -105,7 +105,7 @@ public class ServiceControllerTest {
     Predicate predicate = qService.isNotNull();
 
     MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
-    MappingJacksonValue mappingJacksonValue = serviceController.getService(3L, args, predicate);
+    MappingJacksonValue mappingJacksonValue = serviceController.getService("3", args, predicate);
     Object object = mappingJacksonValue.getValue();
     Optional<Service> optionalService = object instanceof Optional ? ((Optional) object) : Optional.empty();
 
@@ -117,8 +117,8 @@ public class ServiceControllerTest {
     assertEquals("createdServiceName", createdService.getName());
     assertEquals("createdServiceCategory", createdService.getCategory());
 
-    serviceController.deleteService(3L);
-    Object emptyServiceObject = serviceController.getService(3L, args, predicate).getValue();
+    serviceController.deleteService("3");
+    Object emptyServiceObject = serviceController.getService("3", args, predicate).getValue();
     Optional<Service> optionalEmptyService = emptyServiceObject instanceof Optional ? ((Optional) emptyServiceObject) : Optional.empty();
     assertTrue(!optionalEmptyService.isPresent());
   }
