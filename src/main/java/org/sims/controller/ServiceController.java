@@ -8,6 +8,7 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.MethodUtils;
 import org.sims.model.*;
 import org.sims.repository.*;
@@ -83,12 +84,20 @@ public class ServiceController implements Serializable {
     }
   }
 
+  /*
+
+  @ApiParam(name = "startDate", value = "start date", defaultValue = "")
+  @RequestParam("startDate") String startDate,
+   */
+
   //Get all services. If "fields" is present, only the fields specified will be returned.
   @ApiOperation(value="This operation list service entities.")
   @GetMapping("/service")
   @ResponseBody
-  public MappingJacksonValue getServices(@RequestParam MultiValueMap<String,
-          String> params, @QuerydslPredicate(root = Service.class) Predicate predicate) {
+  public MappingJacksonValue getServices(
+          @ApiParam(name = "fields", value = "fields", defaultValue = "")
+          @RequestParam MultiValueMap<String, String> params,
+          @QuerydslPredicate(root = Service.class) Predicate predicate) {
     Iterable<Service> services = this.serviceRepository.findAll(predicate);
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
     return applyFieldFiltering(mappingJacksonValue, params);
@@ -99,7 +108,10 @@ public class ServiceController implements Serializable {
   @ApiOperation(value="This operation retrives a service entity.")
   @GetMapping("/service/{id}")
   @ResponseBody
-  public MappingJacksonValue getService(@PathVariable String id, @RequestParam MultiValueMap<String,
+  public MappingJacksonValue getService(
+          @PathVariable String id,
+          @ApiParam(name = "fields", value = "fields", defaultValue = "")
+          @RequestParam MultiValueMap<String,
           String> params, @QuerydslPredicate(root = Service.class) Predicate predicate) {
 
     QService qService = QService.service;
