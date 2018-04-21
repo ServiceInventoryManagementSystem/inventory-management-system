@@ -10,7 +10,7 @@ public class ServiceSpecification {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="Unique identifier of the service specification.")
-  private Long id;
+  private String id;
 
   @ApiModelProperty(notes="Reference of the ServiceSpecification.")
   private String href;
@@ -22,10 +22,10 @@ public class ServiceSpecification {
   @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecification")
   private Service service;
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

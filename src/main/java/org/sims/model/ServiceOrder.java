@@ -12,18 +12,18 @@ public class ServiceOrder {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="Unique identifier of the related Service Order.")
-  private Long id;
+  private String id;
   @ApiModelProperty(notes="The hyperlink to access the sleated Service Order.")
   private String href;
 
   @OneToMany(mappedBy = "serviceOrder")
   private Set<Service> services = new HashSet<>();
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

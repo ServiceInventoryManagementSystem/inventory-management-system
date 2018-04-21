@@ -10,7 +10,7 @@ public class Note {
   @Id
   @ApiModelProperty(notes="Id of the note.")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private String id;
 
   @ApiModelProperty(notes="Author of the note.")
   private String author;
@@ -35,11 +35,11 @@ public class Note {
     this.service = service;
   }
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
