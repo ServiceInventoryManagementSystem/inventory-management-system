@@ -18,10 +18,12 @@ public class Service {
 
   @ApiModelProperty(notes="'id' is the ID created for the service.")
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  /*
   @GeneratedValue(generator = "prod-generator")
   @GenericGenerator(name = "prod-generator",
     parameters = @Parameter(name = "prefix", value = ""),
-    strategy = "org.sims.model.generator.StringIncrementGenerator")
+    strategy = "org.sims.model.generator.StringIncrementGenerator")*/
   private String id;
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
@@ -30,7 +32,7 @@ public class Service {
   private String description;
   @ApiModelProperty(notes="endDate is the date when the service ends.")
   private String endDate;
-  @ApiModelProperty(notes="This is a Booean attribute that, if TRUE, signifies that this Service has already been started. If the value of this attribute is FALSE, then this signifies that this Service has NOT been Started.")
+  @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, signifies that this Service has already been started. If the value of this attribute is FALSE, then this signifies that this Service has NOT been Started.")
   private Boolean hasStarted;
   @ApiModelProperty(notes="Reference of the service.")
   private String href;
