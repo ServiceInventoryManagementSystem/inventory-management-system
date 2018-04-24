@@ -2,6 +2,6 @@ FROM library/openjdk:8-jre
 
 COPY ./build/libs /sims
 
-ENTRYPOINT ["java", "-jar", "/sims/service-api-1.0.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/sims/sims-api-1.0.0-SNAPSHOT.jar"]
 
-CMD ["java", "-jar", "/sims/service-api-1.0.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/sims/sims-api-1.0.0-SNAPSHOT.jar"]
