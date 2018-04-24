@@ -12,6 +12,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Collections;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import static springfox.documentation.builders.PathSelectors.regex;
 
@@ -38,6 +40,5 @@ public class SwaggerConfig {
             new Contact("FFI", "www.ffi.no", "Frank-Trethan.Johnsen@ffi.no"),
             "Apache Licence Version 2.0",
             "https://www.apache.org/license.html", Collections.emptyList());
-
   }
 }
