@@ -6,7 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-public interface IService {
+public interface IService extends Comparable<IService>{
 
   @NotNull
   public String getName();
@@ -35,4 +35,5 @@ public interface IService {
   // A local reference that can be used to map to id
   public String getLocalReference();
   
+
 }

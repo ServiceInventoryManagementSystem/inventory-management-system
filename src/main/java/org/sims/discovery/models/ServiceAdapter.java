@@ -22,5 +22,8 @@ public abstract class ServiceAdapter implements IService{
   public Boolean isStateful(){return null;}
   public Boolean hasStarted(){return null;}
 
+  public int compareTo(IService other){
+    return 0;
+  }
 
 }

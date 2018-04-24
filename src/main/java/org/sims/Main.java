@@ -1,6 +1,7 @@
 package org.sims;
 
 import org.sims.discovery.manager.DiscoveryManager;
+import org.sims.discovery.manager.HybernateResourceManager;
 import org.sims.discovery.mdns.DnsDiscovery;
 import org.sims.discovery.ws.WsDiscovery;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -18,11 +19,13 @@ public class Main {
 
     ApplicationContext ctx = SpringApplication.run(Main.class, args);
 
-
-    DiscoveryManager manager = new DiscoveryManager();
+    HybernateResourceManager resourceManager = new HybernateResourceManager();
     ctx.getAutowireCapableBeanFactory().autowireBeanProperties(
-            manager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
+      resourceManager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
     );
+    
+    DiscoveryManager manager = new DiscoveryManager(resourceManager);
+    
 
     manager.registerDiscovery(WsDiscovery.class);
     manager.registerDiscovery(DnsDiscovery.class);
