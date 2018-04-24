@@ -10,7 +10,7 @@ import java.util.List;
 public class SupportingService {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private String id;
 
   private String category;
   private String href;
@@ -19,11 +19,11 @@ public class SupportingService {
   @ManyToMany(mappedBy = "supportingServices")
   private List<Service> services = new ArrayList<>();
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
