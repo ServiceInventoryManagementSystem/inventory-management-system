@@ -10,7 +10,7 @@ public class ServiceRef {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="Id of the service.")
-  private Long id;
+  private String id;
 
   @ApiModelProperty(notes="reference of the service.")
   private String href;
@@ -18,7 +18,7 @@ public class ServiceRef {
   @OneToOne(mappedBy = "service")
   private ServiceRelationship serviceRelationship;
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 

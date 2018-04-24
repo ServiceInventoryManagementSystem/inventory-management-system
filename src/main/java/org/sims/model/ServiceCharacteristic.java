@@ -11,7 +11,7 @@ public class ServiceCharacteristic {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="Id of the the characteristic.")
-  private Long id;
+  private String id;
   @ApiModelProperty(notes="Name of the characteristic.")
   private String name;
   @ApiModelProperty(notes="Value of the characteristic.")
@@ -20,11 +20,11 @@ public class ServiceCharacteristic {
   @ManyToOne
   private Service service;
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
