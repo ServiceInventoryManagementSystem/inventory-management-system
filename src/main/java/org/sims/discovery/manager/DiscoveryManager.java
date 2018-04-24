@@ -152,65 +152,12 @@ public class DiscoveryManager{
       .collect(Collectors.toList());
   }
 
-  //Service was discovered
-  private String addService(IService s){
-    
-    Example<Service> example = Example.of(new Service());
-    Service entry = serviceRepo.findOne(s.getId());
-
-    //Service entry = new Service();
-    if(entry == null){
-      System.out.println("Service does not already exist creating");
-      entry = new Service();
-      // Map IService to Service, should be moved to helper method
-      entry.setUuid(UUID);
-      entry.setHasStarted(s.hasStarted());
-      entry.setDescription(s.getDescription());
-      entry.setCategory("MANAGED");
-    }
-    entry.setName(s.getName());
-    entry.setHref(s.getHref());
-      
-    return serviceRepo.save(entry).getId().toString();
-    
+  public String addService(IService service){
+    return "";
   }
 
-  private void updateService(IService s){
+  public void removeService(IService service){
 
-    
-    //Service entry = new Service();
-    if(entry == null){
-      System.out.println("Service does not already exist creating");
-      entry = new Service();
-      // Map IService to Service, should be moved to helper method
-      entry.setUuid(UUID);
-      entry.setHasStarted(s.hasStarted());
-      entry.setDescription(s.getDescription());
-      entry.setCategory("MANAGED");
-    }
-    entry.setName(s.getName());
-    entry.setHref(s.getHref());
-      
-    return serviceRepo.save(entry).getId().toString();
   }
-
-  //Service was lost
-  private void removeService(IService s){
-    String id = s.getId();
-    Service example = new Service();
-    example.setUuid(UUID);
-
-    Service res = serviceRepo.getByUuid(UUID);
-    if(res == null){
-      System.out.println("Service remove: was not tracked");
-    } else {
-      // Set service state to 'terminated'
-      System.out.println("Service remove: state set to terminated");
-      res.setState("terminated");
-      serviceRepo.save(res);
-    }
-  
-  }
-
 
 }
