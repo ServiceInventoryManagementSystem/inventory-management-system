@@ -15,4 +15,7 @@ public interface IResourceManager{
 
   // Return a list of services managed by this system
   public Single<List<IService>> getOwnedServices();
+
+  // Finish anything important
+  public void dispose();
 }

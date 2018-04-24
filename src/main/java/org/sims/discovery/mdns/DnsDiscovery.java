@@ -43,13 +43,13 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   
   public Observable<IService> serviceAdded(){
     return serviceAddSubject.distinct((IService s) -> {
-      return s.getUUID();
+      return s.getLocalReference();
     });
   } // emitts when service is created
 
   public Observable<IService> serviceRemoved(){
     return serviceRemoveSubject.distinct((IService s) -> {
-      return s.getUUID();
+      return s.getLocalReference();
     });
   } // emitts when service no longer exists
 
@@ -80,7 +80,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
             System.err.println(e);
           }
           for(ServiceInfo info : jmdns.list("_http._tcp.local.")){
-            DnsService service = new DnsService(info);
+            DnsService service = null;//new DnsService(info);
             dnsSubject.onNext(service);
           }
           dnsSubject.onComplete();

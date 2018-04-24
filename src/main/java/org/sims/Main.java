@@ -1,9 +1,19 @@
 package org.sims;
 
+
 import org.sims.discovery.manager.DiscoveryManager;
 import org.sims.discovery.manager.HybernateResourceManager;
-import org.sims.discovery.mdns.DnsDiscovery;
 import org.sims.discovery.ws.WsDiscovery;
+
+import java.io.File;
+import java.util.HashMap;
+
+import com.fasterxml.jackson.core.Base64Variant;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,20 +27,23 @@ public class Main {
   public static void main(String[] args) {
 
 
-    ApplicationContext ctx = SpringApplication.run(Main.class, args);
+    //ApplicationContext ctx = SpringApplication.run(Main.class, args);
+
 
     HybernateResourceManager resourceManager = new HybernateResourceManager();
-    ctx.getAutowireCapableBeanFactory().autowireBeanProperties(
+
+
+    /*ctx.getAutowireCapableBeanFactory().autowireBeanProperties(
       resourceManager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
-    );
+    );*/
     
     DiscoveryManager manager = new DiscoveryManager(resourceManager);
     
+    
 
     manager.registerDiscovery(WsDiscovery.class);
-    manager.registerDiscovery(DnsDiscovery.class);
-    manager.initAll();
+    //manager.initAll();
 
-    manager.startAll();
+    //manager.startAll();
   }
 }

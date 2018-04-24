@@ -22,7 +22,7 @@ import com.ms.wsdiscovery.WsDiscoveryConstants;
 
 import org.reactivestreams.Publisher;
 import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IService;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -60,13 +60,13 @@ public class WsDiscovery implements IDiscoveryService{
   }
   public Observable<IService> serviceAdded(){
     return serviceAddSubject.distinct((IService s) -> {
-      return s.getUUID();
+      return s.getLocalReference();
     });
   }
   
   public Observable<IService> serviceRemoved(){
     return serviceRemoveSubject.distinct((IService s) -> {
-      return s.getUUID();
+      return s.getLocalReference();
     });
   }
 

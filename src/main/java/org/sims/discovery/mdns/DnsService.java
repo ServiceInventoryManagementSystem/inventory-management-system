@@ -6,7 +6,7 @@ import javax.jmdns.ServiceInfo;
 
 import org.sims.discovery.models.IService;;
 
-public class DnsService implements IService{
+public abstract class DnsService implements IService{
   private ServiceInfo info;
   private Date discoveryDate;
 
@@ -32,7 +32,7 @@ public class DnsService implements IService{
     return "mDNS - service";
   }
 
-  public boolean hasStarted(){
+  public Boolean hasStarted(){
     return true;
   }
 
