@@ -13,7 +13,7 @@ public class RelatedParty {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="Id of the related party.")
-  private Long id;
+  private String id;
   @ApiModelProperty(notes="Reference of the related party, could be a party reference or a party role reference.")
   private String href;
   @ApiModelProperty(notes="Name of the related party.")
@@ -27,11 +27,11 @@ public class RelatedParty {
   @ManyToMany(mappedBy = "relatedParties") //
   private Set<Service> services = new HashSet<>();
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

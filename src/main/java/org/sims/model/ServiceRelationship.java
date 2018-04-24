@@ -10,7 +10,7 @@ public class ServiceRelationship {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="")
-  private Long id;
+  private String id;
 
   @ApiModelProperty(notes="")
   private String type;
@@ -22,11 +22,11 @@ public class ServiceRelationship {
   @OneToOne(cascade = CascadeType.ALL)
   private ServiceRef service;
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 

@@ -11,7 +11,7 @@ public class Place {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ApiModelProperty(notes="Id of the place")
-  private Long id;
+  private String id;
   @ApiModelProperty(notes="Referance of a place (for instance in google map).")
   private String href;
   @ApiModelProperty(notes="Role of the place (for instance delivery geographical place.)")
@@ -33,11 +33,11 @@ public class Place {
     this.service = service;
   }
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
