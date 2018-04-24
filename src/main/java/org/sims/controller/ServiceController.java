@@ -98,6 +98,7 @@ public class ServiceController implements Serializable {
           @ApiParam(name = "fields", value = "fields", defaultValue = "")
           @RequestParam MultiValueMap<String, String> params,
           @QuerydslPredicate(root = Service.class) Predicate predicate) {
+    System.out.println(predicate);
     Iterable<Service> services = this.serviceRepository.findAll(predicate);
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
     return applyFieldFiltering(mappingJacksonValue, params);
