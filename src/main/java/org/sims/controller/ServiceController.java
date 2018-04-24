@@ -116,7 +116,7 @@ public class ServiceController implements Serializable {
 
     QService qService = QService.service;
     Predicate p = new BooleanBuilder(predicate);
-    ((BooleanBuilder) p).and(qService.id.eq(Long.valueOf(id).longValue()));
+    ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> service = serviceRepository.findOne(p);
     if(!service.isPresent()) {
       return new MappingJacksonValue("No service with parameters: " + p.toString());
@@ -162,7 +162,7 @@ public class ServiceController implements Serializable {
   public void deleteService(@PathVariable String id) {
     QService qService = QService.service;
     Predicate p = new BooleanBuilder();
-    ((BooleanBuilder) p).and(qService.id.eq(Long.valueOf(id).longValue()));
+    ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> optionalService = serviceRepository.findOne(p);
     if(!optionalService.isPresent()) {
       return;
