@@ -36,11 +36,11 @@ public abstract class BasicResourceManager implements IResourceManager{
   }
 
   @Override
-  public Single<IService> save(IService service){
+  public Single<String> save(IService service){
     if(!serviceMap.containsKey(service.getLocalReference())){
       serviceMap.put(service.getLocalReference(), service.getId());
     }
-    return Single.just(service);
+    return Single.just(service.getId());
   }
 
   private void flush(){

@@ -4,6 +4,7 @@ import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,7 +32,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.github.fge.jackson.JsonLoader;
 import com.sun.xml.messaging.saaj.util.Base64;
 
+import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
+import org.sims.model.RelatedParty;
+import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,7 +52,17 @@ public class HybernateResourceManager extends BasicResourceManager{
   }
 
   public Single<IService> save(IService service){
-    return null;
+    Service model;
+    if(service.getId() == null) {
+      model = new ServiceMapper(service).getService();
+    } else {
+
+    }
+
+    
+    
+
+    return super.save();
   }
 
   public Single<IService> getById(String id){
@@ -63,6 +77,35 @@ public class HybernateResourceManager extends BasicResourceManager{
     return null;
   }
 
+  public class ServiceMapper{
+    private IService service;
+    public ServiceMapper(IService service){
+      this.service = service;
+    }
+
+    public Service getService(){
+      Service model = new Service();
+      model.setName(service.getName());
+      model.setCategory(service.getCategory());
+      model.setDescription(service.getDescription());
+      model.setEndDate(service.getEndDate().toGMTString());
+      model.setStartDate(service.getStartDate().toGMTString());
+      model.setIsStateful(service.isStateful());
+      model.setIsServiceEnabled(service.isServiceEnabled());
+      model.setHref(service.getHref());
+
+      List<RelatedParty> relatedParties = new ArrayList<RelatedParty>();
+      for(IRelatedParty party : service.getRelatedParty()){
+        RelatedParty partyModel = new RelatedParty();
+        //partyModel.set
+        relatedParties.add(partyModel);
+      }
+
+      return model;
+    }
+
+
+  }
 }
 
 /*
