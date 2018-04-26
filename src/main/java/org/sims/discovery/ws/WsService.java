@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 import com.ms.wsdiscovery.servicedirectory.WsDiscoveryService;
 
 import org.sims.discovery.models.IRelatedParty;
-import org.sims.discovery.models.Service;
+import org.sims.discovery.models.BasicService;;
 import org.sims.discovery.models.ServiceAdapter;
 import org.sims.model.RelatedParty;
 

@@ -3,22 +3,22 @@ package org.sims.discovery.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Service extends ServiceAdapter{
+public class BasicService extends ServiceAdapter{
   
   private String id;
   private String name;
   private List<IRelatedParty> relatedParty;
   private final String ref;
   
-  public Service(String name, String ref, List<IRelatedParty> relatedParty){
+  public BasicService(String id, String name, String ref, List<IRelatedParty> relatedParty){
     this.name = name;
     this.ref = ref;
     this.relatedParty = relatedParty;
+    this.id = id;
   }
 
-  public Service(String id, IService service){
-    this(service.getName(), service.getLocalReference(), service.getRelatedParty());
-    this.id = id;
+  public BasicService(IService service){
+    this(service.getId(), service.getName(), service.getLocalReference(), service.getRelatedParty());
   }
 
 

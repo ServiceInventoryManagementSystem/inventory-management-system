@@ -6,7 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-public interface IService extends Comparable<IService>{
+public interface IService extends IHasId{
 
   @NotNull
   public String getName();
@@ -14,8 +14,6 @@ public interface IService extends Comparable<IService>{
   @NotEmpty
   public List<IRelatedParty> getRelatedParty();
 
-
-  public String getId();
   public String getHref();
   public String getDescription();
   public String getStartMode();
