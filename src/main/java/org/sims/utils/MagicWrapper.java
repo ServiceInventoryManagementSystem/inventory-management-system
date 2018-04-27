@@ -14,20 +14,23 @@ import org.sims.discovery.models.IHasId;
 import org.sims.discovery.models.IService;
 
 
-public class MagicWrapper implements InvocationHandler{
+/**
+ * Wraps multiple objects of one instance of a common interface
+ */
+public class MagicWrapper<T> implements InvocationHandler{
 
-  private Object[] objects;
+  private T[] objects;
   private boolean continueIfNull = false;
-
-  public MagicWrapper(Object... objects){
+  
+  public MagicWrapper(T[] objects){
     this.objects = objects;
   }
 
-  public MagicWrapper(boolean continueIfNull, Object... objects){
+  public MagicWrapper(boolean continueIfNull, T[] objects){
     this(objects);
     this.continueIfNull = continueIfNull;
   }
-  
+
 
   private Object _invoke(Object proxy, Object who, Method m, Object[] args) 
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
@@ -53,12 +56,11 @@ public class MagicWrapper implements InvocationHandler{
     return null;
   }
   
-  @SuppressWarnings("unchecked")
-  public static <T> T createProxy(Class<? extends T> type, Boolean continueIfNull, Object... objects) throws IllegalArgumentException{
-    return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class[]{IHasId.class, type}, new MagicWrapper(continueIfNull, objects)));
+  public static <T> T createProxy(Class<? extends T> type, Boolean continueIfNull, T[] objects) throws IllegalArgumentException{
+    return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, new MagicWrapper<T>(continueIfNull, objects)));
   }
 
-  public static <T> T createProxy(Class<? extends T> type, Object... objects) throws IllegalArgumentException{
+  public static <T> T createProxy(Class<? extends T> type, T[] objects) throws IllegalArgumentException{
     return createProxy(type, false, objects);
   }
 }

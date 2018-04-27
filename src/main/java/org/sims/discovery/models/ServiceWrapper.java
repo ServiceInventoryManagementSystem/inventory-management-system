@@ -16,7 +16,7 @@ public class ServiceWrapper{
   
   IService combined;
   public static IService combine(IService... services){
-    return MagicWrapper.createProxy(IService.class, true, (Object[])services);
+    return MagicWrapper.createProxy(IService.class, true, services);
   }
 }
 
