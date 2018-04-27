@@ -29,9 +29,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Basic;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.github.fge.jackson.JsonLoader;
 import com.sun.xml.messaging.saaj.util.Base64;
 
+import org.sims.discovery.models.BasicService;
 import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
 import org.sims.model.RelatedParty;
@@ -51,9 +51,10 @@ public class HybernateResourceManager extends BasicResourceManager{
     super();
   }
 
-  public Single<IService> save(IService service){
+  public Single<String> save(IService service){
     Service model;
-    if(service.getId() == null) {
+    String id = service.getId();
+    if(id == null) {
       model = new ServiceMapper(service).getService();
     } else {
 
@@ -62,7 +63,7 @@ public class HybernateResourceManager extends BasicResourceManager{
     
     
 
-    return super.save();
+    return super.save(service);
   }
 
   public Single<IService> getById(String id){

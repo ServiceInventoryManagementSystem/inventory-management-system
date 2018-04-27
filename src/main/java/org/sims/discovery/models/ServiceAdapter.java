@@ -7,7 +7,6 @@ public abstract class ServiceAdapter implements IService{
   public String getId(){return null;}
   public String getHref(){return null;}
   public String getDescription(){return null;}
-  public String getName(){return null;}
   public String getStartMode(){return null;}
   public String getState(){return null;}
   public String getType(){return null;}
@@ -22,8 +21,5 @@ public abstract class ServiceAdapter implements IService{
   public Boolean isStateful(){return null;}
   public Boolean hasStarted(){return null;}
 
-  public int compareTo(IService other){
-    return 0;
-  }
 
 }

@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.reactivestreams.Subscription;
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.models.IService;
-import org.sims.model.QService;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
