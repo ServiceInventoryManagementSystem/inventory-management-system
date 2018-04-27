@@ -56,11 +56,11 @@ public class MagicWrapper<T> implements InvocationHandler{
     return null;
   }
   
-  public static <T> T createProxy(Class<? extends T> type, Boolean continueIfNull, T[] objects) throws IllegalArgumentException{
-    return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, new MagicWrapper<T>(continueIfNull, objects)));
+  public static <T> T createProxy(Class<? extends T> type, Boolean continueIfNull, Object[] objects) throws IllegalArgumentException{
+    return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, new MagicWrapper<Object>(continueIfNull, objects)));
   }
 
-  public static <T> T createProxy(Class<? extends T> type, T[] objects) throws IllegalArgumentException{
+  public static <T> T createProxy(Class<? extends T> type, Object[] objects) throws IllegalArgumentException{
     return createProxy(type, false, objects);
   }
 }
