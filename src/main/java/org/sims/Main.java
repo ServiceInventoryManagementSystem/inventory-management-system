@@ -27,23 +27,22 @@ public class Main {
   public static void main(String[] args) {
 
 
-    //ApplicationContext ctx = SpringApplication.run(Main.class, args);
+    ApplicationContext ctx = SpringApplication.run(Main.class, args);
 
 
     HybernateResourceManager resourceManager = new HybernateResourceManager();
 
 
-    /*ctx.getAutowireCapableBeanFactory().autowireBeanProperties(
+    ctx.getAutowireCapableBeanFactory().autowireBeanProperties(
       resourceManager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
-    );*/
+    );
     
     DiscoveryManager manager = new DiscoveryManager(resourceManager);
     
     
 
     manager.registerDiscovery(WsDiscovery.class);
-    //manager.initAll();
-
-    //manager.startAll();
+    manager.initAll();
+    manager.startAll();
   }
 }

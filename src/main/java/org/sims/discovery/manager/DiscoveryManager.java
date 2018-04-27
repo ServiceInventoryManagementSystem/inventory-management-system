@@ -152,11 +152,16 @@ public class DiscoveryManager{
   }
 
   public String addService(IService service){
+    System.out.println("Adding service... " + service.getName());
+    resourceManager.save(service).subscribe((String s) -> {
+      System.out.println("Service added to db id = " + s);
+    });
     return "";
   }
 
   public void removeService(IService service){
-
+    System.out.println("Removing service... " + service.getName());
+    resourceManager.removeService(service);
   }
 
 }

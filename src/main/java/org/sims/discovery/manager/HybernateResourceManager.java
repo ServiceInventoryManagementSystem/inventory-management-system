@@ -32,13 +32,17 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.sun.xml.messaging.saaj.util.Base64;
 
 import org.sims.discovery.models.BasicService;
+import org.sims.discovery.models.IHasId;
 import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
+import org.sims.discovery.models.ServiceWrapper;
 import org.sims.model.RelatedParty;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
+import org.sims.utils.MagicWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -52,18 +56,24 @@ public class HybernateResourceManager extends BasicResourceManager{
   }
 
   public Single<String> save(IService service){
-    Service model;
-    String id = service.getId();
-    if(id == null) {
-      model = new ServiceMapper(service).getService();
+    Service model = new ServiceMapper(service).getService();
+    if(service.getId() == null) {
     } else {
-
+      model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.getOne(Long.valueOf(service.getId()))});  
     }
 
+     serviceRepo.save(model);
+    final String id = "" + serviceRepo.save(model).getId();
     
-    
+    IHasId serviceId = new IHasId(){
+      @Override
+      public String getId() {
+        return id;
+      }
+    };
 
-    return super.save(service);
+    return super.save(MagicWrapper.createProxy(IService.class, true, new Object[]{serviceId, service} ));
+    //return super.save(ServiceWrapper.combine((IService)serviceId, service));
   }
 
   public Single<IService> getById(String id){
@@ -78,6 +88,21 @@ public class HybernateResourceManager extends BasicResourceManager{
     return null;
   }
 
+  public Completable removeService(String id){
+    serviceRepo.deleteById(Long.valueOf(id));
+    return super.removeService(id);
+  }
+
+  public Completable removeService(IService service){
+    String remoteId = service.getId();
+    if(remoteId == null){
+      remoteId = super.getRemoteId(service.getLocalReference());
+    }
+
+    return this.removeService(remoteId);
+  }
+
+
   public class ServiceMapper{
     private IService service;
     public ServiceMapper(IService service){
@@ -89,8 +114,8 @@ public class HybernateResourceManager extends BasicResourceManager{
       model.setName(service.getName());
       model.setCategory(service.getCategory());
       model.setDescription(service.getDescription());
-      model.setEndDate(service.getEndDate().toGMTString());
-      model.setStartDate(service.getStartDate().toGMTString());
+      //model.setEndDate(service.getEndDate().toGMTString());
+      //model.setStartDate(service.getStartDate().toGMTString());
       model.setIsStateful(service.isStateful());
       model.setIsServiceEnabled(service.isServiceEnabled());
       model.setHref(service.getHref());

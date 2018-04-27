@@ -27,12 +27,12 @@ public class WsService extends ServiceAdapter{
 
   private Date discoveredDate = new Date();
 
-  private List<IRelatedParty> relatedParty;
+  private List<IRelatedParty> relatedParty = new ArrayList<IRelatedParty>();
 
   public WsService(WsDiscoveryService service){
     this.service = service;
     href = service.getXAddrs().get(0);
-    ref = "";
+    ref = service.getEndpointReference().getAddress().toString();
   }
 
 
@@ -61,7 +61,7 @@ public class WsService extends ServiceAdapter{
   }
 
   public String getLocalReference(){
-    return ref;
+    return "ws:" + ref;
   }
 
 }
