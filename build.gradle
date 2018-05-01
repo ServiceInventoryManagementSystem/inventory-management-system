@@ -72,7 +72,7 @@ dependencies {
     //---------------------------QueryDsl-------------------------------------
     compile "com.querydsl:querydsl-jpa:$querydslVersion"
     compile "com.querydsl:querydsl-core"
-    compile "com.querydsl:querydsl-apt:4.1.4"
+    compileOnly("com.querydsl:querydsl-apt:4.1.4")
 
     //---------------------------Database-------------------------------------
     //compile("mysql:mysql-connector-java")
@@ -104,7 +104,7 @@ dependencies {
 
 querydsl {
     library = "com.querydsl:querydsl-apt:$querydslVersion"
-//    querydslSourcesDir = "$buildDir/generated/source/app/main"
+    querydslSourcesDir = "$buildDir/generated/source/main"
     jpa = true
     jdo = false
     hibernate = false
@@ -118,12 +118,12 @@ querydsl {
 sourceSets {
     main {
         java {
-            srcDir "$buildDir/generated/source/app/main"
+            srcDir "$buildDir/generated/source/main"
         }
     }
 }
 
-jar {
-    baseName = "sims-rest"
-    version = "0.1.0"
-}
+//jar {
+//    baseName = "sims-rest"
+//    version = "0.1.0"
+//}
