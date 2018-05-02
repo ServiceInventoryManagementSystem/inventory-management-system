@@ -73,6 +73,7 @@ pipeline:
     port: 22
     username: root
     key_path: /ssh/id_rsa
+    secrets: [docker_username, docker_password]
     when:
       event:
         - push
@@ -83,6 +84,7 @@ pipeline:
     
     script:
       - cd /srv/sims
+      - docker login -u $${docker_username} -p $${docker_password}
       - docker-compose pull
       - docker-compose down
       - docker-compose up -d
