@@ -55,14 +55,20 @@ public class HybernateResourceManager extends BasicResourceManager{
     super();
   }
 
-  public Single<String> save(IService service){
+  public Single<IService> save(IService service){
     Service model = new ServiceMapper(service).getService();
-    if(service.getId() == null) {
+    String remoteId = service.getId();
+
+    if(service.getId() == null){
+      remoteId = super.getRemoteId(service.getLocalReference());
+    }
+    
+    if(remoteId == null) {
     } else {
-      model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.getOne(Long.valueOf(service.getId()))});  
+      model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.getOne(Long.valueOf(remoteId))});  
     }
 
-     serviceRepo.save(model);
+    serviceRepo.save(model);
     final String id = "" + serviceRepo.save(model).getId();
     
     IHasId serviceId = new IHasId(){

@@ -3,10 +3,23 @@ package org.sims;
 
 import org.sims.discovery.manager.DiscoveryManager;
 import org.sims.discovery.manager.HybernateResourceManager;
+import org.sims.discovery.models.BasicService;
+import org.sims.discovery.models.IHasId;
+import org.sims.discovery.models.IRelatedParty;
+import org.sims.discovery.models.IService;
+import org.sims.discovery.models.ServiceAdapter;
+import org.sims.discovery.models.ServiceWrapper;
 import org.sims.discovery.ws.WsDiscovery;
+import org.sims.utils.MagicWrapper;
 
 import java.io.File;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,23 +39,19 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class Main {
   public static void main(String[] args) {
 
-
     ApplicationContext ctx = SpringApplication.run(Main.class, args);
-
-
     HybernateResourceManager resourceManager = new HybernateResourceManager();
-
 
     ctx.getAutowireCapableBeanFactory().autowireBeanProperties(
       resourceManager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
     );
-    
+
     DiscoveryManager manager = new DiscoveryManager(resourceManager);
     
-    
-
     manager.registerDiscovery(WsDiscovery.class);
     manager.initAll();
     manager.startAll();
+
   }
 }
+

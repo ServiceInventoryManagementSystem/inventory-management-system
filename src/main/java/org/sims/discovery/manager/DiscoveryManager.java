@@ -26,10 +26,7 @@ public class DiscoveryManager{
   List<IDiscoveryService> discoveryServices = new ArrayList<IDiscoveryService>();
   Set<Class<? extends IDiscoveryService>> serviceClasses = new HashSet<Class<? extends IDiscoveryService>>();
 
-  // Map IService to database entry 
-  Map<IService, Long> databaseMap = new HashMap<IService, Long>(50);
-  
-  // Map UUID to IService
+  // Map local ref to IService
   Map<String, IService> serviceMap = new HashMap<String, IService>(50);
 
   //List of disposable subscriptions
@@ -60,14 +57,17 @@ public class DiscoveryManager{
   public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
     
     serviceClasses.add(serviceClass);
-    // find all services managed by this class
-    
+
   }
 
   public void initAll(){
     if(init){
       throw new IllegalStateException("Manager has already been initialized");
     }
+
+    this.resourceManager.getOwnedServices();
+
+
     for(Class<? extends IDiscoveryService> discovery : serviceClasses){
       try{
         IDiscoveryService service = discovery.getConstructor().newInstance();
@@ -153,8 +153,9 @@ public class DiscoveryManager{
 
   public String addService(IService service){
     System.out.println("Adding service... " + service.getName());
-    resourceManager.save(service).subscribe((String s) -> {
-      System.out.println("Service added to db id = " + s);
+    resourceManager.save(service).subscribe((IService s) -> {
+      System.out.println("Service saved to db id = " + s.getId() + " " + s.getLocalReference());
+      serviceMap.put(service.getLocalReference(), service);
     });
     return "";
   }

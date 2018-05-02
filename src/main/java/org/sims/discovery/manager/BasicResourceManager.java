@@ -3,6 +3,7 @@ package org.sims.discovery.manager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -30,22 +31,23 @@ public abstract class BasicResourceManager implements IResourceManager{
     ObjectReader objectReader = objectMapper.readerFor(HashMap.class);
 
     try{
-      serviceMap = objectReader.readValue("./data/serviceref.json");
+      serviceMap = objectReader.readValue(new File("./data/serviceref.json"));
       for(String localRef : serviceMap.keySet()){
         String remoteId = serviceMap.get(localRef);
         put(localRef, remoteId);
       }
     }catch(IOException e){
+      System.err.println(e);
       serviceMap = new HashMap<String, String>();
       flush();
     }
   }
 
   @Override
-  public Single<String> save(IService service){
+  public Single<IService> save(IService service){
     put(service.getLocalReference(), service.getId());
     flush();
-    return Single.just(service.getId());
+    return Single.just(service);
   }
 
   public Completable removeService(String id){
@@ -84,6 +86,8 @@ public abstract class BasicResourceManager implements IResourceManager{
         System.err.println(e);
       }
   }
+
+
 
   @Override
   public void dispose(){
