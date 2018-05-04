@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class Note {
   @Id
-  @ApiModelProperty(notes="Id of the note.")
+//  @ApiModelProperty(notes="Id of the note.")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
