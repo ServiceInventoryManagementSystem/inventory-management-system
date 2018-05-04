@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.google.common.base.Splitter;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
@@ -17,9 +18,12 @@ import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.io.Serializable;
@@ -90,17 +94,56 @@ public class ServiceController implements Serializable {
   @RequestParam("startDate") String startDate,
    */
 
-  //Get all services. If "fields" is present, only the fields specified will be returned.
+  // Get all services. If "fields" is present, only the fields specified will be returned.
+//  @ApiOperation(value="This operation list service entities.")
+//  @GetMapping("/service")
+//  @ResponseBody
+//  public MappingJacksonValue getServices(
+//          @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
+//          @RequestParam MultiValueMap<String, String> params,
+//          @QuerydslPredicate(root = Service.class) Predicate predicate) {
+//    System.out.println(predicate);
+//    Iterable<Service> services = this.serviceRepository.findAll(predicate);
+//    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
+//    System.out.println(params); // {fields=[category,id,name], category=[category3]}
+//    System.out.println(params);
+//    System.out.println(params);
+//    System.out.println(params);
+//    System.out.println(params);
+//    return applyFieldFiltering(mappingJacksonValue, params);
+//  }
+
   @ApiOperation(value="This operation list service entities.")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(
-          @ApiParam(name = "fields", value = "fields", defaultValue = "")
-          @RequestParam MultiValueMap<String, String> params,
+          @RequestParam(value = "fields", required = false) String fields,
+          @ApiIgnore
           @QuerydslPredicate(root = Service.class) Predicate predicate) {
-    System.out.println(predicate);
+    System.out.println("Predicate = " + predicate);
+    System.out.println("Fields = " + fields);
+
     Iterable<Service> services = this.serviceRepository.findAll(predicate);
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
+
+//    MultiValueMap<String, String> parameters =
+//            UriComponentsBuilder.fromUriString(fields).build().getQueryParams();
+//    MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+//
+//    multiValueMap.add("fields", "id");
+//
+
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    if(fields != null) {
+      params.add("fields", fields);
+    }
+
+    System.out.println("MultiValueMap = " + params);
+
+//
+//    return applyFieldFiltering(mappingJacksonValue, multiValueMap);
+//    Iterable<Service> services = this.serviceRepository.findAll(predicate);
+//    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 

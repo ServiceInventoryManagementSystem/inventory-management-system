@@ -12,11 +12,11 @@ public class Note {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-  @ApiModelProperty(notes="Author of the note.")
+//  @ApiModelProperty(notes="Author of the note.")
   private String author;
-  @ApiModelProperty(notes="Date of the note.")
+//  @ApiModelProperty(notes="Date of the note.")
   private String date;
-  @ApiModelProperty(notes="Text of the note.")
+//  @ApiModelProperty(notes="Text of the note.")
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY)
