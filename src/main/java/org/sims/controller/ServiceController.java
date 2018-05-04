@@ -229,7 +229,7 @@ public class ServiceController implements Serializable {
     String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
     Boolean[] booleanArray = {true, false};
     String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
-    String[] stateArray = {"active", "inactive", "stopped"};
+    String[] stateArray = {"active", "inactive", "terminated"};
     String[] typeArray = {"type1", "type2", "type3"};
 
     ServiceSpecification[] serviceSpecificationArray = new ServiceSpecification[count];
