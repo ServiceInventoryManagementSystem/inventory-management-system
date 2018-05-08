@@ -315,16 +315,14 @@ public class Service {
     return relatedParties;
   }
 
+  public void setRelatedParty(Set<RelatedParty> relatedParty) { this.relatedParties = relatedParty; }
+
   public Set<ServiceCharacteristic> getServiceCharacteristic() {
     return serviceCharacteristics;
   }
 
   public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristics) {
-    for (ServiceCharacteristic serviceCharacteristic : serviceCharacteristics) {
-      this.serviceCharacteristics.add(serviceCharacteristic);
-      serviceCharacteristic.setService(this);
-
-    }
+    this.serviceCharacteristics = serviceCharacteristics;
   }
 
   public Set<ServiceRelationship> getServiceRelationship() {
@@ -332,17 +330,22 @@ public class Service {
   }
 
   public void setServiceRelationship(Set<ServiceRelationship> serviceRelationships) {
-    for (ServiceRelationship serviceRelationship : serviceRelationships) {
-      this.serviceRelationships.add(serviceRelationship);
-      serviceRelationship.setServiceRel(this);
-    }
+    this.serviceRelationships = serviceRelationships;
   }
 
   public List<SupportingResource> getSupportingResource() {
     return supportingResources;
   }
 
+  public void setSupportingResource(List<SupportingResource> supportingResource) {
+    this.supportingResources = supportingResource;
+  }
+
   public List<SupportingService> getSupportingService() {
     return supportingServices;
+  }
+
+  public void setSupportingService(List<SupportingService> supportingService) {
+    this.supportingServices = supportingService;
   }
 }

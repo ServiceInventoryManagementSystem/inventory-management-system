@@ -40,7 +40,7 @@ public class ServiceControllerTest {
   public void getService() {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
-    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    String args = "";
     MappingJacksonValue mjv = serviceController.getService("1", args, predicate);
     if (mjv == null) {
       fail();
@@ -58,7 +58,7 @@ public class ServiceControllerTest {
   public void getServices() {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
-    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    String args = "";
     MappingJacksonValue mjv = serviceController.getServices(args, predicate);
     if (mjv == null) {
       fail();
@@ -81,7 +81,7 @@ public class ServiceControllerTest {
 
     QService qService = QService.service;
     Predicate predicate = qService.isNotNull();
-    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    String args = "";
 
     MappingJacksonValue mappingJacksonValue = serviceController.getService("3", args, predicate);
     Object object = mappingJacksonValue.getValue();
@@ -104,7 +104,7 @@ public class ServiceControllerTest {
     QService qService = QService.service;
     Predicate predicate = qService.isNotNull();
 
-    MultiValueMap<String, String> args = new LinkedMultiValueMap<>();
+    String args = "";
     MappingJacksonValue mappingJacksonValue = serviceController.getService("3", args, predicate);
     Object object = mappingJacksonValue.getValue();
     Optional<Service> optionalService = object instanceof Optional ? ((Optional) object) : Optional.empty();

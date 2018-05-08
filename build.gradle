@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = "2.0.0.RELEASE"
+        querydslVersion = "4.1.4"
     }
     repositories {
         mavenCentral()
@@ -17,7 +18,6 @@ buildscript {
 
 plugins {
     id 'org.gradle.java'
-//    id 'org.gradle.war'
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.9'
 }
 
@@ -48,6 +48,8 @@ repositories {
     }
 }
 
+
+
 dependencies {
 
     //---------------------------Spring Framework----------------------------
@@ -72,7 +74,7 @@ dependencies {
     //---------------------------QueryDsl-------------------------------------
     compile "com.querydsl:querydsl-jpa:$querydslVersion"
     compile "com.querydsl:querydsl-core"
-    compile "com.querydsl:querydsl-apt:4.1.4"
+    compileOnly("com.querydsl:querydsl-apt:4.1.4")
 
     //---------------------------Database-------------------------------------
     //compile("mysql:mysql-connector-java")
@@ -89,6 +91,8 @@ dependencies {
     compile "io.springfox:springfox-swagger2:2.8.0"
     compile 'io.springfox:springfox-swagger-ui:2.8.0'
 
+
+
     compile(group: "com.github.fge", name: "json-patch", version: "1.9");
 
 
@@ -102,9 +106,11 @@ dependencies {
 
 }
 
+
+
 querydsl {
     library = "com.querydsl:querydsl-apt:$querydslVersion"
-//    querydslSourcesDir = "$buildDir/generated/source/app/main"
+    querydslSourcesDir = "$buildDir/generated/source/main"
     jpa = true
     jdo = false
     hibernate = false
@@ -118,12 +124,12 @@ querydsl {
 sourceSets {
     main {
         java {
-            srcDir "$buildDir/generated/source/app/main"
+            srcDir "$buildDir/generated/source/main"
         }
     }
 }
 
-jar {
-    baseName = "sims-rest"
-    version = "0.1.0"
-}
+//jar {
+//    baseName = "sims-rest"
+//    version = "0.1.0"
+//}

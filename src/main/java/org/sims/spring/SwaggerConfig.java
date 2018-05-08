@@ -37,7 +37,7 @@ public class SwaggerConfig {
             "Implementation of tmforum Product Inventory Management API REST Specificaiton, made for FFI (The Norwegian Defence Research Establishmen)",
             "1.0",
             "Terms of Service",
-            new Contact("FFI", "www.ffi.no", "Frank-Trethan.Johnsen@ffi.no"),
+            new Contact("FFI", "http://www.ffi.no", "Frank-Trethan.Johnsen@ffi.no"),
             "Apache Licence Version 2.0",
             "https://www.apache.org/license.html", Collections.emptyList());
   }
