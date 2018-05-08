@@ -88,8 +88,9 @@ dependencies {
 
     //---------------------------Misc----------------------------------------
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
-    compile "io.springfox:springfox-swagger2:2.8.0"
-    compile 'io.springfox:springfox-swagger-ui:2.8.0'
+    compile "io.springfox:springfox-swagger2:2.9.0"
+    compile 'io.springfox:springfox-swagger-ui:2.9.0'
+//    compile 'springfox-swagger-ui-rfc6570'
 
 
 
