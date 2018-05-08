@@ -10,12 +10,17 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -24,6 +29,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
+import org.springframework.hateoas.EntityLinks;
+
 
 import javax.validation.Valid;
 import java.io.Serializable;
@@ -107,13 +114,15 @@ public class ServiceController implements Serializable {
 //    return applyFieldFiltering(mappingJacksonValue, params);
 //  }
 
+
+
+  //TODO Handle queries in Swagger
   @ApiOperation(value="This operation list service entities.")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(
           @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
           @RequestParam(value = "fields", required = false) String fields,
-          @ApiIgnore
           @QuerydslPredicate(root = Service.class) Predicate predicate) {
     System.out.println("Predicate = " + predicate);
     System.out.println("Fields = " + fields);
@@ -174,15 +183,77 @@ public class ServiceController implements Serializable {
     return mappingJacksonValue;
   }
 
-  @ApiOperation(value="This operation allows partial updates of a service entity.")
-  @PatchMapping("/service/{id}")
-  @Transactional
-  @ResponseStatus(HttpStatus.CREATED)
-  public MappingJacksonValue patchService(@PathVariable("id") String id, @RequestBody JsonPatch jsonPatch) {
-    ObjectMapper objectMapper;
+//  @ApiOperation(value="This operation allows partial updates of a service entity.")
+//  @PatchMapping("/service/{id}")
+//  @Transactional
+//  @ResponseStatus(HttpStatus.CREATED)
+//  public MappingJacksonValue patchService(@PathVariable("id") String id, @RequestBody JsonPatch jsonPatch) {
+//    ObjectMapper objectMapper;
+//
+//    return new MappingJacksonValue("");
+//  }
 
+  @Transactional
+  @PatchMapping(value = "/service/{id}"/*, consumes = {"application/merge-patch+json"}*/)
+  public MappingJacksonValue patchService(@PathVariable("id") String id, @RequestBody String data) throws Exception {
+    if(id == null) {
+      return new MappingJacksonValue("");
+    }
+
+    QService qService = QService.service;
+    Predicate p = new BooleanBuilder();
+    ((BooleanBuilder) p).and(qService.id.eq(id));
+    Optional<Service> optionalService = serviceRepository.findOne(p);
+
+    if(optionalService.isPresent()){
+      System.out.println("Entered the if is present");
+      System.out.println("Entered the if is present");
+      System.out.println("Entered the if is present");
+      Service service = optionalService.get();
+      System.out.println("got service from optional");
+      service = JsonMergePatchUtils.mergePatch(service, data, Service.class);
+      System.out.println("performed mergepatch");
+
+      SimpleFilterProvider filters;
+      filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+              SimpleBeanPropertyFilter.serializeAll());
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(service));
+      System.out.println("saved patched service");
+
+      mappingJacksonValue.setFilters(filters);
+      return mappingJacksonValue;
+
+
+    }
     return new MappingJacksonValue("");
+
+//
+//    if(cust != null) {
+//      cust = JsonMergePatchUtils.mergePatch(cust, data, com.thirur.mergepatch.domain.Customer.class);
+//      com.thirur.mergepatch.domain.Customer patchedCust = repository.save(cust);
+//      return getCustomerResourceHttpEntity(patchedCust, false);
+//    }
+//    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
+
+//  private HttpEntity<Resource<Service>> getServiceResourceHttpEntity(Service serviceDomain,
+//                                                                       boolean isCreate) {
+//    Service serviceMT = new Service();
+//    try {
+//      BeanUtils.copyProperties(serviceDomain, serviceMT);
+//    } catch (IllegalAccessException | InvocationTargetException e) {
+//      e.printStackTrace();
+//    }
+//    Resource<Service> custResource = new Resource<Service>(serviceMT);
+//    custResource.add(entityLinks.linkToSingleResource(custMT));
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setLocation(URI.create(entityLinks.linkToSingleResource(custMT).getHref()));
+//    HttpStatus status = HttpStatus.OK;
+//    if (isCreate) {
+//      status = HttpStatus.CREATED;
+//    }
+//    return new ResponseEntity<Resource<Customer>>(custResource, headers, status);
+//  }
 
 
 
