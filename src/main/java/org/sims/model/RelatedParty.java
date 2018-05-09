@@ -3,7 +3,6 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.jws.HandlerChain;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;

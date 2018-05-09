@@ -1,17 +1,18 @@
 package org.sims.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.google.common.base.Splitter;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.beanutils.MethodUtils;
-import org.sims.model.*;
+import org.sims.controller.common.JsonMergePatcher;
+import org.sims.controller.common.JsonPatcher;
+import org.sims.model.QService;
+import org.sims.model.Service;
+import org.sims.model.ServiceSpecification;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -20,15 +21,12 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Optional;
+import java.util.Random;
 
 
 @RestController
@@ -48,6 +46,8 @@ public class ServiceController implements Serializable {
   private final SupportingResourceRepository supportingResourceRepository;
   private final SupportingServiceRepository supportingServiceRepository;
 
+  private JsonPatcher jsonPatcher;
+  private JsonMergePatcher jsonMergePatcher;
 
 
   @Autowired
@@ -58,7 +58,8 @@ public class ServiceController implements Serializable {
                            ServiceRelationshipRepository serviceRelationshipRepository,
                            ServiceSpecificationRepository serviceSpecificationRepository,
                            SupportingResourceRepository supportingResourceRepository,
-                           SupportingServiceRepository supportingServiceRepository) {
+                           SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
+                           JsonMergePatcher jsonMergePatcher) {
     this.serviceRepository = serviceRepository;
     this.noteRepository = noteRepository;
     this.placeRepository = placeRepository;
@@ -70,6 +71,8 @@ public class ServiceController implements Serializable {
     this.serviceSpecificationRepository = serviceSpecificationRepository;
     this.supportingResourceRepository = supportingResourceRepository;
     this.supportingServiceRepository = supportingServiceRepository;
+    this.jsonPatcher = jsonPatcher;
+    this.jsonMergePatcher = jsonMergePatcher;
   }
 
   //Method to return only the specified fields
@@ -77,43 +80,25 @@ public class ServiceController implements Serializable {
           String> params) {
     SimpleFilterProvider filters;
     if (params.containsKey("fields")) {
-      filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+      filters = (new SimpleFilterProvider()).addFilter("service",
               SimpleBeanPropertyFilter.filterOutAllExcept((params.getFirst("fields")).split(",")));
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     } else {
-      filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service", SimpleBeanPropertyFilter.serializeAll());
+      filters = (new SimpleFilterProvider()).addFilter("service", SimpleBeanPropertyFilter.serializeAll());
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     }
   }
 
-  // Get all services. If "fields" is present, only the fields specified will be returned.
-//  @ApiOperation(value="This operation list service entities.")
-//  @GetMapping("/service")
-//  @ResponseBody
-//  public MappingJacksonValue getServices(
-//          @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
-//          @RequestParam MultiValueMap<String, String> params,
-//          @QuerydslPredicate(root = Service.class) Predicate predicate) {
-//    System.out.println(predicate);
-//    Iterable<Service> services = this.serviceRepository.findAll(predicate);
-//    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
-//    System.out.println(params); // {fields=[category,id,name], category=[category3]}
-//    System.out.println(params);
-//    System.out.println(params);
-//    System.out.println(params);
-//    System.out.println(params);
-//    return applyFieldFiltering(mappingJacksonValue, params);
-//  }
 
+  //TODO Handle queries in Swagger
   @ApiOperation(value="This operation list service entities.")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(
           @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
           @RequestParam(value = "fields", required = false) String fields,
-          @ApiIgnore
           @QuerydslPredicate(root = Service.class) Predicate predicate) {
     System.out.println("Predicate = " + predicate);
     System.out.println("Fields = " + fields);
@@ -167,25 +152,12 @@ public class ServiceController implements Serializable {
   @ResponseStatus(HttpStatus.CREATED)
   public MappingJacksonValue createService(@Valid @RequestBody Service service) {
     SimpleFilterProvider filters;
-    filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+    filters = (new SimpleFilterProvider()).addFilter("service",
             SimpleBeanPropertyFilter.serializeAll());
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(service));
     mappingJacksonValue.setFilters(filters);
     return mappingJacksonValue;
   }
-
-  @ApiOperation(value="This operation allows partial updates of a service entity.")
-  @PatchMapping("/service/{id}")
-  @Transactional
-  @ResponseStatus(HttpStatus.CREATED)
-  public MappingJacksonValue patchService(@PathVariable("id") String id, @RequestBody JsonPatch jsonPatch) {
-    ObjectMapper objectMapper;
-
-    return new MappingJacksonValue("");
-  }
-
-
-
 
   //TODO Proper exception handling for invalid id
   //Deletes the service at the given id
@@ -258,177 +230,79 @@ public class ServiceController implements Serializable {
     }
   }
 
-
-
-  //TODO
-  //Started different patch
-  /*
-  //TODO Check if the requestbody is a PatchObject or a Service
-  @PatchMapping("/service/{id}")
   @Transactional
-  @ResponseStatus(HttpStatus.CREATED)
-  public MappingJacksonValue patchService(@PathVariable("id") Long id, @Valid @RequestBody PatchObject patchObject) {
-    System.out.println("Entered patch");
-    Optional<Service> optionalService = serviceRepository.findById(id);
-    System.out.println("Got service object");
-    if (!optionalService.isPresent()) {
-      //TODO proper response
-      return new MappingJacksonValue("Returns null");
-    }
-    Service service = optionalService.get();
-
-    System.out.println("Service name = " + service.getName());
-    System.out.println("Path = " + patchObject.getPath());
-    System.out.println("Value = " + patchObject.getValue());
-    System.out.println(patchObject.getValue().getClass());
+  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
+  public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
+    System.out.println(contentType);
+    System.out.println(contentType);
+    System.out.println(contentType);
+    System.out.println(contentType);
 
 
-    switch (patchObject.getPath()) {
-      case "Note":
-        noteRepository.save(new Note());
-        break;
-      case "Place":
-        placeRepository.save(new Place());
-        break;
-      case "RelatedParty":
-        relatedPartyRepository.save(new RelatedParty());
-        break;
-      case "ServiceCharacteristic":
-        serviceCharacteristicRepository.save(new ServiceCharacteristic());
-        break;
-      case "ServiceOrder":
-        serviceOrderRepository.save(new ServiceOrder());
-        break;
-      case "ServiceRef":
-        serviceRefRepository.save(new ServiceRef());
-        break;
-      case "ServiceRelationship":
-        serviceRelationshipRepository.save(new ServiceRelationship());
-        break;
-      case "ServiceSpecification":
-        //TODO update with id
-        System.out.println("Entered servicespecification");
-        System.out.println("patchObject.getValue() = " + patchObject.getValue());
-        if (patchObject.getOp().equals("update")) {
-          QServiceSpecification qServiceSpecification = QServiceSpecification.serviceSpecification;
-          Predicate predicate = new BooleanBuilder();
-          ((BooleanBuilder) predicate).and(qServiceSpecification.service.id.eq(id));
-          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findOne(predicate);
-          if (!optionalServiceSpecification.isPresent()) {
-            return new MappingJacksonValue("No servicespecification found for that id");
-          }
-          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
-          LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
-          if (linkedHashMap == null) {
-            return new MappingJacksonValue("Invalid value");
-          }
-          for (String key : linkedHashMap.keySet()) {
-            try {
-              System.out.println("Entered try block");
-              MethodUtils.invokeMethod(serviceSpecification, "set" + StringUtils.capitalize(key), linkedHashMap.get(key));
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-              e.printStackTrace();
-            }
-          }
-
-          serviceSpecificationRepository.save(serviceSpecification);
-        }
-        else if (patchObject.getOp().equals("replace")) {
-          ServiceSpecification serviceSpecification = new ServiceSpecification();
-          LinkedHashMap<String, String> linkedHashMap = patchObject.getValue() instanceof LinkedHashMap ? ((LinkedHashMap) patchObject.getValue()) : null;
-          if (linkedHashMap == null) {
-            return new MappingJacksonValue("Invalid value");
-          }
-          for (String key : linkedHashMap.keySet()) {
-            try {
-              MethodUtils.invokeMethod(serviceSpecification, "set" + StringUtils.capitalize(key), linkedHashMap.get(key));
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-              e.printStackTrace();
-            }
-          }
-          service.setServiceSpecification(serviceSpecification);
-          serviceSpecificationRepository.save(serviceSpecification);
-        }
-
-        //----------------------------------------------Experimental----------------------------------------------------
-        //TODO Error: More than one row with the given identifier was found
-        else if (patchObject.getOp().equals("changeid")) {
-          System.out.println("Entered changeid");
-          String temp = patchObject.getValue().toString();
-          System.out.println("Got value");
-          Long bleb = Long.parseLong(temp);
-          System.out.println("converted to long");
-          Optional<ServiceSpecification> optionalServiceSpecification = serviceSpecificationRepository.findById(bleb);
-          System.out.println("Found by id");
-          ServiceSpecification serviceSpecification = optionalServiceSpecification.get();
-          System.out.println("Got from optional");
-
-          service.setServiceSpecification(serviceSpecification);
-          System.out.println("set the servicespecification");
-          serviceRepository.save(service);
-          System.out.println("saved the service");
-        }
-        break;
-      case "SupportingResource":
-        supportingResourceRepository.save(new SupportingResource());
-        break;
-      case "SupportingService":
-        supportingServiceRepository.save(new SupportingService());
-    }
-
-    try {
-      System.out.println("Trying set");
-      MethodUtils.invokeExactMethod(service, "set" + patchObject.getPath(), patchObject.getValue());
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      System.err.println(e);
-    }
-
-    return new MappingJacksonValue("Returns Service");
-
-  }*/
-  /*
-  //TODO Exception handling for invalid id
-  //TODO Be able to create subresources
-  //TODO add check for update or delete
-  //Partially updates a service according to the TMForum API
-  @PatchMapping("/service/{id}")
-  @Transactional
-  @ResponseStatus(HttpStatus.CREATED)
-  public MappingJacksonValue patchService(@PathVariable("id") Long id, @Valid @RequestBody PatchObject patchObject) {
-    Optional<Service> s = this.serviceRepository.findById(id);
-    if (!s.isPresent()) {
-      //TODO add proper exception handling and http status code
+    QService qService = QService.service;
+    Predicate p = new BooleanBuilder();
+    ((BooleanBuilder) p).and(qService.id.eq(id));
+    Optional<Service> optionalService = serviceRepository.findOne(p);
+    if(!optionalService.isPresent()) {
+      System.out.println("return null");
       return null;
     }
-    Service service = s.get();
-
-    System.out.println("Service name = " + service.getName());
-    System.out.println("Path = " + patchObject.getPath());
-    System.out.println("Value = " + patchObject.getValue());
-    System.out.println(patchObject.getValue().getClass());
-    Object[] args = new Object[2];
-    args[0] = patchObject.getValue();
-    args[1] = patchObject.getOp();
-    try {
-      System.out.println("Trying customSet");
-      MethodUtils.invokeExactMethod(service, "customSet" + patchObject.getPath(), args);
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      e.printStackTrace();
+    Service resource = optionalService.get();
+    if (contentType.equals("application/merge-patch+json")) {
+      Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
+      System.out.println(patched.get().getCategory());
+      System.out.println(patched.get().getName());
+      System.out.println(patched.get().getId());
+      SimpleFilterProvider filters;
+      filters = (new SimpleFilterProvider()).addFilter("service",
+              SimpleBeanPropertyFilter.serializeAll());
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+      mappingJacksonValue.setFilters(filters);
+      return mappingJacksonValue;
     }
-
-    try {
-      System.out.println("Trying set");
-      MethodUtils.invokeExactMethod(service, "set" + patchObject.getPath(), patchObject.getValue());
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      System.err.println(e);
+    else if (contentType.equals("application/json-patch+json")) {
+      try {
+        String updateResourceAsArray = "[" + updateResource + "]";
+        System.out.println(updateResource);
+        Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
+        SimpleFilterProvider filters;
+        filters = (new SimpleFilterProvider()).addFilter("service",
+                SimpleBeanPropertyFilter.serializeAll());
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+        mappingJacksonValue.setFilters(filters);
+        return mappingJacksonValue;      }
+      catch (RuntimeException e) {
+        System.out.println(e);
+        if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
+          return new MappingJacksonValue("Not found");
+        }
+      }
+      return new MappingJacksonValue("No content");
     }
+    return new MappingJacksonValue("");
+  }
 
-    serviceRepository.save(service);
-    SimpleFilterProvider filters;
-    filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
-            SimpleBeanPropertyFilter.serializeAll());
-    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
-    mappingJacksonValue.setFilters(filters);
-    return mappingJacksonValue;
-  }*/
+  /*
+  	@RequestMapping(
+			value = "/v3/persons/{id}",
+			method = RequestMethod.PATCH,
+			consumes = RestMediaType.APPLICATION_PATCH_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PersonResource> updatePartial(@PathVariable Integer id, @RequestBody String updateResource) {
+		PersonResource resource = new ResourceBuilder().build();
+
+		try {
+			Optional<PersonResource> patched = jsonPatcher.patch(updateResource, resource);
+			return new ResponseEntity<>(patched.get(), HttpStatus.OK);
+		}
+		catch (RuntimeException e) {
+			if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
+				return new ResponseEntity<>(resource, HttpStatus.NOT_FOUND);
+			}
+		}
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+   */
+
 }

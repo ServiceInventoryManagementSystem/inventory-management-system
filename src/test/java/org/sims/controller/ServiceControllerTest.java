@@ -11,10 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -123,8 +122,32 @@ public class ServiceControllerTest {
     assertTrue(!optionalEmptyService.isPresent());
   }
 
-  //TODO
   @Test
   public void patchService() {
+    QService qService = QService.service;
+    Predicate predicate = qService.isNotNull();
+
+    String args = "";
+    MappingJacksonValue preMappingJacksonValue = serviceController.getService("1", args, predicate);
+    Object preObject = preMappingJacksonValue.getValue();
+    Optional<Service> preOptionalService = preObject instanceof Optional ? ((Optional) preObject) : Optional.empty();
+
+    if(!preOptionalService.isPresent()) {
+      fail();
+    }
+    Service preService = preOptionalService.get();
+    assertEquals("name1", preService.getName());
+
+    serviceController.patchService("application/merge-patch+json", "1", "{\"name\": \"postPatchName\"}");
+    MappingJacksonValue postMappingJacksonValue = serviceController.getService("1", args, predicate);
+    Object postObject = postMappingJacksonValue.getValue();
+    Optional<Service> postOptionalService = postObject instanceof Optional ? ((Optional) postObject) : Optional.empty();
+
+    if (!postOptionalService.isPresent()) {
+      fail();
+    }
+
+    Service postService = postOptionalService.get();
+    assertEquals("postPatchName", postService.getName());
   }
 }
