@@ -2,9 +2,12 @@ package org.sims.controller.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -28,6 +31,14 @@ public class JsonMergePatcher {
     JsonNode patchedNode = null;
     try {
       final JsonMergePatch patch = mapper.readValue(json, JsonMergePatch.class);
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(target);
+      SimpleFilterProvider filters = new SimpleFilterProvider();
+      filters.setFailOnUnknownId(false);
+//      SimpleFilterProvider filters;
+//      filters = (new SimpleFilterProvider()).addFilter("service",
+//              SimpleBeanPropertyFilter.serializeAll());
+      mapper.setFilterProvider(filters);
+      mappingJacksonValue.setFilters(filters);
       patchedNode = patch.apply(mapper.convertValue(target, JsonNode.class));
     } catch (IOException | JsonPatchException e) {
       throw new RuntimeException(e);

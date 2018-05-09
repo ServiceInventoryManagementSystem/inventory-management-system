@@ -15,7 +15,7 @@ import java.util.*;
 
 @Entity
 //@JsonIgnoreProperties(ignoreUnknown = true)
-//@JsonFilter("org.sims.model.Service")
+@JsonFilter("service")
 public class Service {
 
   @ApiModelProperty(notes="'id' is the ID created for the service.")

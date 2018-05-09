@@ -98,12 +98,12 @@ public class ServiceController implements Serializable {
           String> params) {
     SimpleFilterProvider filters;
     if (params.containsKey("fields")) {
-      filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+      filters = (new SimpleFilterProvider()).addFilter("service",
               SimpleBeanPropertyFilter.filterOutAllExcept((params.getFirst("fields")).split(",")));
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     } else {
-      filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service", SimpleBeanPropertyFilter.serializeAll());
+      filters = (new SimpleFilterProvider()).addFilter("service", SimpleBeanPropertyFilter.serializeAll());
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     }
@@ -190,7 +190,7 @@ public class ServiceController implements Serializable {
   @ResponseStatus(HttpStatus.CREATED)
   public MappingJacksonValue createService(@Valid @RequestBody Service service) {
     SimpleFilterProvider filters;
-    filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+    filters = (new SimpleFilterProvider()).addFilter("service",
             SimpleBeanPropertyFilter.serializeAll());
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(service));
     mappingJacksonValue.setFilters(filters);
@@ -571,7 +571,7 @@ public class ServiceController implements Serializable {
     System.out.println(patched.get().getName());
     System.out.println(patched.get().getId());
     SimpleFilterProvider filters;
-    filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+    filters = (new SimpleFilterProvider()).addFilter("service",
             SimpleBeanPropertyFilter.serializeAll());
     Service s = patched.get();
     s.setId(id);
