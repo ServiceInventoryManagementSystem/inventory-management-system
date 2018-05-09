@@ -229,6 +229,7 @@ public class ServiceController implements Serializable {
     }
   }
 
+  @Transactional
   @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
   public MappingJacksonValue patchService(@PathVariable String id, @RequestBody String updateResource) {
     QService qService = QService.service;
