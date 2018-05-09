@@ -3,6 +3,7 @@ package org.sims.controller;
 
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
@@ -231,7 +232,13 @@ public class ServiceController implements Serializable {
 
   @Transactional
   @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
-  public MappingJacksonValue patchService(@PathVariable String id, @RequestBody String updateResource) {
+  public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
+    System.out.println(contentType);
+    System.out.println(contentType);
+    System.out.println(contentType);
+    System.out.println(contentType);
+
+
     QService qService = QService.service;
     Predicate p = new BooleanBuilder();
     ((BooleanBuilder) p).and(qService.id.eq(id));
@@ -241,18 +248,64 @@ public class ServiceController implements Serializable {
       return null;
     }
     Service resource = optionalService.get();
-    Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
-    System.out.println(patched.get().getCategory());
-    System.out.println(patched.get().getName());
-    System.out.println(patched.get().getId());
-    SimpleFilterProvider filters;
-    filters = (new SimpleFilterProvider()).addFilter("service",
-            SimpleBeanPropertyFilter.serializeAll());
-    Service s = patched.get();
-    s.setId(id);
-    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
-    mappingJacksonValue.setFilters(filters);
-    return mappingJacksonValue;
+    if (contentType.equals("application/merge-patch+json")) {
+      Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
+      System.out.println(patched.get().getCategory());
+      System.out.println(patched.get().getName());
+      System.out.println(patched.get().getId());
+      SimpleFilterProvider filters;
+      filters = (new SimpleFilterProvider()).addFilter("service",
+              SimpleBeanPropertyFilter.serializeAll());
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+      mappingJacksonValue.setFilters(filters);
+      return mappingJacksonValue;
+    }
+    else if (contentType.equals("application/json-patch+json")) {
+      try {
+        StringBuilder _sb = new StringBuilder(updateResource);
+        _sb.insert(0, "[");
+        _sb.append("]");
+        System.out.println(updateResource);
+        System.out.println(_sb);
+        Optional<Service> patched = jsonPatcher.patch(_sb.toString(), resource);
+        SimpleFilterProvider filters;
+        filters = (new SimpleFilterProvider()).addFilter("service",
+                SimpleBeanPropertyFilter.serializeAll());
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+        mappingJacksonValue.setFilters(filters);
+        return mappingJacksonValue;      }
+      catch (RuntimeException e) {
+        System.out.println(e);
+        if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
+          return new MappingJacksonValue("Not found");
+        }
+      }
+      return new MappingJacksonValue("No content");
+    }
+    return new MappingJacksonValue("");
   }
+
+  /*
+  	@RequestMapping(
+			value = "/v3/persons/{id}",
+			method = RequestMethod.PATCH,
+			consumes = RestMediaType.APPLICATION_PATCH_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PersonResource> updatePartial(@PathVariable Integer id, @RequestBody String updateResource) {
+		PersonResource resource = new ResourceBuilder().build();
+
+		try {
+			Optional<PersonResource> patched = jsonPatcher.patch(updateResource, resource);
+			return new ResponseEntity<>(patched.get(), HttpStatus.OK);
+		}
+		catch (RuntimeException e) {
+			if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
+				return new ResponseEntity<>(resource, HttpStatus.NOT_FOUND);
+			}
+		}
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+   */
 
 }

@@ -138,7 +138,7 @@ public class ServiceControllerTest {
     Service preService = preOptionalService.get();
     assertEquals("name1", preService.getName());
 
-    serviceController.patchService("1", "{\"name\": \"postPatchName\"}");
+    serviceController.patchService("Content-Type", "1", "{\"name\": \"postPatchName\"}");
     MappingJacksonValue postMappingJacksonValue = serviceController.getService("1", args, predicate);
     Object postObject = postMappingJacksonValue.getValue();
     Optional<Service> postOptionalService = postObject instanceof Optional ? ((Optional) postObject) : Optional.empty();

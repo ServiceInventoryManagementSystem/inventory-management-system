@@ -2,6 +2,7 @@ package org.sims.controller.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class JsonPatcher {
   }
 
   public <T> Optional patch(String json, @NotNull @Valid T target) {
+    SimpleFilterProvider filters = new SimpleFilterProvider();
+    filters.setFailOnUnknownId(false);
+    mapper.setFilterProvider(filters);
     JsonNode patchedNode = null;
     try {
       final JsonPatch patch = mapper.readValue(json, JsonPatch.class);
