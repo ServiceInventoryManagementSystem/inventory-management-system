@@ -1,17 +1,13 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.annotations.GenericGenerator;
-import org.sims.model.generator.StringIncrementGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 //@JsonIgnoreProperties(ignoreUnknown = true)
