@@ -262,12 +262,9 @@ public class ServiceController implements Serializable {
     }
     else if (contentType.equals("application/json-patch+json")) {
       try {
-        StringBuilder _sb = new StringBuilder(updateResource);
-        _sb.insert(0, "[");
-        _sb.append("]");
+        String updateResourceAsArray = "[" + updateResource + "]";
         System.out.println(updateResource);
-        System.out.println(_sb);
-        Optional<Service> patched = jsonPatcher.patch(_sb.toString(), resource);
+        Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
         SimpleFilterProvider filters;
         filters = (new SimpleFilterProvider()).addFilter("service",
                 SimpleBeanPropertyFilter.serializeAll());
