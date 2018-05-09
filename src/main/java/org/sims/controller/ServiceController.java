@@ -159,6 +159,54 @@ public class ServiceController implements Serializable {
     return mappingJacksonValue;
   }
 
+  //TODO Make it work in Swagger UI
+  @ApiOperation(value="Partially updates a service entity")
+  @Transactional
+  @PatchMapping(value = "/service/{id}")
+  public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
+    QService qService = QService.service;
+    Predicate p = new BooleanBuilder();
+    ((BooleanBuilder) p).and(qService.id.eq(id));
+    Optional<Service> optionalService = serviceRepository.findOne(p);
+    if(!optionalService.isPresent()) {
+      System.out.println("return null");
+      return null;
+    }
+    Service resource = optionalService.get();
+    if (contentType.equals("application/merge-patch+json")) {
+      Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
+      System.out.println(patched.get().getCategory());
+      System.out.println(patched.get().getName());
+      System.out.println(patched.get().getId());
+      SimpleFilterProvider filters;
+      filters = (new SimpleFilterProvider()).addFilter("service",
+              SimpleBeanPropertyFilter.serializeAll());
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+      mappingJacksonValue.setFilters(filters);
+      return mappingJacksonValue;
+    }
+    else if (contentType.equals("application/json-patch+json")) {
+      try {
+        String updateResourceAsArray = "[" + updateResource + "]";
+        System.out.println(updateResource);
+        Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
+        SimpleFilterProvider filters;
+        filters = (new SimpleFilterProvider()).addFilter("service",
+                SimpleBeanPropertyFilter.serializeAll());
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+        mappingJacksonValue.setFilters(filters);
+        return mappingJacksonValue;      }
+      catch (RuntimeException e) {
+        System.out.println(e);
+        if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
+          return new MappingJacksonValue("Not found");
+        }
+      }
+      return new MappingJacksonValue("No content");
+    }
+    return new MappingJacksonValue("");
+  }
+
   //TODO Proper exception handling for invalid id
   //Deletes the service at the given id
   @ApiOperation(value="This operation deletes a service entity.")
@@ -229,80 +277,5 @@ public class ServiceController implements Serializable {
       serviceRepository.save(service);
     }
   }
-
-  @Transactional
-  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
-  public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
-    System.out.println(contentType);
-    System.out.println(contentType);
-    System.out.println(contentType);
-    System.out.println(contentType);
-
-
-    QService qService = QService.service;
-    Predicate p = new BooleanBuilder();
-    ((BooleanBuilder) p).and(qService.id.eq(id));
-    Optional<Service> optionalService = serviceRepository.findOne(p);
-    if(!optionalService.isPresent()) {
-      System.out.println("return null");
-      return null;
-    }
-    Service resource = optionalService.get();
-    if (contentType.equals("application/merge-patch+json")) {
-      Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
-      System.out.println(patched.get().getCategory());
-      System.out.println(patched.get().getName());
-      System.out.println(patched.get().getId());
-      SimpleFilterProvider filters;
-      filters = (new SimpleFilterProvider()).addFilter("service",
-              SimpleBeanPropertyFilter.serializeAll());
-      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
-      mappingJacksonValue.setFilters(filters);
-      return mappingJacksonValue;
-    }
-    else if (contentType.equals("application/json-patch+json")) {
-      try {
-        String updateResourceAsArray = "[" + updateResource + "]";
-        System.out.println(updateResource);
-        Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
-        SimpleFilterProvider filters;
-        filters = (new SimpleFilterProvider()).addFilter("service",
-                SimpleBeanPropertyFilter.serializeAll());
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
-        mappingJacksonValue.setFilters(filters);
-        return mappingJacksonValue;      }
-      catch (RuntimeException e) {
-        System.out.println(e);
-        if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
-          return new MappingJacksonValue("Not found");
-        }
-      }
-      return new MappingJacksonValue("No content");
-    }
-    return new MappingJacksonValue("");
-  }
-
-  /*
-  	@RequestMapping(
-			value = "/v3/persons/{id}",
-			method = RequestMethod.PATCH,
-			consumes = RestMediaType.APPLICATION_PATCH_JSON_VALUE,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PersonResource> updatePartial(@PathVariable Integer id, @RequestBody String updateResource) {
-		PersonResource resource = new ResourceBuilder().build();
-
-		try {
-			Optional<PersonResource> patched = jsonPatcher.patch(updateResource, resource);
-			return new ResponseEntity<>(patched.get(), HttpStatus.OK);
-		}
-		catch (RuntimeException e) {
-			if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
-				return new ResponseEntity<>(resource, HttpStatus.NOT_FOUND);
-			}
-		}
-
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
-   */
 
 }
