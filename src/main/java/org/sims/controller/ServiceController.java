@@ -187,15 +187,23 @@ public class ServiceController implements Serializable {
     }
     else if (contentType.equals("application/json-patch+json")) {
       try {
-        String updateResourceAsArray = "[" + updateResource + "]";
-        System.out.println(updateResource);
-        Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
         SimpleFilterProvider filters;
         filters = (new SimpleFilterProvider()).addFilter("service",
                 SimpleBeanPropertyFilter.serializeAll());
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
-        mappingJacksonValue.setFilters(filters);
-        return mappingJacksonValue;      }
+        if (updateResource.startsWith("[")) {
+          Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
+          MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+          mappingJacksonValue.setFilters(filters);
+          return mappingJacksonValue;
+        }
+        else {
+          String updateResourceAsArray = "[" + updateResource + "]";
+          Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
+          MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+          mappingJacksonValue.setFilters(filters);
+          return mappingJacksonValue;
+        }
+      }
       catch (RuntimeException e) {
         System.out.println(e);
         if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
