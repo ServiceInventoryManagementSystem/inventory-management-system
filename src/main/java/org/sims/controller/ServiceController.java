@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.google.common.base.Splitter;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -12,6 +13,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.MethodUtils;
+import org.hibernate.Session;
+import org.sims.controller.common.JsonMergePatcher;
+import org.sims.controller.common.JsonPatcher;
+import org.sims.controller.common.RestMediaType;
 import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,7 @@ import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +61,11 @@ public class ServiceController implements Serializable {
   private final SupportingResourceRepository supportingResourceRepository;
   private final SupportingServiceRepository supportingServiceRepository;
 
+  private JsonPatcher jsonPatcher;
+  private JsonMergePatcher jsonMergePatcher;
+
+  private Session session;
+
 
 
   @Autowired
@@ -65,7 +76,8 @@ public class ServiceController implements Serializable {
                            ServiceRelationshipRepository serviceRelationshipRepository,
                            ServiceSpecificationRepository serviceSpecificationRepository,
                            SupportingResourceRepository supportingResourceRepository,
-                           SupportingServiceRepository supportingServiceRepository) {
+                           SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
+                           JsonMergePatcher jsonMergePatcher) {
     this.serviceRepository = serviceRepository;
     this.noteRepository = noteRepository;
     this.placeRepository = placeRepository;
@@ -77,6 +89,8 @@ public class ServiceController implements Serializable {
     this.serviceSpecificationRepository = serviceSpecificationRepository;
     this.supportingResourceRepository = supportingResourceRepository;
     this.supportingServiceRepository = supportingServiceRepository;
+    this.jsonPatcher = jsonPatcher;
+    this.jsonMergePatcher = jsonMergePatcher;
   }
 
   //Method to return only the specified fields
@@ -192,40 +206,39 @@ public class ServiceController implements Serializable {
 //
 //    return new MappingJacksonValue("");
 //  }
-
-  @Transactional
-  @PatchMapping(value = "/service/{id}"/*, consumes = {"application/merge-patch+json"}*/)
-  public MappingJacksonValue patchService(@PathVariable("id") String id, @RequestBody String data) throws Exception {
-    if(id == null) {
-      return new MappingJacksonValue("");
-    }
-
-    QService qService = QService.service;
-    Predicate p = new BooleanBuilder();
-    ((BooleanBuilder) p).and(qService.id.eq(id));
-    Optional<Service> optionalService = serviceRepository.findOne(p);
-
-    if(optionalService.isPresent()){
-      System.out.println("Entered the if is present");
-      System.out.println("Entered the if is present");
-      System.out.println("Entered the if is present");
-      Service service = optionalService.get();
-      System.out.println("got service from optional");
-      service = JsonMergePatchUtils.mergePatch(service, data, Service.class);
-      System.out.println("performed mergepatch");
-
-      SimpleFilterProvider filters;
-      filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
-              SimpleBeanPropertyFilter.serializeAll());
-      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(service));
-      System.out.println("saved patched service");
-
-      mappingJacksonValue.setFilters(filters);
-      return mappingJacksonValue;
-
-
-    }
-    return new MappingJacksonValue("");
+//
+//  @Transactional
+//  @PatchMapping(value = "/service/{id}"/*, consumes = {"application/merge-patch+json"}*/)
+//  public void patchService(@PathVariable("id") String id, @RequestBody String data) throws Exception {
+//    if(id == null) {
+//      return;
+//    }
+//    System.out.println(data);
+//
+//    QService qService = QService.service;
+//    Predicate p = new BooleanBuilder();
+//    ((BooleanBuilder) p).and(qService.id.eq(id));
+//    Optional<Service> optionalService = serviceRepository.findOne(p);
+//
+//    if(optionalService.isPresent()){
+//      System.out.println("Entered the if is present");
+//      System.out.println("Entered the if is present");
+//      System.out.println("Entered the if is present");
+//      Service service = optionalService.get();
+//      System.out.println();
+//      System.out.println("got service from optional");
+//      service = JsonMergePatchUtils.mergePatch(service, data, Service.class);
+//      System.out.println("performed mergepatch");
+//      service.setId(id);
+//
+//      serviceRepository.save(service);
+//
+//      System.out.println("saved patched service");
+//      return;
+//
+//
+//    }
+//    return;
 
 //
 //    if(cust != null) {
@@ -234,7 +247,7 @@ public class ServiceController implements Serializable {
 //      return getCustomerResourceHttpEntity(patchedCust, false);
 //    }
 //    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-  }
+//  }
 
 //  private HttpEntity<Resource<Service>> getServiceResourceHttpEntity(Service serviceDomain,
 //                                                                       boolean isCreate) {
@@ -502,4 +515,71 @@ public class ServiceController implements Serializable {
     mappingJacksonValue.setFilters(filters);
     return mappingJacksonValue;
   }*/
+
+
+//  @RequestMapping(
+//          value = "/v3/persons/{id}",
+//          method = RequestMethod.PATCH,
+//          consumes = RestMediaType.APPLICATION_PATCH_JSON_VALUE,
+//          produces = MediaType.APPLICATION_JSON_VALUE)
+//  @PatchMapping("/service/{id}")
+//  public ResponseEntity<Service> updatePartial(@PathVariable String id, @RequestBody String updateResource) {
+//
+//    QService qService = QService.service;
+//    Predicate p = new BooleanBuilder();
+//    ((BooleanBuilder) p).and(qService.id.eq(id));
+//    Optional<Service> optionalService = serviceRepository.findOne(p);
+//    if(!optionalService.isPresent()) {
+//      System.out.println("return null");
+//      return null;
+//    }
+//
+//    Service resource = optionalService.get();
+//
+//    System.out.println(resource);
+//    try {
+//      System.out.println("try");
+//      Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
+//      System.out.println(patched);
+//      System.out.println(patched.get().getCategory());
+//      return new ResponseEntity<>(patched.get(), HttpStatus.OK);
+//    }
+//    catch (RuntimeException e) {
+//      System.out.println("catch");
+//      if (JsonPatchException.class.isAssignableFrom(e.getCause().getClass())) {
+//        return new ResponseEntity<>(resource, HttpStatus.NOT_FOUND);
+//      }
+//    }
+//
+//    System.out.println("no content");
+//    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//  }
+
+  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH/*, consumes = RestMediaType.APPLICATION_MERGE_PATCH_JSON_VALUE*/)
+  public MappingJacksonValue patch(@PathVariable String id, @RequestBody String updateResource) {
+    QService qService = QService.service;
+    Predicate p = new BooleanBuilder();
+    ((BooleanBuilder) p).and(qService.id.eq(id));
+    Optional<Service> optionalService = serviceRepository.findOne(p);
+    if(!optionalService.isPresent()) {
+      System.out.println("return null");
+      return null;
+    }
+    Service resource = optionalService.get();
+    Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
+    System.out.println(patched.get().getCategory());
+    System.out.println(patched.get().getName());
+    System.out.println(patched.get().getId());
+    SimpleFilterProvider filters;
+    filters = (new SimpleFilterProvider()).addFilter("org.sims.model.Service",
+            SimpleBeanPropertyFilter.serializeAll());
+    Service s = patched.get();
+    s.setId(id);
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+    mappingJacksonValue.setFilters(filters);
+    return mappingJacksonValue;
+  }
+
+
+
 }

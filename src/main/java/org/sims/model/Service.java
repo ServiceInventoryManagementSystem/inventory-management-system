@@ -2,6 +2,7 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.GenericGenerator;
@@ -13,7 +14,8 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@JsonFilter("org.sims.model.Service")
+//@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonFilter("org.sims.model.Service")
 public class Service {
 
   @ApiModelProperty(notes="'id' is the ID created for the service.")
@@ -25,6 +27,10 @@ public class Service {
     parameters = @Parameter(name = "prefix", value = ""),
     strategy = "org.sims.model.generator.StringIncrementGenerator")*/
   private String id;
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
@@ -49,7 +55,7 @@ public class Service {
   private String startDate;
     @ApiModelProperty(notes="This attribute is an enumerated integer that indicates how the Service is started: 0: Unknown, 1: Automaically by the managed environment, 2: Automatically by the owner device, 3: Manually by the Provider of the Service, 4: Manually by a Customer of the Provider, 5: Any of the above.")
   private String startMode;
-    @ApiModelProperty(notes="The life cucle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
+    @ApiModelProperty(notes="The lifecycle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
   private String state;
     @ApiModelProperty(notes="Name of the resource type.")
   private String type;
