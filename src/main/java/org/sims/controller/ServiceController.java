@@ -229,8 +229,8 @@ public class ServiceController implements Serializable {
     }
   }
 
-  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH/*, consumes = RestMediaType.APPLICATION_MERGE_PATCH_JSON_VALUE*/)
-  public MappingJacksonValue patch(@PathVariable String id, @RequestBody String updateResource) {
+  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
+  public MappingJacksonValue patchService(@PathVariable String id, @RequestBody String updateResource) {
     QService qService = QService.service;
     Predicate p = new BooleanBuilder();
     ((BooleanBuilder) p).and(qService.id.eq(id));
