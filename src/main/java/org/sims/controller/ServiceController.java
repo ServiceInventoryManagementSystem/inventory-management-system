@@ -200,6 +200,14 @@ public class ServiceController implements Serializable {
               SimpleBeanPropertyFilter.serializeAll());
       MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
       mappingJacksonValue.setFilters(filters);
+      SpecificNotification specificNotification = new SpecificNotification();
+      LocalDate localDate = LocalDate.now();
+      specificNotification.setEventTime(localDate.toString());
+      specificNotification.setEventType("ServiceAttributeValueChangeNotification");
+      SpecificEvent specificEvent = new SpecificEvent();
+      specificEvent.setService(patched.get());
+      specificNotification.setSpecificEvent(specificEvent);
+      specificNotificationRepository.save(specificNotification);
       return mappingJacksonValue;
     }
     else if (contentType.equals("application/json-patch+json")) {
@@ -211,6 +219,14 @@ public class ServiceController implements Serializable {
           Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
           mappingJacksonValue.setFilters(filters);
+          SpecificNotification specificNotification = new SpecificNotification();
+          LocalDate localDate = LocalDate.now();
+          specificNotification.setEventTime(localDate.toString());
+          specificNotification.setEventType("ServiceAttributeValueChangeNotification");
+          SpecificEvent specificEvent = new SpecificEvent();
+          specificEvent.setService(patched.get());
+          specificNotification.setSpecificEvent(specificEvent);
+          specificNotificationRepository.save(specificNotification);
           return mappingJacksonValue;
         }
         else {
@@ -218,6 +234,14 @@ public class ServiceController implements Serializable {
           Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
           mappingJacksonValue.setFilters(filters);
+          SpecificNotification specificNotification = new SpecificNotification();
+          LocalDate localDate = LocalDate.now();
+          specificNotification.setEventTime(localDate.toString());
+          specificNotification.setEventType("ServiceAttributeValueChangeNotification");
+          SpecificEvent specificEvent = new SpecificEvent();
+          specificEvent.setService(patched.get());
+          specificNotification.setSpecificEvent(specificEvent);
+          specificNotificationRepository.save(specificNotification);
           return mappingJacksonValue;
         }
       }
@@ -245,6 +269,14 @@ public class ServiceController implements Serializable {
     if(!optionalService.isPresent()) {
       return;
     }
+    SpecificNotification specificNotification = new SpecificNotification();
+    LocalDate localDate = LocalDate.now();
+    specificNotification.setEventTime(localDate.toString());
+    specificNotification.setEventType("ServiceRemoveNotification");
+    SpecificEvent specificEvent = new SpecificEvent();
+    specificEvent.setService(optionalService.get());
+    specificNotification.setSpecificEvent(specificEvent);
+    specificNotificationRepository.save(specificNotification);
     serviceRepository.delete(optionalService.get());
   }
 
