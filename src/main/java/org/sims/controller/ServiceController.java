@@ -10,9 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.sims.controller.common.JsonMergePatcher;
 import org.sims.controller.common.JsonPatcher;
-import org.sims.model.QService;
-import org.sims.model.Service;
-import org.sims.model.ServiceSpecification;
+import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Random;
 
@@ -49,6 +48,9 @@ public class ServiceController implements Serializable {
   private JsonPatcher jsonPatcher;
   private JsonMergePatcher jsonMergePatcher;
 
+  private SpecificNotificationRepository specificNotificationRepository;
+  private SpecificEventRepository specificEventRepository;
+
 
   @Autowired
   public ServiceController(ServiceRepository serviceRepository, NoteRepository noteRepository,
@@ -59,7 +61,9 @@ public class ServiceController implements Serializable {
                            ServiceSpecificationRepository serviceSpecificationRepository,
                            SupportingResourceRepository supportingResourceRepository,
                            SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
-                           JsonMergePatcher jsonMergePatcher) {
+                           JsonMergePatcher jsonMergePatcher,
+                           SpecificNotificationRepository specificNotificationRepository,
+                           SpecificEventRepository specificEventRepository) {
     this.serviceRepository = serviceRepository;
     this.noteRepository = noteRepository;
     this.placeRepository = placeRepository;
@@ -73,6 +77,8 @@ public class ServiceController implements Serializable {
     this.supportingServiceRepository = supportingServiceRepository;
     this.jsonPatcher = jsonPatcher;
     this.jsonMergePatcher = jsonMergePatcher;
+    this.specificNotificationRepository = specificNotificationRepository;
+    this.specificEventRepository = specificEventRepository;
   }
 
   //Method to return only the specified fields
@@ -154,8 +160,19 @@ public class ServiceController implements Serializable {
     SimpleFilterProvider filters;
     filters = (new SimpleFilterProvider()).addFilter("service",
             SimpleBeanPropertyFilter.serializeAll());
-    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(service));
+    Service newService = serviceRepository.save(service);
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(newService);
     mappingJacksonValue.setFilters(filters);
+
+    SpecificNotification specificNotification = new SpecificNotification();
+    LocalDate localDate = LocalDate.now();
+    specificNotification.setEventTime(localDate.toString());
+    specificNotification.setEventType("ServiceCreationNotification");
+    SpecificEvent specificEvent = new SpecificEvent();
+    specificEvent.setService(newService);
+    specificNotification.setSpecificEvent(specificEvent);
+    specificNotificationRepository.save(specificNotification);
+
     return mappingJacksonValue;
   }
 

@@ -85,6 +85,9 @@ public class Service {
   @OneToMany(mappedBy = "serviceRel", cascade = CascadeType.ALL)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<SpecificEvent> specificEvents = new HashSet<>();
+
 
 
   //----------------------------------------ManyToOne-----------------------------------------------------------------
