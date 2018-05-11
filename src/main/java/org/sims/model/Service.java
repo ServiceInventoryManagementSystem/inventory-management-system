@@ -1,19 +1,17 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.annotations.GenericGenerator;
-import org.sims.model.generator.StringIncrementGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
-@JsonFilter("org.sims.model.Service")
+//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonFilter("service")
 public class Service {
 
   @ApiModelProperty(notes="'id' is the ID created for the service.")
@@ -25,6 +23,10 @@ public class Service {
     parameters = @Parameter(name = "prefix", value = ""),
     strategy = "org.sims.model.generator.StringIncrementGenerator")*/
   private String id;
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
@@ -49,7 +51,7 @@ public class Service {
   private String startDate;
     @ApiModelProperty(notes="This attribute is an enumerated integer that indicates how the Service is started: 0: Unknown, 1: Automaically by the managed environment, 2: Automatically by the owner device, 3: Manually by the Provider of the Service, 4: Manually by a Customer of the Provider, 5: Any of the above.")
   private String startMode;
-    @ApiModelProperty(notes="The life cucle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
+    @ApiModelProperty(notes="The lifecycle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
   private String state;
     @ApiModelProperty(notes="Name of the resource type.")
   private String type;
@@ -315,16 +317,14 @@ public class Service {
     return relatedParties;
   }
 
+  public void setRelatedParty(Set<RelatedParty> relatedParty) { this.relatedParties = relatedParty; }
+
   public Set<ServiceCharacteristic> getServiceCharacteristic() {
     return serviceCharacteristics;
   }
 
   public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristics) {
-    for (ServiceCharacteristic serviceCharacteristic : serviceCharacteristics) {
-      this.serviceCharacteristics.add(serviceCharacteristic);
-      serviceCharacteristic.setService(this);
-
-    }
+    this.serviceCharacteristics = serviceCharacteristics;
   }
 
   public Set<ServiceRelationship> getServiceRelationship() {
@@ -332,17 +332,22 @@ public class Service {
   }
 
   public void setServiceRelationship(Set<ServiceRelationship> serviceRelationships) {
-    for (ServiceRelationship serviceRelationship : serviceRelationships) {
-      this.serviceRelationships.add(serviceRelationship);
-      serviceRelationship.setServiceRel(this);
-    }
+    this.serviceRelationships = serviceRelationships;
   }
 
   public List<SupportingResource> getSupportingResource() {
     return supportingResources;
   }
 
+  public void setSupportingResource(List<SupportingResource> supportingResource) {
+    this.supportingResources = supportingResource;
+  }
+
   public List<SupportingService> getSupportingService() {
     return supportingServices;
+  }
+
+  public void setSupportingService(List<SupportingService> supportingService) {
+    this.supportingServices = supportingService;
   }
 }

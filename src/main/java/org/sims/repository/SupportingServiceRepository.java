@@ -1,9 +1,7 @@
 package org.sims.repository;
 
 import com.querydsl.core.types.dsl.StringPath;
-import org.sims.model.QService;
 import org.sims.model.QSupportingService;
-import org.sims.model.Service;
 import org.sims.model.SupportingService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;

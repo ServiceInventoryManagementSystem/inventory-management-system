@@ -9,8 +9,6 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
-
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long>, QuerydslPredicateExecutor<Service>, QuerydslBinderCustomizer<QService> {
   @Override
