@@ -71,7 +71,7 @@ public class OpenIdConnectFilter extends AbstractAuthenticationProcessingFilter 
             verifyClaims(authInfo);
             OpenIdConnectUserDetails user = new OpenIdConnectUserDetails(authInfo, accessToken);
             return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        } catch (InvalidTokenException e) {
+        } catch (Exception e) {
             throw new BadCredentialsException("Could not obtain user details from token", e);
         }
     }

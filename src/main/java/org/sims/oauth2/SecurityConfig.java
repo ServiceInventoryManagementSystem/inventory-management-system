@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .addFilterAfter(new OAuth2ClientContextFilter(),
                         AbstractPreAuthenticatedProcessingFilter.class)
-                .addFilterAfter(OpenIdConnectFilter(),
+                .addFilterAfter(openIdConnectFilter(),
                         OAuth2ClientContextFilter.class)
                 .httpBasic()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/google-login"))
