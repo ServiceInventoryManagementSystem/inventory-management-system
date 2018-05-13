@@ -60,12 +60,12 @@ public class OpenIdConnectFilter extends AbstractAuthenticationProcessingFilter 
         }
         try {
             String idToken = accessToken.getAdditionalInformation().get("id_token").toString();
-            String kid = JwtHelper.decode(idToken).getHeader(); // :(
-
-
-
-
+            //String kid = JwtHelper.headers(idToken).get("kid");
+            String kid = JwtHelper.headers(idToken).get("kid");
+            //Jwt tokenDecoded = JwtHelper.decode(idToken);
             Jwt tokenDecoded = JwtHelper.decodeAndVerify(idToken, verifier(kid));
+
+
             Map<String, String> authInfo = new ObjectMapper()
                     .readValue(tokenDecoded.getClaims(), Map.class);
             verifyClaims(authInfo);
@@ -75,23 +75,6 @@ public class OpenIdConnectFilter extends AbstractAuthenticationProcessingFilter 
             throw new BadCredentialsException("Could not obtain user details from token", e);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -111,6 +94,11 @@ public class OpenIdConnectFilter extends AbstractAuthenticationProcessingFilter 
                 !claims.get("aud").equals(clientId)) {
             throw new RuntimeException("Invalid claims");
         }
+    }
+
+    public void setRestTemplate(OAuth2RestTemplate restTemplate2) {
+        restTemplate = restTemplate2;
+
     }
 
     private static class NoopAuthenticationManager implements AuthenticationManager {
