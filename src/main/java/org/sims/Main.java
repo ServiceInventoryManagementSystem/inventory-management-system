@@ -1,9 +1,6 @@
 package org.sims;
 
-<<<<<<< HEAD
-=======
 import java.net.UnknownHostException;
->>>>>>> 1d13b11... Hacky way to pass settings along
 
 import org.sims.discovery.manager.DiscoveryManager;
 import org.sims.discovery.manager.HybernateResourceManager;
