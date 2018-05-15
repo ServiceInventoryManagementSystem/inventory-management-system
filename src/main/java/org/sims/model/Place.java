@@ -10,10 +10,11 @@ import javax.persistence.*;
 public class Place {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ApiModelProperty(notes="Id of the place")
-  private String id;
+  private Long id;
+
   @ApiModelProperty(notes="Referance of a place (for instance in google map).")
   private String href;
+
   @ApiModelProperty(notes="Role of the place (for instance delivery geographical place.)")
   private String role;
 
@@ -33,14 +34,6 @@ public class Place {
     this.service = service;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getHref() {
     return href;
   }
@@ -56,4 +49,12 @@ public class Place {
   public void setRole(String role) {
     this.role = role;
   }
+
+//  public Long getId() {
+//    return id;
+//  }
+//
+//  public void setId(Long id) {
+//    this.id = id;
+//  }
 }

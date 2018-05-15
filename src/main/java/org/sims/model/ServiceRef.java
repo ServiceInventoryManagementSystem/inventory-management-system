@@ -9,17 +9,23 @@ import javax.persistence.*;
 public class ServiceRef {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long dbid;
+
   @ApiModelProperty(notes="Id of the service.")
   private String id;
 
   @ApiModelProperty(notes="reference of the service.")
   private String href;
 
-  @OneToOne(mappedBy = "service")
+  @OneToOne(mappedBy = "serviceRef")
   private ServiceRelationship serviceRelationship;
 
   public String getId() {
     return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getHref() {
@@ -38,4 +44,12 @@ public class ServiceRef {
   public void setServiceRelationship(ServiceRelationship serviceRelationship) {
     this.serviceRelationship = serviceRelationship;
   }
+
+//  public Long getDbid() {
+//    return dbid;
+//  }
+//
+//  public void setDbid(Long dbid) {
+//    this.dbid = dbid;
+//  }
 }

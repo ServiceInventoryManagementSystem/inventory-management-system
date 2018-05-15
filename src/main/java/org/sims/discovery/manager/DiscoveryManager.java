@@ -21,22 +21,22 @@ import io.reactivex.disposables.Disposable;
 
 // Class that manages multiple discovery mechanisms
 public class DiscoveryManager{
-  
+
   @Autowired
   ServiceRepository serviceRepo;
 
   List<IDiscoveryService> discoveryServices = new ArrayList<IDiscoveryService>();
   Set<Class<? extends IDiscoveryService>> serviceClasses = new HashSet<Class<? extends IDiscoveryService>>();
 
-  // Map IService to database entry 
+  // Map IService to database entry
   Map<IService, Long> databaseMap = new HashMap<IService, Long>(50);
-  
+
   // Map UUID to IService
   Map<String, IService> serviceMap = new HashMap<String, IService>(50);
 
   //List of disposable subscriptions
   List<Disposable> subscriptions = new ArrayList<Disposable>();
-  
+
 
   private float probeInterval;
   private Thread probingThread;
@@ -50,7 +50,7 @@ public class DiscoveryManager{
   public DiscoveryManager(float probeInterval){
     this.probeInterval = probeInterval;
   }
-  
+
   public DiscoveryManager(){
     this(60);
   }
@@ -58,10 +58,10 @@ public class DiscoveryManager{
   // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
   // have to be disposed before calling initAll
   public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
-    
+
     serviceClasses.add(serviceClass);
     // find all services managed by this class
-    
+
   }
 
   public void initAll(){
@@ -137,7 +137,7 @@ public class DiscoveryManager{
     for(Disposable subscription : subscriptions){
       subscription.dispose();
     }
-    
+
     for(IDiscoveryService service : discoveryServices){
       service.dispose();
     }
@@ -172,9 +172,9 @@ public class DiscoveryManager{
     }
     entry.setName(s.getName());
     entry.setHref(s.getHref());
-      
+
     serviceRepo.save(entry);
-    
+
   }
 
   //Service was lost
@@ -192,7 +192,7 @@ public class DiscoveryManager{
       res.setState("terminated");
       serviceRepo.save(res);
     }
-  
+
   }
 
 

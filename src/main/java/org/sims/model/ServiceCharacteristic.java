@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class ServiceCharacteristic {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ApiModelProperty(notes="Id of the the characteristic.")
-  private String id;
+  private Long id;
+
   @ApiModelProperty(notes="Name of the characteristic.")
   private String name;
   @ApiModelProperty(notes="Value of the characteristic.")
@@ -19,14 +19,6 @@ public class ServiceCharacteristic {
 
   @ManyToOne
   private Service service;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public String getName() {
     return name;
@@ -52,4 +44,12 @@ public class ServiceCharacteristic {
   public void setService(Service service) {
     this.service = service;
   }
+
+//  public Long getId() {
+//    return id;
+//  }
+//
+//  public void setId(Long id) {
+//    this.id = id;
+//  }
 }

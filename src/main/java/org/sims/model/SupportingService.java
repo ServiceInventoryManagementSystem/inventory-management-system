@@ -10,6 +10,8 @@ import java.util.List;
 public class SupportingService {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long dbid;
+
   private String id;
 
   private String category;
@@ -25,6 +27,14 @@ public class SupportingService {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
   }
 
   public String getHref() {
@@ -52,11 +62,11 @@ public class SupportingService {
     this.services = services;
   }
 
-  public String getCategory() {
-    return category;
-  }
-
-  public void setCategory(String category) {
-    this.category = category;
-  }
+//  public Long getDbid() {
+//    return dbid;
+//  }
+//
+//  public void setDbid(Long dbid) {
+//    this.dbid = dbid;
+//  }
 }
