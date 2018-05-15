@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 public class ServiceRef {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long dbid;
 
   @ApiModelProperty(notes="Id of the service.")

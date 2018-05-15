@@ -1,11 +1,11 @@
-INSERT INTO SERVICE_SPECIFICATION (dbid, id, href, name, version) VALUES (1, 1, 'href1', 'name1', 'version1');
-INSERT INTO SERVICE_SPECIFICATION (dbid, id, href, name, version) VALUES (2, 2, 'href2', 'name2', 'version2');
+INSERT INTO SERVICE_SPECIFICATION (dbid, id, href, name, version) VALUES (1, '1', 'http://server:port/serviceCatalogManagement/serviceSpecification/1', 'name1', 'version1');
+INSERT INTO SERVICE_SPECIFICATION (dbid, id, href, name, version) VALUES (2, '2', 'http://server:port/serviceCatalogManagement/serviceSpecification/2', 'name2', 'version2');
 
 INSERT INTO SERVICE_ORDER (dbid, id, href) VALUES (1, 1, 'href1');
 INSERT INTO SERVICE_ORDER (dbid, id, href) VALUES (2, 2, 'href2');
 
-INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_dbid, service_specification_dbid) VALUES (1, 'category1', 'description1', 'endDate1', true, 'href1', true, true, 'name1', 'orderDate1', 'startDate1', 'startMode1', 'state1', 'type1', 2, 1);
-INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_dbid, service_specification_dbid) VALUES (2, 'category2', 'description2', 'endDate2', false, 'href2', false, false, 'name2', 'orderDate2', 'startDate2', 'startMode2', 'state2', 'type2', 1, 2);
+INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_dbid, service_specification_dbid) VALUES (1, 'CFS', 'Description of service 1', 'endDate1', true, 'http://server:port/serviceInventoryManagement/service/1', true, true, 'Email', 'orderDate1', 'startDate1', 'startMode1', 'state1', 'type1', 2, 1);
+INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_dbid, service_specification_dbid) VALUES (2, 'RFS', 'Description of service 2', 'endDate2', false, 'http://server:port/serviceInventoryManagement/service/2', false, false, 'Search', 'orderDate2', 'startDate2', 'startMode2', 'state2', 'type2', 1, 2);
 
 INSERT INTO RELATED_PARTY (dbid, id, href, name, role, valid_for) VALUES (1, 1, 'href1', 'name1', 'role1', 'validFor1');
 INSERT INTO RELATED_PARTY (dbid, id, href, name, role, valid_for) VALUES (2, 2, 'href2', 'name2', 'role2', 'validFor2');

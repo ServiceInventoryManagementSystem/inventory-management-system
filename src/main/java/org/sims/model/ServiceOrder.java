@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity
 public class ServiceOrder {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long dbid;
 
   @ApiModelProperty(notes="Unique identifier of the related Service Order.")

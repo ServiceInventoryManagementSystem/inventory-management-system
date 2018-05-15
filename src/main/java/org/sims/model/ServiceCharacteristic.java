@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 public class ServiceCharacteristic {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ApiModelProperty(notes="Name of the characteristic.")

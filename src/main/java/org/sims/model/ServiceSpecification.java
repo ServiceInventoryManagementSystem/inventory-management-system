@@ -3,12 +3,13 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.jdo.annotations.Unique;
 import javax.persistence.*;
 
 @Entity
 public class ServiceSpecification {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long dbid;
 
   @ApiModelProperty(notes="Unique identifier of the service specification.")

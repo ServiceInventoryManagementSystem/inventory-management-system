@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity
 public class RelatedParty {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long dbid;
 
   @ApiModelProperty(notes="Id of the related party.")
