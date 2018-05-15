@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -20,6 +21,7 @@ public class Service {
 
   private String uuid;
 
+  @JsonIgnore
   public String getUuid() {
     return uuid;
   }

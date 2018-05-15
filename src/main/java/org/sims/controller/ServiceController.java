@@ -242,7 +242,7 @@ public class ServiceController implements Serializable {
 //          specificEvent.setService(patched.get());
 //          specificNotification.setSpecificEvent(specificEvent);
 //          specificNotificationRepository.save(specificNotification);
-//          return mappingJacksonValue;
+          return mappingJacksonValue;
         }
       }
       catch (RuntimeException e) {
