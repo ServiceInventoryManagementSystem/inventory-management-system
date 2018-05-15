@@ -8,14 +8,16 @@ import javax.persistence.*;
 @Entity
 public class Note {
   @Id
-  @ApiModelProperty(notes="Id of the note.")
+//  @ApiModelProperty(notes="Id of the note.")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
   @ApiModelProperty(notes="Author of the note.")
   private String author;
+
   @ApiModelProperty(notes="Date of the note.")
   private String date;
+
   @ApiModelProperty(notes="Text of the note.")
   private String text;
 

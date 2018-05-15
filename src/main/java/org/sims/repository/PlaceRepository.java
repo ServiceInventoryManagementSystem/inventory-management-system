@@ -3,8 +3,6 @@ package org.sims.repository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.sims.model.Place;
 import org.sims.model.QPlace;
-import org.sims.model.QService;
-import org.sims.model.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
