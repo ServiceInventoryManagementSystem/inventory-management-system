@@ -82,5 +82,8 @@ public class WsService extends ServiceAdapter{
     return true;
   }
 
-
+  @Override
+  public String getCategory(){
+    return "WS - RFS";
+  }
 }

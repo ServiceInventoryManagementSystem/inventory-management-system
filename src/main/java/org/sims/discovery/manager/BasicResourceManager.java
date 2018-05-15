@@ -3,7 +3,6 @@ package org.sims.discovery.manager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -57,10 +56,8 @@ public abstract class BasicResourceManager implements IResourceManager{
   }
 
   private void put(String localRef, String remoteId){
-    //if(!serviceMap.containsKey(localRef)){
-      serviceMap.putIfAbsent(localRef, remoteId);
-      reverseMap.putIfAbsent(remoteId, localRef);
-    //}
+    serviceMap.putIfAbsent(localRef, remoteId);
+    reverseMap.putIfAbsent(remoteId, localRef);
   }
 
   private void remove(String remoteId){

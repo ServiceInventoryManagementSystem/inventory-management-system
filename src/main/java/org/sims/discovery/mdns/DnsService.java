@@ -65,5 +65,9 @@ public class DnsService extends ServiceAdapter{
     return true;
   }
 
+  @Override
+  public String getCategory(){
+    return "DNS - RFS";
+  }
 
 }

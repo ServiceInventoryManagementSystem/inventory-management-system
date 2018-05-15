@@ -147,6 +147,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println("Service removed");
     System.out.println(event.getInfo());
     System.out.println("----------------------------------");
+    DnsService service = new DnsService(event.getInfo());
   }
 
   public void serviceResolved(ServiceEvent event){

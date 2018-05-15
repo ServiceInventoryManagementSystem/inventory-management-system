@@ -41,6 +41,7 @@ import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.sims.utils.MagicWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -54,6 +55,12 @@ public class HybernateResourceManager extends BasicResourceManager{
   public HybernateResourceManager(){
     super();
   }
+ 
+  private Example<Service> getExample(String id){
+    Service exampleService = new Service();
+    exampleService.setId(id);
+    return Example.of(exampleService);
+  }
 
   public Single<IService> save(IService service){
     Service model = new ServiceMapper(service).getService();
@@ -65,7 +72,7 @@ public class HybernateResourceManager extends BasicResourceManager{
     
     if(remoteId == null) {
     } else {
-      model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.getOne(Long.valueOf(remoteId))});  
+      model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.findOne(getExample(remoteId)).get()});  
     }
 
     serviceRepo.save(model);
@@ -95,7 +102,7 @@ public class HybernateResourceManager extends BasicResourceManager{
   }
 
   public Completable removeService(String id){
-    serviceRepo.deleteById(Long.valueOf(id));
+    serviceRepo.delete(serviceRepo.findOne(getExample(id)).get());
     return super.removeService(id);
   }
 
@@ -136,6 +143,9 @@ public class HybernateResourceManager extends BasicResourceManager{
       //model.setStartDate(service.getStartDate().toGMTString());
       model.setIsStateful(service.isStateful());
       model.setIsServiceEnabled(service.isServiceEnabled());
+      model.setHasStarted(service.hasStarted());
+      model.setState(service.getState());
+      model.setCategory(service.getCategory());
       model.setHref(service.getHref());
 
       List<RelatedParty> relatedParties = new ArrayList<RelatedParty>();
