@@ -36,32 +36,51 @@ public class WsService extends ServiceAdapter{
   }
 
 
-  public Date getDiscovered(){
+  @Override
+  public Date getDiscoveryDate(){
     return discoveredDate;
   }
-    
+
+  @Override
   public String getHref(){
     return href;
   }
 
+  @Override
   public String getName(){
     return name;
   }
 
+  @Override
   public String getDescription(){
     return "WS-Discovery service";
   }
 
+  @Override
   public Boolean hasStarted(){
-    return null;
+    return true;
   }
 
+  @Override
   public List<IRelatedParty> getRelatedParty(){
     return relatedParty;
   }
 
+  @Override
   public String getLocalReference(){
     return "ws:" + ref;
   }
+
+  @Override
+  public String getState(){
+    return "active";
+  }
+
+
+  @Override
+  public Boolean isStateful(){
+    return true;
+  }
+
 
 }

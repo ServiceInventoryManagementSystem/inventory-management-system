@@ -107,6 +107,18 @@ public class HybernateResourceManager extends BasicResourceManager{
 
     return this.removeService(remoteId);
   }
+  
+  public void stopWatching(IService service){
+    String remoteId = service.getId();
+    if(remoteId == null){
+      remoteId = super.getRemoteId(service.getLocalReference());
+    }
+    this.stopWatching(remoteId);
+  }
+
+  public void stopWatching(String id){
+    super.stopWatching(id);
+  }
 
 
   public class ServiceMapper{

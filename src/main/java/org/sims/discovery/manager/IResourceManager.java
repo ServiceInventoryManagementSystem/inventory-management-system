@@ -18,7 +18,8 @@ public interface IResourceManager{
   public Completable removeService(String id);
   // Return a list of services managed by this system
   public Single<List<IService>> getOwnedServices();
-
+  public void stopWatching(IService service);
+  public void stopWatching(String id);
 
   // Finish anything important
   public void dispose();

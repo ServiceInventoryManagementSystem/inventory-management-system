@@ -87,6 +87,12 @@ public abstract class BasicResourceManager implements IResourceManager{
       }
   }
 
+  public void stopWatching(IService service){
+    this.stopWatching(service.getId());
+  }
+  public void stopWatching(String id){
+    this.remove(id);
+  }
 
 
   @Override

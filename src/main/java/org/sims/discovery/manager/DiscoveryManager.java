@@ -79,7 +79,7 @@ public class DiscoveryManager{
 
     for(Class<? extends IDiscoveryService> discovery : serviceClasses){
       try{
-        IDiscoveryService service = discovery.getConstructor(new Class[]{DiscoverySettings.class}).newInstance();
+        IDiscoveryService service = discovery.getConstructor(new Class[]{DiscoverySettings.class}).newInstance(serviceSettings.get(discovery));
         discoveryServices.add(service);
         subscriptions.add(service.serviceAdded().subscribe(this::addService));
         subscriptions.add(service.serviceRemoved().subscribe(this::removeService));

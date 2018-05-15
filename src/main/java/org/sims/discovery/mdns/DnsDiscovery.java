@@ -19,7 +19,6 @@ import javax.jmdns.impl.DNSEntry;
 import javax.jmdns.impl.JmDNSImpl;
 import javax.validation.constraints.NotEmpty;
 
-import org.assertj.core.util.Arrays;
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
