@@ -1,8 +1,13 @@
 package org.sims;
 
+<<<<<<< HEAD
+=======
+import java.net.UnknownHostException;
+>>>>>>> 1d13b11... Hacky way to pass settings along
 
 import org.sims.discovery.manager.DiscoveryManager;
 import org.sims.discovery.manager.HybernateResourceManager;
+import org.sims.discovery.mdns.DnsDiscovery;
 import org.sims.discovery.models.BasicService;
 import org.sims.discovery.models.IHasId;
 import org.sims.discovery.models.IRelatedParty;
@@ -47,8 +52,13 @@ public class Main {
     );
 
     DiscoveryManager manager = new DiscoveryManager(resourceManager);
-    
-    manager.registerDiscovery(WsDiscovery.class);
+
+    try{
+      manager.registerDiscovery(WsDiscovery.class, new WsDiscovery.WsSettings());
+      manager.registerDiscovery(DnsDiscovery.class, new DnsDiscovery.DnsSettings());
+    } catch(UnknownHostException e){
+      System.err.println(e);
+    }
     manager.initAll();
     manager.startAll();
 

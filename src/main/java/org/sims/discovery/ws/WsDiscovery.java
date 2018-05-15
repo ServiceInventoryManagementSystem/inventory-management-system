@@ -51,9 +51,9 @@ public class WsDiscovery implements IDiscoveryService{
   private boolean run = false;
   private Thread notifyThread;
   private WsSettings settings;
-  public WsDiscovery(WsSettings settings){
+  public WsDiscovery(DiscoverySettings settings){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
-    this.settings = settings;
+    this.settings = (WsSettings)settings;
     try{
       server = new WsDiscoveryServer();
       server.start();
@@ -200,7 +200,7 @@ public class WsDiscovery implements IDiscoveryService{
     return "WS-DISCOVERY";
   }
 
-  public class WsSettings{
+  static public class WsSettings extends DiscoverySettings{
     private InetAddress  host; 
     public WsSettings(InetAddress host){
       this.host = host;

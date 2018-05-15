@@ -41,12 +41,12 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   
   private DnsSettings settings;
   
-  public DnsDiscovery(DnsSettings settings){
+  public DnsDiscovery(DiscoverySettings settings){
     
-    this.settings = settings;
+    this.settings = (DnsSettings)settings;
     alive = true;
     try{
-      jmdns = new JmDNSImpl(settings.host, settings.name);
+      jmdns = new JmDNSImpl(this.settings.host, this.settings.name);
     } catch(Exception e){
       running = false;
       System.err.println(e);
@@ -167,7 +167,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   }
 
 
-  public class DnsSettings{
+  static public class DnsSettings extends DiscoverySettings{
     private String[] types;
     private InetAddress host;
     private String name;
