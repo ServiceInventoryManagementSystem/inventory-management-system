@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,8 +36,10 @@ public class Service {
   private String category;
   @ApiModelProperty(notes="free-text description of the service.")
   private String description;
+
   @ApiModelProperty(notes="endDate is the date when the service ends.")
-  private String endDate;
+  private OffsetDateTime endDate;
+
   @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, signifies that this Service has already been started. If the value of this attribute is FALSE, then this signifies that this Service has NOT been Started.")
   private Boolean hasStarted;
   @ApiModelProperty(notes="Reference of the service.")
@@ -47,9 +51,9 @@ public class Service {
   @ApiModelProperty(notes="'Name' is the name of the service.")
   private String name;
   @ApiModelProperty(notes="orderDate is the date when the service was ordered.")
-  private String orderDate;
+  private OffsetDateTime orderDate;
   @ApiModelProperty(notes="startDate is the date when the service starts.")
-  private String startDate;
+  private OffsetDateTime startDate;
   @ApiModelProperty(notes="This attribute is an enumerated integer that indicates how the Service is started: 0: Unknown, 1: Automaically by the managed environment, 2: Automatically by the owner device, 3: Manually by the Provider of the Service, 4: Manually by a Customer of the Provider, 5: Any of the above.")
   private String startMode;
   @ApiModelProperty(notes="The lifecycle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
@@ -84,7 +88,8 @@ public class Service {
 
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
-  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+//  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToOne(cascade = {CascadeType.ALL})
   private ServiceOrder serviceOrder;
 
 
@@ -93,19 +98,19 @@ public class Service {
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_RELATED_PARTY",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
-          inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_DBID"))
+          inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_ID"))
   private Set<RelatedParty> relatedParties = new HashSet<>();
 
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_SUPPORTING_RESOURCE",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
-          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_DBID"))
+          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_ID"))
   private List<SupportingResource> supportingResources = new ArrayList<>();
 
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @JoinTable(name = "SERVICE_SUPPORTING_SERVICE",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
-          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_DBID"))
+          inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_ID"))
   private List<SupportingService> supportingServices = new ArrayList<>();
 
 
@@ -121,9 +126,10 @@ public class Service {
     return id;
   }
 
-//  public void setId(String id) {
-//    this.id = id;
-//  }
+  @JsonIgnore
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public String getCategory() {
     return category;
@@ -141,11 +147,11 @@ public class Service {
     this.description = description;
   }
 
-  public String getEndDate() {
+  public OffsetDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(String endDate) {
+  public void setEndDate(OffsetDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -191,19 +197,19 @@ public class Service {
     this.name = name;
   }
 
-  public String getOrderDate() {
+  public OffsetDateTime getOrderDate() {
     return orderDate;
   }
 
-  public void setOrderDate(String orderDate) {
+  public void setOrderDate(OffsetDateTime orderDate) {
     this.orderDate = orderDate;
   }
 
-  public String getStartDate() {
+  public OffsetDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(String startDate) {
+  public void setStartDate(OffsetDateTime startDate) {
     this.startDate = startDate;
   }
 
@@ -261,11 +267,11 @@ public class Service {
     this.places = places;
   }
 
-  @JsonProperty("serviceCharacteristics")
+  @JsonProperty("serviceCharacteristic")
   public Set<ServiceCharacteristic> getServiceCharacteristics() {
     return serviceCharacteristics;
   }
-  @JsonProperty("serviceCharacteristics")
+  @JsonProperty("serviceCharacteristic")
   public void setServiceCharacteristics(Set<ServiceCharacteristic> serviceCharacteristics) {
     this.serviceCharacteristics = serviceCharacteristics;
   }

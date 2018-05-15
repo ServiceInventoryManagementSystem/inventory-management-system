@@ -46,11 +46,13 @@ public class ServiceRelationship {
     this.serviceRef = serviceRef;
   }
 
-//  public Long getId() {
-//    return id;
-//  }
-//
-//  public void setId(Long id) {
-//    this.id = id;
-//  }
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
+
+  @JsonIgnore
+  public void setId(Long id) {
+    this.id = id;
+  }
 }

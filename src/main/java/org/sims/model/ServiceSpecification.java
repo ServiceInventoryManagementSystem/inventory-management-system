@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.jdo.annotations.Unique;
@@ -10,10 +11,10 @@ import javax.persistence.*;
 public class ServiceSpecification {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   @ApiModelProperty(notes="Unique identifier of the service specification.")
-  private String id;
+  private String jsonId;
 
 
   @ApiModelProperty(notes="Reference of the ServiceSpecification.")
@@ -26,11 +27,12 @@ public class ServiceSpecification {
   @OneToOne(fetch = FetchType.LAZY, mappedBy = "serviceSpecification")
   private Service service;
 
-  public String getId() {
+  @JsonIgnore
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -67,11 +69,13 @@ public class ServiceSpecification {
     this.service = service;
   }
 
-//  public Long getDbid() {
-//    return dbid;
-//  }
-//
-//  public void setDbid(Long dbid) {
-//    this.dbid = dbid;
-//  }
+  @JsonProperty("id")
+  public String getJsonId() {
+    return jsonId;
+  }
+
+  @JsonProperty("id")
+  public void setJsonId(String jsonId) {
+    this.jsonId = jsonId;
+  }
 }

@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -9,10 +10,10 @@ import javax.persistence.*;
 public class ServiceRef {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long dbid;
+  private Long id;
 
   @ApiModelProperty(notes="Id of the service.")
-  private String id;
+  private String jsonId;
 
   @ApiModelProperty(notes="reference of the service.")
   private String href;
@@ -20,11 +21,11 @@ public class ServiceRef {
   @OneToOne(mappedBy = "serviceRef")
   private ServiceRelationship serviceRelationship;
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -45,11 +46,12 @@ public class ServiceRef {
     this.serviceRelationship = serviceRelationship;
   }
 
-//  public Long getDbid() {
-//    return dbid;
-//  }
-//
-//  public void setDbid(Long dbid) {
-//    this.dbid = dbid;
-//  }
+  @JsonProperty("id")
+  public String getTestId() {
+    return jsonId;
+  }
+  @JsonProperty("id")
+  public void setTestId(String jsonId) {
+    this.jsonId = jsonId;
+  }
 }

@@ -190,7 +190,7 @@ public class ServiceController implements Serializable {
       return null;
     }
     Service resource = optionalService.get();
-    if (contentType.equals("application/merge-patch+json")) {
+    if (contentType.equals("application/json")) {
       Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
       System.out.println(patched.get().getCategory());
       System.out.println(patched.get().getName());
@@ -209,7 +209,7 @@ public class ServiceController implements Serializable {
 //      specificNotification.setSpecificEvent(specificEvent);
 //      specificNotificationRepository.save(specificNotification);
       return mappingJacksonValue;
-    }
+    }/*
     else if (contentType.equals("application/json-patch+json")) {
       try {
         SimpleFilterProvider filters;
@@ -252,7 +252,7 @@ public class ServiceController implements Serializable {
         }
       }
       return new MappingJacksonValue("No content");
-    }
+    }*/
     return new MappingJacksonValue("");
   }
 

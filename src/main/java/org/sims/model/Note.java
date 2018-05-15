@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 @Entity
 public class Note {
@@ -15,7 +16,7 @@ public class Note {
   private String author;
 
   @ApiModelProperty(notes="Date of the note.")
-  private String date;
+  private OffsetDateTime date;
 
   @ApiModelProperty(notes="Text of the note.")
   private String text;
@@ -44,11 +45,11 @@ public class Note {
     this.author = author;
   }
 
-  public String getDate() {
+  public OffsetDateTime getDate() {
     return date;
   }
 
-  public void setDate(String date) {
+  public void setDate(OffsetDateTime date) {
     this.date = date;
   }
 
@@ -60,11 +61,13 @@ public class Note {
     this.text = text;
   }
 
-//  public Long getId() {
-//    return id;
-//  }
-//
-//  public void setId(Long id) {
-//    this.id = id;
-//  }
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
+
+  @JsonIgnore
+  public void setId(Long id) {
+    this.id = id;
+  }
 }
