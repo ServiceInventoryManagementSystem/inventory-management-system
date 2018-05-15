@@ -126,7 +126,6 @@ public class Service {
     return id;
   }
 
-  @JsonIgnore
   public void setId(String id) {
     this.id = id;
   }
