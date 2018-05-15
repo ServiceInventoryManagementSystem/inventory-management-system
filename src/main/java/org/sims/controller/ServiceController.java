@@ -187,7 +187,7 @@ public class ServiceController implements Serializable {
     Optional<Service> optionalService = serviceRepository.findOne(p);
     if(!optionalService.isPresent()) {
       System.out.println("return null");
-      return null;
+      return new MappingJacksonValue("No service with id = " + id);
     }
     Service resource = optionalService.get();
     if (contentType.equals("application/json")) {
@@ -306,7 +306,7 @@ public class ServiceController implements Serializable {
     String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
     Boolean[] booleanArray = {true, false};
     String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
-    String[] stateArray = {"active", "inactive", "terminated"};
+    String[] stateArray = {"active", "inactive", "terminated", "reserved", "designed", "feasabilityChecked"};
     String[] typeArray = {"type1", "type2", "type3"};
 
     ServiceSpecification[] serviceSpecificationArray = new ServiceSpecification[count];
