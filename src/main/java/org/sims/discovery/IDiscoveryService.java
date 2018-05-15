@@ -1,4 +1,5 @@
 package org.sims.discovery;
+import java.util.HashMap;
 import java.util.List;
 
 import org.reactivestreams.Publisher;
@@ -30,4 +31,9 @@ public interface IDiscoveryService{
 
   // String that describes what kind of service this service discovery class will emitt
   public String getTypeDescriptor();
+
+
+  public class DiscoverySettings{
+    public DiscoverySettings(){}
+  }
 }

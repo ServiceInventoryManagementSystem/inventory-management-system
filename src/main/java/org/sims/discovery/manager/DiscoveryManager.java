@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.reactivestreams.Subscription;
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.models.IService;
+import org.sims.discovery.IDiscoveryService.DiscoverySettings;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,11 @@ public class DiscoveryManager{
   List<IDiscoveryService> discoveryServices = new ArrayList<IDiscoveryService>();
   Set<Class<? extends IDiscoveryService>> serviceClasses = new HashSet<Class<? extends IDiscoveryService>>();
 
-  // Map local ref to IService
+  HashMap<Class<? extends IDiscoveryService>, DiscoverySettings> serviceSettings = new HashMap<Class<? extends IDiscoveryService>, DiscoverySettings>();
+  // Map IService to database entry 
+  Map<IService, Long> databaseMap = new HashMap<IService, Long>(50);
+  
+  // Map UUID to IService
   Map<String, IService> serviceMap = new HashMap<String, IService>(50);
 
   //List of disposable subscriptions
@@ -54,10 +59,14 @@ public class DiscoveryManager{
 
   // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
   // have to be disposed before calling initAll
-  public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
+  public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass, DiscoverySettings settings){
     
     serviceClasses.add(serviceClass);
+    serviceSettings.put(serviceClass, settings);
+  }
 
+  public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
+    registerDiscovery(serviceClass, null);
   }
 
   public void initAll(){
@@ -70,7 +79,7 @@ public class DiscoveryManager{
 
     for(Class<? extends IDiscoveryService> discovery : serviceClasses){
       try{
-        IDiscoveryService service = discovery.getConstructor().newInstance();
+        IDiscoveryService service = discovery.getConstructor(new Class[]{DiscoverySettings.class}).newInstance();
         discoveryServices.add(service);
         subscriptions.add(service.serviceAdded().subscribe(this::addService));
         subscriptions.add(service.serviceRemoved().subscribe(this::removeService));

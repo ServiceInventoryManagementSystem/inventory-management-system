@@ -1,5 +1,8 @@
 package org.sims.discovery.ws;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,9 +50,10 @@ public class WsDiscovery implements IDiscoveryService{
 
   private boolean run = false;
   private Thread notifyThread;
-  
-  public WsDiscovery(){
+  private WsSettings settings;
+  public WsDiscovery(DiscoverySettings settings){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
+    this.settings = (WsSettings)settings;
     try{
       server = new WsDiscoveryServer();
       server.start();
@@ -139,11 +143,6 @@ public class WsDiscovery implements IDiscoveryService{
 
   public void stop(){
     if(notifyThread != null){
-      /*try{
-        notifyThread.join();
-      } catch(Exception e){
-        System.err.println(e);
-      }*/
       run = false;
     }
   }
@@ -199,6 +198,17 @@ public class WsDiscovery implements IDiscoveryService{
 
   public String getTypeDescriptor(){
     return "WS-DISCOVERY";
+  }
+
+  static public class WsSettings extends DiscoverySettings{
+    private InetAddress  host; 
+    public WsSettings(InetAddress host){
+      this.host = host;
+    }
+
+    public WsSettings() throws UnknownHostException{
+      this(Inet4Address.getLocalHost());
+    }
   }
 
 }

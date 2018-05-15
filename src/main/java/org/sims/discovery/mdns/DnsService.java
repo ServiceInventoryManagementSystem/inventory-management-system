@@ -6,7 +6,7 @@ import javax.jmdns.ServiceInfo;
 
 import org.sims.discovery.models.IService;;
 
-public abstract class DnsService implements IService{
+public class DnsService implements IService{
   private ServiceInfo info;
   private Date discoveryDate;
 
