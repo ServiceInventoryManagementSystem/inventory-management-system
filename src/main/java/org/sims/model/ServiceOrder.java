@@ -10,9 +10,12 @@ import java.util.Set;
 @Entity
 public class ServiceOrder {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long dbid;
+
   @ApiModelProperty(notes="Unique identifier of the related Service Order.")
   private String id;
+
   @ApiModelProperty(notes="The hyperlink to access the sleated Service Order.")
   private String href;
 
@@ -43,4 +46,12 @@ public class ServiceOrder {
   public void setServices(Set<Service> services) {
     this.services = services;
   }
+
+//  public String getDbid() {
+//    return dbid;
+//  }
+//
+//  public void setDbid(String dbid) {
+//    this.dbid = dbid;
+//  }
 }

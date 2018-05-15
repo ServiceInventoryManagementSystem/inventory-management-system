@@ -9,7 +9,9 @@ import java.util.List;
 @Entity
 public class SupportingResource {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long dbid;
+
   private String id;
 
   private String href;
@@ -50,4 +52,12 @@ public class SupportingResource {
   public void setServices(List<Service> services) {
     this.services = services;
   }
+
+//  public Long getDbid() {
+//    return dbid;
+//  }
+//
+//  public void setDbid(Long dbid) {
+//    this.dbid = dbid;
+//  }
 }

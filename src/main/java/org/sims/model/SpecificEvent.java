@@ -12,7 +12,7 @@ public class SpecificEvent {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToOne(cascade = {CascadeType.DETACH})
   private Service service;
 
   @ManyToOne

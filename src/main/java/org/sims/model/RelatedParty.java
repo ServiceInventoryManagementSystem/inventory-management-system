@@ -10,9 +10,12 @@ import java.util.Set;
 @Entity
 public class RelatedParty {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long dbid;
+
   @ApiModelProperty(notes="Id of the related party.")
   private String id;
+
   @ApiModelProperty(notes="Reference of the related party, could be a party reference or a party role reference.")
   private String href;
   @ApiModelProperty(notes="Name of the related party.")
@@ -74,4 +77,12 @@ public class RelatedParty {
   public void setServices(Set<Service> services) {
     this.services = services;
   }
+
+//  public Long getDbid() {
+//    return dbid;
+//  }
+//
+//  public void setDbid(Long dbid) {
+//    this.dbid = dbid;
+//  }
 }

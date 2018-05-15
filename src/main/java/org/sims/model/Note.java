@@ -8,9 +8,8 @@ import javax.persistence.*;
 @Entity
 public class Note {
   @Id
-//  @ApiModelProperty(notes="Id of the note.")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private String id;
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
   @ApiModelProperty(notes="Author of the note.")
   private String author;
@@ -37,14 +36,6 @@ public class Note {
     this.service = service;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getAuthor() {
     return author;
   }
@@ -68,4 +59,12 @@ public class Note {
   public void setText(String text) {
     this.text = text;
   }
+
+//  public Long getId() {
+//    return id;
+//  }
+//
+//  public void setId(Long id) {
+//    this.id = id;
+//  }
 }
