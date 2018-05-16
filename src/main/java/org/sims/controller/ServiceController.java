@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 
 @RestController
@@ -198,7 +200,12 @@ public class ServiceController implements Serializable {
       SimpleFilterProvider filters;
       filters = (new SimpleFilterProvider()).addFilter("service",
               SimpleBeanPropertyFilter.serializeAll());
-      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+      Service patchedService = patched.get();
+      System.out.println("patchedService = " + patchedService);
+      Service savedPatchedService = serviceRepository.save(patchedService);
+      Set<ServiceCharacteristic> serviceCharacteristic = savedPatchedService.getServiceCharacteristics();
+      System.out.println("savedPatchedService = " + savedPatchedService.getServiceCharacteristics());
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(savedPatchedService);
       mappingJacksonValue.setFilters(filters);
 //      SpecificNotification specificNotification = new SpecificNotification();
 //      LocalDate localDate = LocalDate.now();

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -75,7 +74,7 @@ public class Service {
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
   private Set<Place> places = new HashSet<>();
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "service", cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
   private Set<ServiceCharacteristic> serviceCharacteristics = new HashSet<>();
 
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
@@ -89,25 +88,25 @@ public class Service {
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
 //  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
-  @ManyToOne(cascade = {CascadeType.ALL})
+  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
   private ServiceOrder serviceOrder;
 
 
   //----------------------------------------ManyToMany----------------------------------------------------------------
 
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
-  @JoinTable(name = "SERVICE_RELATED_PARTY",
+@ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
+@JoinTable(name = "SERVICE_RELATED_PARTY",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
           inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_ID"))
   private Set<RelatedParty> relatedParties = new HashSet<>();
 
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
   @JoinTable(name = "SERVICE_SUPPORTING_RESOURCE",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
           inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_ID"))
   private List<SupportingResource> supportingResources = new ArrayList<>();
 
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
   @JoinTable(name = "SERVICE_SUPPORTING_SERVICE",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
           inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_ID"))
