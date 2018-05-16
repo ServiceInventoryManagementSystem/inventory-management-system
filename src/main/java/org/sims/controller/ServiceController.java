@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -121,6 +122,8 @@ public class ServiceController implements Serializable {
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 
+
+
   //TODO Return proper message back when resource isn't found (if(user==null))
   //Returns the service resource of the given id
   @ApiOperation(value="This operation retrives a service entity.")
@@ -176,10 +179,13 @@ public class ServiceController implements Serializable {
     return mappingJacksonValue;
   }
 
+
   //TODO Make it work in Swagger UI
   @ApiOperation(value="Partially updates a service entity")
   @Transactional
-  @PatchMapping(value = "/service/{id}")
+  @CrossOrigin
+//  @PatchMapping(value = "/service/{id}")
+  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
   public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
     QService qService = QService.service;
     Predicate p = new BooleanBuilder();
