@@ -32,7 +32,7 @@ public class DnsService extends ServiceAdapter{
 
   @Override
   public String getDescription(){
-    return "mDNS - service";
+    return String.format("Domain: %s\nUrl: %s\nKey: %s\nPath: %s\n Server: %s", info.getDomain(), info.getURLs()[0], info.getKey(), info.getPropertyString("path"), info.getServer());
   }
 
   @Override
