@@ -4,6 +4,7 @@ import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -139,10 +140,12 @@ public class HybernateResourceManager extends BasicResourceManager{
       model.setName(service.getName());
       model.setCategory(service.getCategory());
       model.setDescription(service.getDescription());
-      //model.setEndDate(service.getEndDate().toGMTString());
+      /*if(endDate != null){
+        model.setEndDate(endDate);
+      }*/
       //model.setStartDate(service.getStartDate().toGMTString());
-      model.setIsStateful(service.isStateful());
-      model.setIsServiceEnabled(service.isServiceEnabled());
+      model.setStateful(service.isStateful());
+      model.setServiceEnabled(service.isServiceEnabled());
       model.setHasStarted(service.hasStarted());
       model.setState(service.getState());
       model.setCategory(service.getCategory());
