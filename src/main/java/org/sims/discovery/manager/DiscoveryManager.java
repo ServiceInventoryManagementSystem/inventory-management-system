@@ -169,6 +169,10 @@ public class DiscoveryManager{
     return "";
   }
 
+  public void updateService(IService service){
+    System.out.println("Updating service...");
+  }
+
   public void removeService(IService service){
     System.out.println("Removing service... " + service.getName());
     resourceManager.removeService(service);
