@@ -122,6 +122,7 @@ public class ServiceControllerTest {
     assertTrue(!optionalEmptyService.isPresent());
   }
 
+  /*
   @Test
   public void patchService() {
     QService qService = QService.service;
@@ -150,4 +151,5 @@ public class ServiceControllerTest {
     Service postService = postOptionalService.get();
     assertEquals("postPatchName", postService.getName());
   }
+  */
 }

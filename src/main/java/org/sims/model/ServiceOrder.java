@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -11,19 +12,23 @@ import java.util.Set;
 public class ServiceOrder {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
   @ApiModelProperty(notes="Unique identifier of the related Service Order.")
-  private String id;
+  private String jsonId;
+
   @ApiModelProperty(notes="The hyperlink to access the sleated Service Order.")
   private String href;
 
   @OneToMany(mappedBy = "serviceOrder")
   private Set<Service> services = new HashSet<>();
 
-  public String getId() {
+  @JsonIgnore
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -42,5 +47,14 @@ public class ServiceOrder {
 
   public void setServices(Set<Service> services) {
     this.services = services;
+  }
+
+  @JsonProperty("id")
+  public String getJsonId() {
+    return jsonId;
+  }
+  @JsonProperty("id")
+  public void setJsonId(String jsonId) {
+    this.jsonId = jsonId;
   }
 }

@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -11,8 +12,11 @@ import java.util.Set;
 public class RelatedParty {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
   @ApiModelProperty(notes="Id of the related party.")
-  private String id;
+  private String jsonId;
+
   @ApiModelProperty(notes="Reference of the related party, could be a party reference or a party role reference.")
   private String href;
   @ApiModelProperty(notes="Name of the related party.")
@@ -26,11 +30,12 @@ public class RelatedParty {
   @ManyToMany(mappedBy = "relatedParties") //
   private Set<Service> services = new HashSet<>();
 
-  public String getId() {
+  @JsonIgnore
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -73,5 +78,15 @@ public class RelatedParty {
 
   public void setServices(Set<Service> services) {
     this.services = services;
+  }
+
+  @JsonProperty("id")
+  public String getJsonId() {
+    return jsonId;
+  }
+
+  @JsonProperty("id")
+  public void setJsonId(String jsonId) {
+    this.jsonId = jsonId;
   }
 }

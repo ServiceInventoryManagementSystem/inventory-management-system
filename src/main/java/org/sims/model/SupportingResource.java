@@ -1,6 +1,7 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -10,7 +11,9 @@ import java.util.List;
 public class SupportingResource {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private String id;
+  private Long id;
+
+  private String jsonId;
 
   private String href;
   private String name;
@@ -18,11 +21,12 @@ public class SupportingResource {
   @ManyToMany(mappedBy = "supportingResources")
   private List<Service> services = new ArrayList<>();
 
-  public String getId() {
+  @JsonIgnore
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -49,5 +53,15 @@ public class SupportingResource {
 
   public void setServices(List<Service> services) {
     this.services = services;
+  }
+
+  @JsonProperty("id")
+  public String getJsonId() {
+    return jsonId;
+  }
+
+  @JsonProperty("id")
+  public void setJsonId(String jsonId) {
+    this.jsonId = jsonId;
   }
 }

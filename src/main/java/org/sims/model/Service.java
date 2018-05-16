@@ -1,69 +1,65 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-//@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonFilter("service")
 public class Service {
-
   @ApiModelProperty(notes="'id' is the ID created for the service.")
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  /*
-  @GeneratedValue(generator = "prod-generator")
-  @GenericGenerator(name = "prod-generator",
-    parameters = @Parameter(name = "prefix", value = ""),
-    strategy = "org.sims.model.generator.StringIncrementGenerator")*/
   private String id;
 
-  public void setId(String id) {
-    this.id = id;
+  private String uuid;
+
+  @JsonIgnore
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
   @ApiModelProperty(notes="free-text description of the service.")
   private String description;
+
   @ApiModelProperty(notes="endDate is the date when the service ends.")
-  private String endDate;
+  private OffsetDateTime endDate;
+
   @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, signifies that this Service has already been started. If the value of this attribute is FALSE, then this signifies that this Service has NOT been Started.")
   private Boolean hasStarted;
   @ApiModelProperty(notes="Reference of the service.")
   private String href;
-//  private String id;
   @ApiModelProperty(notes="If the value of this attribute is FALSE, then this means that this particular Service has NOT been enabled for use.")
   private Boolean isServiceEnabled;
-    @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, means that this Service can be changed without affecting any other services.")
+  @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, means that this Service can be changed without affecting any other services.")
   private Boolean isStateful;
-    @ApiModelProperty(notes="'Name' is the name of the service.")
+  @ApiModelProperty(notes="'Name' is the name of the service.")
   private String name;
-    @ApiModelProperty(notes="orderDate is the date when the service was ordered.")
-  private String orderDate;
-    @ApiModelProperty(notes="startDate is the date when the service starts.")
-  private String startDate;
-    @ApiModelProperty(notes="This attribute is an enumerated integer that indicates how the Service is started: 0: Unknown, 1: Automaically by the managed environment, 2: Automatically by the owner device, 3: Manually by the Provider of the Service, 4: Manually by a Customer of the Provider, 5: Any of the above.")
+  @ApiModelProperty(notes="orderDate is the date when the service was ordered.")
+  private OffsetDateTime orderDate;
+  @ApiModelProperty(notes="startDate is the date when the service starts.")
+  private OffsetDateTime startDate;
+  @ApiModelProperty(notes="This attribute is an enumerated integer that indicates how the Service is started: 0: Unknown, 1: Automaically by the managed environment, 2: Automatically by the owner device, 3: Manually by the Provider of the Service, 4: Manually by a Customer of the Provider, 5: Any of the above.")
   private String startMode;
-    @ApiModelProperty(notes="The lifecycle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
+  @ApiModelProperty(notes="The lifecycle state of the service. feasibilityChecked, designed, reserved, active, inactive, terminated.")
   private String state;
-    @ApiModelProperty(notes="Name of the resource type.")
+  @ApiModelProperty(notes="Name of the resource type.")
   private String type;
-
-
-  private String uuid;
-  public String getUuid() {
-    return uuid;
-  }
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
 
   //---------------------------------------Relations------------------------------------------------------------------
   //---------------------------------------OneToOne-------------------------------------------------------------------
@@ -82,14 +78,18 @@ public class Service {
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
   private Set<ServiceCharacteristic> serviceCharacteristics = new HashSet<>();
 
-  @OneToMany(mappedBy = "serviceRel", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
+
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  private Set<SpecificEvent> specificEvents = new HashSet<>();
 
 
 
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
-  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+//  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToOne(cascade = {CascadeType.ALL})
   private ServiceOrder serviceOrder;
 
 
@@ -123,7 +123,11 @@ public class Service {
   //-----------------------------Getters and Setters for non-relations------------------------------------------------
 
   public String getId() {
-    return this.id;
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getCategory() {
@@ -142,11 +146,11 @@ public class Service {
     this.description = description;
   }
 
-  public String getEndDate() {
+  public OffsetDateTime getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(String endDate) {
+  public void setEndDate(OffsetDateTime endDate) {
     this.endDate = endDate;
   }
 
@@ -166,19 +170,21 @@ public class Service {
     this.href = href;
   }
 
-  public Boolean getIsServiceEnabled() {
+  @JsonProperty("isServiceEnabled")
+  public Boolean getServiceEnabled() {
     return isServiceEnabled;
   }
-
-  public void setIsServiceEnabled(Boolean serviceEnabled) {
+  @JsonProperty("isServiceEnabled")
+  public void setServiceEnabled(Boolean serviceEnabled) {
     isServiceEnabled = serviceEnabled;
   }
 
-  public Boolean getIsStateful() {
+  @JsonProperty("isStateful")
+  public Boolean getStateful() {
     return isStateful;
   }
-
-  public void setIsStateful(Boolean stateful) {
+  @JsonProperty("isStateful")
+  public void setStateful(Boolean stateful) {
     isStateful = stateful;
   }
 
@@ -190,19 +196,19 @@ public class Service {
     this.name = name;
   }
 
-  public String getOrderDate() {
+  public OffsetDateTime getOrderDate() {
     return orderDate;
   }
 
-  public void setOrderDate(String orderDate) {
+  public void setOrderDate(OffsetDateTime orderDate) {
     this.orderDate = orderDate;
   }
 
-  public String getStartDate() {
+  public OffsetDateTime getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(String startDate) {
+  public void setStartDate(OffsetDateTime startDate) {
     this.startDate = startDate;
   }
 
@@ -233,6 +239,7 @@ public class Service {
 
   //--------------------------------Getters and Setters for relations-------------------------------------------------
 
+
   public ServiceSpecification getServiceSpecification() {
     return serviceSpecification;
   }
@@ -241,68 +248,40 @@ public class Service {
     this.serviceSpecification = serviceSpecification;
   }
 
-//  //TODO update currently replaces the existing servicespecification with the given parameters, even if they're not present
-//  //Creates or updates service specification depending on the value of op
-//  public void customSetServiceSpecification(LinkedHashMap lhm, String op) {
-//    if (op.equals("update")) {
-//      System.out.println("\nUPDATING EXISTING SERVICESPECIFICATION \n");
-//      //TODO Add a check to see which attributes are passed before applying.
-//      this.serviceSpecification.setVersion((String) lhm.get("version"));
-//      this.serviceSpecification.setName((String) lhm.get("name"));
-//      this.serviceSpecification.setId((String) lhm.get("id"));
-//      this.serviceSpecification.setHref((String) lhm.get("href"));
-//    } else if (op.equals("replace")) {
-//      System.out.println("\nCREATING NEW SERVICESPECIFICATION \n");
-//      ServiceSpecification serviceSpecification = new ServiceSpecification();
-//      serviceSpecification.setVersion((String) lhm.get("version"));
-//      serviceSpecification.setName((String) lhm.get("name"));
-//      serviceSpecification.setId((String) lhm.get("id"));
-//      serviceSpecification.setHref((String) lhm.get("href"));
-//      this.setServiceSpecification(serviceSpecification);
-//    }
-//  }
-
-    /*
-    //TODO be able to update id of object, currently not working, not part of the API
-    //Updates / removes the relationship between a service and a ServiceSpecification to the given id
-    public void customSetServiceSpecification(Integer id, String op) {
-
-        System.out.println("Entered Integer changer");
-        String lewl = id.toString();
-        System.out.println("Set lewl to " + lewl);
-        Long lul = new Long(lewl);
-        System.out.println("Set lul to " + lul);
-
-        EntityHelper eh = new EntityHelper();
-        System.out.println("Created EntityHelper");
-
-        ServiceSpecification ser = eh.findById(lul);
-        System.out.println("Found ServiceSpecification by id, = " + ser);
-        this.setServiceSpecification(ser);
-        System.out.println("\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID\nChange ID");
-    }
-    */
-
-  public Set<Place> getPlace() {
-    return places;
-  }
-
-  public void setPlace(Set<Place> places) {
-    for (Place place : places) {
-      this.places.add(place);
-      place.setService(this);
-    }
-  }
-
-  public Set<Note> getNote() {
+  @JsonProperty("note")
+  public Set<Note> getNotes() {
     return notes;
   }
+  @JsonProperty("note")
+  public void setNotes(Set<Note> notes) {
+    this.notes = notes;
+  }
 
-  public void setNote(Set<Note> notes) {
-    for (Note note : notes) {
-      this.notes.add(note);
-      note.setService(this);
-    }
+  @JsonProperty("place")
+  public Set<Place> getPlaces() {
+    return places;
+  }
+  @JsonProperty("place")
+  public void setPlaces(Set<Place> places) {
+    this.places = places;
+  }
+
+  @JsonProperty("serviceCharacteristic")
+  public Set<ServiceCharacteristic> getServiceCharacteristics() {
+    return serviceCharacteristics;
+  }
+  @JsonProperty("serviceCharacteristic")
+  public void setServiceCharacteristics(Set<ServiceCharacteristic> serviceCharacteristics) {
+    this.serviceCharacteristics = serviceCharacteristics;
+  }
+
+  @JsonProperty("serviceRelationship")
+  public Set<ServiceRelationship> getServiceRelationships() {
+    return serviceRelationships;
+  }
+  @JsonProperty("serviceRelationship")
+  public void setServiceRelationships(Set<ServiceRelationship> serviceRelationships) {
+    this.serviceRelationships = serviceRelationships;
   }
 
   public ServiceOrder getServiceOrder() {
@@ -313,41 +292,39 @@ public class Service {
     this.serviceOrder = serviceOrder;
   }
 
-  public Set<RelatedParty> getRelatedParty() {
+  @JsonProperty("relatedParty")
+  public Set<RelatedParty> getRelatedParties() {
     return relatedParties;
   }
-
-  public void setRelatedParty(Set<RelatedParty> relatedParty) { this.relatedParties = relatedParty; }
-
-  public Set<ServiceCharacteristic> getServiceCharacteristic() {
-    return serviceCharacteristics;
+  @JsonProperty("relatedParty")
+  public void setRelatedParties(Set<RelatedParty> relatedParties) {
+    this.relatedParties = relatedParties;
   }
 
-  public void setServiceCharacteristic(Set<ServiceCharacteristic> serviceCharacteristics) {
-    this.serviceCharacteristics = serviceCharacteristics;
-  }
-
-  public Set<ServiceRelationship> getServiceRelationship() {
-    return serviceRelationships;
-  }
-
-  public void setServiceRelationship(Set<ServiceRelationship> serviceRelationships) {
-    this.serviceRelationships = serviceRelationships;
-  }
-
-  public List<SupportingResource> getSupportingResource() {
+  @JsonProperty("supportingResource")
+  public List<SupportingResource> getSupportingResources() {
     return supportingResources;
   }
-
-  public void setSupportingResource(List<SupportingResource> supportingResource) {
-    this.supportingResources = supportingResource;
+  @JsonProperty("supportingResource")
+  public void setSupportingResources(List<SupportingResource> supportingResources) {
+    this.supportingResources = supportingResources;
   }
 
-  public List<SupportingService> getSupportingService() {
+  @JsonProperty("supportingService")
+  public List<SupportingService> getSupportingServices() {
     return supportingServices;
   }
 
-  public void setSupportingService(List<SupportingService> supportingService) {
-    this.supportingServices = supportingService;
+  @JsonProperty("supportingService")
+  public void setSupportingServices(List<SupportingService> supportingServices) {
+    this.supportingServices = supportingServices;
   }
+
+  //  public Set<SpecificEvent> getSpecificEvents() {
+//    return specificEvents;
+//  }
+//
+//  public void setSpecificEvents(Set<SpecificEvent> specificEvents) {
+//    this.specificEvents = specificEvents;
+//  }
 }
