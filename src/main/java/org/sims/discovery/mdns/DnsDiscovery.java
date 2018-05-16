@@ -141,6 +141,8 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println("Service added");
     System.out.println(event.getInfo());
     System.out.println("----------------------------------");
+    DnsService service = new DnsService(event.getInfo());
+    serviceAddSubject.onNext(service);
   }
 
   public void serviceRemoved(ServiceEvent event){
@@ -148,6 +150,8 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println(event.getInfo());
     System.out.println("----------------------------------");
     DnsService service = new DnsService(event.getInfo());
+
+    serviceRemoveSubject.onNext(service);
   }
 
   public void serviceResolved(ServiceEvent event){
@@ -160,6 +164,9 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println(String.format("Path: %s", event.getInfo().getPropertyString("path")));
     System.out.println(String.format("Server: %s", event.getInfo().getServer()));
     System.out.println("----------------------------------");
+    // Should use serviceUpdateSubject instead
+    DnsService service = new DnsService(event.getInfo());
+    serviceAddSubject.onNext(service);
   }
 
   public String getTypeDescriptor(){
