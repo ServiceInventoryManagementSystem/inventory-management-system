@@ -1,6 +1,5 @@
 pipeline:
   gradle-test:
-    group: gradle
     image: docker.faavne.no/lgradle:latest
     pull: true
     when:
@@ -14,10 +13,9 @@ pipeline:
 
     commands:
       - gradle --version
-      - gradle test --no-daemon
+      - gradle test
 
   gradle-build:
-    group: gradle
     image: docker.faavne.no/lgradle:latest
     pull: true
     when:
@@ -28,7 +26,7 @@ pipeline:
         
 
     commands:
-      - gradle build --no-daemon
+      - gradle build
   
   build-zip:
     image: kramos/alpine-zip
@@ -40,7 +38,7 @@ pipeline:
       - cp -r ./runners ./deploy
       - cp ./build/libs/* ./deploy
       - cd ./deploy
-      - for file in *.txt; do mv -- "$file" "${file%%.txt}" done
+      - for file in *.txt; do mv -- "$file" "$\{file%%.txt\}"; done
       - cd ..
       - zip -r sims-api_${DRONE_TAG}.zip ./deploy
 
