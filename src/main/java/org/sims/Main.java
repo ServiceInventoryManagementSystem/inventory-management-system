@@ -92,7 +92,7 @@ public class Main {
       String ip = env.getProperty("sims.bindIp");
       
       try{
-        if(iface != null){
+        if(!iface.isEmpty()){
           networkInterface = NetworkInterface.getByName(iface);
           Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
           while(addresses.hasMoreElements()){
@@ -104,7 +104,7 @@ public class Main {
           }
         }
   
-        if(ip != null){
+        if(!ip.isEmpty()){
           address = Inet4Address.getByName(ip);
         }
   
