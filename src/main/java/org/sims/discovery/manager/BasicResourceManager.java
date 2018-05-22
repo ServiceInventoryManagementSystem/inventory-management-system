@@ -24,13 +24,18 @@ public abstract class BasicResourceManager implements IResourceManager{
   
   
   public BasicResourceManager(){
+    open("./data/serviceref.json");
+  }
+
+
+  private void open(String file){
     objectMapper = new ObjectMapper();
     
     objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     ObjectReader objectReader = objectMapper.readerFor(HashMap.class);
 
     try{
-      serviceMap = objectReader.readValue(new File("./data/serviceref.json"));
+      serviceMap = objectReader.readValue(new File(file));
       for(String localRef : serviceMap.keySet()){
         String remoteId = serviceMap.get(localRef);
         put(localRef, remoteId);
@@ -40,6 +45,8 @@ public abstract class BasicResourceManager implements IResourceManager{
       serviceMap = new HashMap<String, String>();
       flush();
     }
+
+    
   }
 
   @Override
@@ -56,12 +63,11 @@ public abstract class BasicResourceManager implements IResourceManager{
   }
 
   private void put(String localRef, String remoteId){
-    serviceMap.putIfAbsent(localRef, remoteId);
-    reverseMap.putIfAbsent(remoteId, localRef);
+    serviceMap.put(localRef, remoteId);
+    reverseMap.put(remoteId, localRef);
   }
 
   private void remove(String remoteId){
-    System.out.println(reverseMap.containsKey(remoteId));
     if(reverseMap.containsKey(remoteId)){
       String localRef = reverseMap.get(remoteId);
       serviceMap.remove(localRef);
