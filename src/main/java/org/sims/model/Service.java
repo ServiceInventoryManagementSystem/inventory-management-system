@@ -65,7 +65,7 @@ public class Service {
   //---------------------------------------Relations------------------------------------------------------------------
   //---------------------------------------OneToOne-------------------------------------------------------------------
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   private ServiceSpecification serviceSpecification;
 
 
@@ -85,8 +85,8 @@ public class Service {
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ServiceCharacteristic> serviceCharacteristics = new ArrayList<>();
 
-//  @JsonManagedReference
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
+  @OneToMany(mappedBy = "owningService", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
