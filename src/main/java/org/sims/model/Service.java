@@ -22,16 +22,16 @@ public class Service {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-  private String uuid;
-
-  @JsonIgnore
-  public String getUuid() {
-    return uuid;
-  }
-
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
+//  private String uuid;
+//
+//  @JsonIgnore
+//  public String getUuid() {
+//    return uuid;
+//  }
+//
+//  public void setUuid(String uuid) {
+//    this.uuid = uuid;
+//  }
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
@@ -78,9 +78,6 @@ public class Service {
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Place> places = new HashSet<>();
 
-//  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-//  private List<ServiceCharacteristic> serviceCharacteristics;
-
   @JsonManagedReference
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ServiceCharacteristic> serviceCharacteristics = new ArrayList<>();
@@ -97,7 +94,7 @@ public class Service {
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
 //  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
-  @ManyToOne(cascade = {CascadeType.ALL})
+  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
   private ServiceOrder serviceOrder;
 
 
