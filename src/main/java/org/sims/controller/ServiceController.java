@@ -14,6 +14,7 @@ import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
@@ -85,21 +86,20 @@ public class ServiceController implements Serializable {
   //Method to return only the specified fields
   private MappingJacksonValue applyFieldFiltering(MappingJacksonValue mappingJacksonValue, MultiValueMap<String,
           String> params) {
-    SimpleFilterProvider filters;
+    SimpleFilterProvider filters = new SimpleFilterProvider();
     if (params.containsKey("fields")) {
       filters = (new SimpleFilterProvider()).addFilter("service",
               SimpleBeanPropertyFilter.filterOutAllExcept((params.getFirst("fields")).split(",")));
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     } else {
-      filters = (new SimpleFilterProvider()).addFilter("service", SimpleBeanPropertyFilter.serializeAll());
+      filters.setFailOnUnknownId(false);
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     }
   }
 
 
-  //TODO Handle queries in Swagger
   @ApiOperation(value="This operation list service entities.")
   @GetMapping("/service")
   @ResponseBody
@@ -124,9 +124,8 @@ public class ServiceController implements Serializable {
 
 
 
-  //TODO Return proper message back when resource isn't found (if(user==null))
   //Returns the service resource of the given id
-  @ApiOperation(value="This operation retrives a service entity.")
+  @ApiOperation(value="This operation retrieves a service entity.")
   @GetMapping("/service/{id}")
   @ResponseBody
   public MappingJacksonValue getService(
@@ -142,7 +141,7 @@ public class ServiceController implements Serializable {
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
 
     if(!service.isPresent()) {
-      return new MappingJacksonValue("No service with parameters: " + p.toString());
+      throw new ResourceNotFoundException();
     }
 
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -153,16 +152,14 @@ public class ServiceController implements Serializable {
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 
-  //TODO currently working, but need to find a better way to return the created object
   //Creates a service in the database from the service JSON passed. Returns the created object.
   @ApiOperation(value="This operation creates a service entity")
   @PostMapping("/service")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
   public MappingJacksonValue createService(@Valid @RequestBody Service service) {
-    SimpleFilterProvider filters;
-    filters = (new SimpleFilterProvider()).addFilter("service",
-            SimpleBeanPropertyFilter.serializeAll());
+    SimpleFilterProvider filters = new SimpleFilterProvider();
+    filters.setFailOnUnknownId(false);
     Service newService = serviceRepository.save(service);
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(newService);
     mappingJacksonValue.setFilters(filters);
@@ -183,27 +180,20 @@ public class ServiceController implements Serializable {
   //TODO Make it work in Swagger UI
   @ApiOperation(value="Partially updates a service entity")
   @Transactional
-  @CrossOrigin
-//  @PatchMapping(value = "/service/{id}")
-  @RequestMapping(value = "/service/{id}", method = RequestMethod.PATCH)
+  @PatchMapping(value = "/service/{id}")
   public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
     QService qService = QService.service;
     Predicate p = new BooleanBuilder();
     ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> optionalService = serviceRepository.findOne(p);
     if(!optionalService.isPresent()) {
-      System.out.println("return null");
-      return new MappingJacksonValue("No service with id = " + id);
+      throw new ResourceNotFoundException();
     }
     Service resource = optionalService.get();
-    if (contentType.equals("application/json")) {
+    if (contentType.equals("application/merge-patch+json")) {
       Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
-      System.out.println(patched.get().getCategory());
-      System.out.println(patched.get().getName());
-      System.out.println(patched.get().getId());
-      SimpleFilterProvider filters;
-      filters = (new SimpleFilterProvider()).addFilter("service",
-              SimpleBeanPropertyFilter.serializeAll());
+      SimpleFilterProvider filters = new SimpleFilterProvider();
+      filters.setFailOnUnknownId(false);
       MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
       mappingJacksonValue.setFilters(filters);
 //      SpecificNotification specificNotification = new SpecificNotification();
@@ -215,12 +205,11 @@ public class ServiceController implements Serializable {
 //      specificNotification.setSpecificEvent(specificEvent);
 //      specificNotificationRepository.save(specificNotification);
       return mappingJacksonValue;
-    }/*
+    }
     else if (contentType.equals("application/json-patch+json")) {
       try {
-        SimpleFilterProvider filters;
-        filters = (new SimpleFilterProvider()).addFilter("service",
-                SimpleBeanPropertyFilter.serializeAll());
+        SimpleFilterProvider filters = new SimpleFilterProvider();
+        filters.setFailOnUnknownId(false);
         if (updateResource.startsWith("[")) {
           Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
@@ -257,12 +246,12 @@ public class ServiceController implements Serializable {
           return new MappingJacksonValue("Not found");
         }
       }
+      //TODO Unsupported Content-Type exception
       return new MappingJacksonValue("No content");
-    }*/
+    }
     return new MappingJacksonValue("");
   }
 
-  //TODO Proper exception handling for invalid id
   //Deletes the service at the given id
   @ApiOperation(value="This operation deletes a service entity.")
   @DeleteMapping("/service/{id}")
@@ -273,7 +262,7 @@ public class ServiceController implements Serializable {
     ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> optionalService = serviceRepository.findOne(p);
     if(!optionalService.isPresent()) {
-      return;
+      throw new ResourceNotFoundException();
     }
 //    SpecificNotification specificNotification = new SpecificNotification();
 //    LocalDate localDate = LocalDate.now();
