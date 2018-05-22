@@ -182,7 +182,6 @@ public class ServiceController implements Serializable {
   }
 
 
-  //TODO Make it work in Swagger UI
   @ApiOperation(value = "Partially updates a service resource with the given id. Currently only RFC 7386 is supported in Swagger UI",
           consumes = "application/merge-patch+json")
   @Transactional
