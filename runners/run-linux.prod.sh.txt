@@ -1,0 +1,25 @@
+#What address to bind the server to
+SIMS_ADDR=localhost
+SIMS_PORT=3000
+
+# What interface\address should sims use for discovery
+# Use either SIMS_BIND_IF or SIMS_BIND_IP
+SIMS_BIND_IF=
+SIMS_BIND_IP=localhost
+
+# probing interval in seconds
+SIMS_PROBE_IV=10
+
+# mdns service types to look for 
+# use , or | as list seperator
+SIMS_MDNS_TYPES="_http._tcp.local.|localhost._http._tcp.local."
+
+
+# Extra prod config
+SIMS_DB_HOST=
+SIMS_DB=
+SIMS_DB_USER=
+SIMS_DB_PASS=
+
+
+java -jar ./sims-api.jar --spring.profiles.active=prod
