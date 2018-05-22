@@ -62,7 +62,7 @@ public class Main {
       resourceManager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
     );
     
-    DiscoveryManager manager = new DiscoveryManager(resourceManager);
+    DiscoveryManager manager = new DiscoveryManager(resourceManager, config.probeInterval);
 
     WsDiscovery.WsSettings wsSettings = new WsDiscovery.WsSettings(config.address);
     DnsDiscovery.DnsSettings dnsSettings = new DnsDiscovery.DnsSettings(config.address, ctx.getEnvironment());
@@ -76,6 +76,7 @@ public class Main {
 
   public static class SimsConfig{
     public InetAddress address;
+    public int probeInterval = 10;
     public SimsConfig(Environment env){
       NetworkInterface networkInterface = null;
       try{
@@ -110,6 +111,8 @@ public class Main {
       }catch(SocketException | UnknownHostException e){
         System.err.println(e);
       }
+
+      probeInterval = env.getProperty("sims.probeInterval", Integer.class, 10);
     }
   }
 

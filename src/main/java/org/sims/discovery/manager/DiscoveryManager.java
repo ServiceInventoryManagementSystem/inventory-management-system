@@ -54,7 +54,7 @@ public class DiscoveryManager{
   }
   
   public DiscoveryManager(IResourceManager resourceManager){
-    this(resourceManager, 5);
+    this(resourceManager, 10);
   }
 
   // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
