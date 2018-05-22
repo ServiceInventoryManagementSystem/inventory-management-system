@@ -13,6 +13,8 @@ import org.sims.controller.common.JsonPatcher;
 import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.MediaTypeNotSupportedStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -110,7 +115,7 @@ public class ServiceController implements Serializable {
     System.out.println("Predicate = " + predicate);
     System.out.println("Fields = " + fields);
 
-    Iterable<Service> services = this.serviceRepository.findAll(predicate);
+    Iterable<Service> services = serviceRepository.findAll(predicate);
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
 
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -177,7 +182,6 @@ public class ServiceController implements Serializable {
   }
 
 
-  //TODO Make it work in Swagger UI
   @ApiOperation(value = "Partially updates a service resource with the given id. Currently only RFC 7386 is supported in Swagger UI",
           consumes = "application/merge-patch+json")
   @Transactional
@@ -247,10 +251,8 @@ public class ServiceController implements Serializable {
           return new MappingJacksonValue("Not found");
         }
       }
-      //TODO Unsupported Content-Type exception
-      return new MappingJacksonValue("No content");
     }
-    return new MappingJacksonValue("");
+    throw new MediaTypeNotSupportedStatusException("Content-Type not supported");
   }
 
   //Deletes the service at the given id

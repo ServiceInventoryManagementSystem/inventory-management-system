@@ -51,7 +51,7 @@ public class ServiceControllerTest {
       fail();
     }
     Service s = ser.get();
-    assertEquals("name1", s.getName());
+    assertEquals("Email", s.getName());
   }
 
   @Test
@@ -68,8 +68,8 @@ public class ServiceControllerTest {
     if(serv == null) {
       fail();
     }
-    assertEquals("name1", serv.get(0).getName());
-    assertEquals("name2", serv.get(1).getName());
+    assertEquals("Email", serv.get(0).getName());
+    assertEquals("Search", serv.get(1).getName());
   }
 
   @Test
