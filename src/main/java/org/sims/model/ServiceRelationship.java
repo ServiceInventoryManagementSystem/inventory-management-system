@@ -1,5 +1,6 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,11 +15,13 @@ public class ServiceRelationship {
 
   private String type;
 
-  @ManyToOne
-  private Service service;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
+  @JoinColumn(name = "owning_service_id")
+  private Service owningService;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  private ServiceRef serviceRef;
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  private ServiceRef service;
 
   public String getType() {
     return type;
@@ -29,21 +32,20 @@ public class ServiceRelationship {
   }
 
   @JsonIgnore
-  public Service getService() {
+  public Service getOwningService() {
+    return owningService;
+  }
+
+  public void setOwningService(Service owningService) {
+    this.owningService = owningService;
+  }
+
+  public ServiceRef getService() {
     return service;
   }
 
-  public void setService(Service service) {
+  public void setServiceRef(ServiceRef service) {
     this.service = service;
-  }
-
-  @JsonProperty("service")
-  public ServiceRef getServiceRef() {
-    return serviceRef;
-  }
-
-  public void setServiceRef(ServiceRef serviceRef) {
-    this.serviceRef = serviceRef;
   }
 
   @JsonIgnore

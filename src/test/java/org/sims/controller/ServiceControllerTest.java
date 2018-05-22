@@ -9,6 +9,7 @@ import org.sims.model.QService;
 import org.sims.model.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -93,7 +94,7 @@ public class ServiceControllerTest {
     assertEquals("createdServiceCategory", createdService.getCategory());
   }
 
-  @Test
+  @Test(expected = ResourceNotFoundException.class)
   public void deleteService() {
     Service service = new Service();
     service.setName("createdServiceName");
@@ -117,6 +118,7 @@ public class ServiceControllerTest {
     assertEquals("createdServiceCategory", createdService.getCategory());
 
     serviceController.deleteService("3");
+
     Object emptyServiceObject = serviceController.getService("3", args, predicate).getValue();
     Optional<Service> optionalEmptyService = emptyServiceObject instanceof Optional ? ((Optional) emptyServiceObject) : Optional.empty();
     assertTrue(!optionalEmptyService.isPresent());

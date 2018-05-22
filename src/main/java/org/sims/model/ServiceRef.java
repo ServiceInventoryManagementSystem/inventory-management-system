@@ -18,7 +18,7 @@ public class ServiceRef {
   @ApiModelProperty(notes="reference of the service.")
   private String href;
 
-  @OneToOne(mappedBy = "serviceRef")
+  @OneToOne(mappedBy = "service")
   private ServiceRelationship serviceRelationship;
 
   public Long getId() {
@@ -47,11 +47,11 @@ public class ServiceRef {
   }
 
   @JsonProperty("id")
-  public String getTestId() {
+  public String getJsonId() {
     return jsonId;
   }
   @JsonProperty("id")
-  public void setTestId(String jsonId) {
+  public void setJsonId(String jsonId) {
     this.jsonId = jsonId;
   }
 }
