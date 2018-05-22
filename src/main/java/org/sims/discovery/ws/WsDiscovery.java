@@ -64,7 +64,7 @@ public class WsDiscovery implements IDiscoveryService{
     }
   }
   public Observable<IService> serviceAdded(){
-    return serviceAddSubject/*.distinct((IService s) -> {
+    return serviceAddSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
     });*/
   }
@@ -76,7 +76,7 @@ public class WsDiscovery implements IDiscoveryService{
   }
 
   public Observable<IService> serviceUpdated(){
-    return serviceUpdated();
+    return serviceUpdateSubject;
   }
 
   public boolean isRunning(){

@@ -22,6 +22,7 @@ import javax.validation.constraints.NotEmpty;
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
+import org.springframework.core.env.Environment;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -58,7 +59,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
       return s.getLocalReference();
     });*/
   } // emitts when service is created
-0
+
   public Observable<IService> serviceRemoved(){
     return serviceRemoveSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
@@ -178,19 +179,35 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   static public class DnsSettings extends DiscoverySettings{
     private String[] types;
     private InetAddress host;
-    private String name;
+    private String name = "DnsDiscovery";
     
+
+    public DnsSettings(InetAddress host){
+      this(host, "DnsDiscovery", "_http._tcp.local.");
+    }
+
     public DnsSettings(InetAddress host, String name, String... types){
       this.host = host;
       this.name = name;
       this.types = types;
     }
+
     public DnsSettings() throws UnknownHostException{
       this("_http._tcp.local.");
     }
 
     public DnsSettings(String... types) throws UnknownHostException{
       this(Inet4Address.getLocalHost(), "DnsDiscovery", types);
+    }
+
+    public DnsSettings(InetAddress host, Environment env){
+      String typeString = env.getProperty("sims.mdns.types");
+      if(typeString != null){
+        types = typeString.split("\\s*[,|]\\s*");
+      }else {
+        types = new String[]{"_http._tcp.local."};
+      }
+      this.host = host;
     }
   }
 }
