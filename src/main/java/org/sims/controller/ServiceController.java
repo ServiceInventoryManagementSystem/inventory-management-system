@@ -100,7 +100,7 @@ public class ServiceController implements Serializable {
   }
 
 
-  @ApiOperation(value="This operation list service entities.")
+  @ApiOperation(value = "Returns all service entities. ?fields= determines the fields that are returned. Querying is currently not supported in Swagger UI")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(
@@ -125,7 +125,7 @@ public class ServiceController implements Serializable {
 
 
   //Returns the service resource of the given id
-  @ApiOperation(value="This operation retrieves a service entity.")
+  @ApiOperation(value = "Returns the service entity with the given id. ?fields= determines the fields that are returned. Querying is currently not supported in Swagger UI")
   @GetMapping("/service/{id}")
   @ResponseBody
   public MappingJacksonValue getService(
@@ -153,7 +153,7 @@ public class ServiceController implements Serializable {
   }
 
   //Creates a service in the database from the service JSON passed. Returns the created object.
-  @ApiOperation(value="This operation creates a service entity")
+  @ApiOperation(value = "Creates a service entity")
   @PostMapping("/service")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
@@ -178,7 +178,8 @@ public class ServiceController implements Serializable {
 
 
   //TODO Make it work in Swagger UI
-  @ApiOperation(value="Partially updates a service entity")
+  @ApiOperation(value = "Partially updates a service resource with the given id. Currently only RFC 7386 is supported in Swagger UI",
+          consumes = "application/merge-patch+json")
   @Transactional
   @PatchMapping(value = "/service/{id}")
   public MappingJacksonValue patchService(@RequestHeader("Content-Type") String contentType, @PathVariable String id, @RequestBody String updateResource) {
@@ -253,7 +254,7 @@ public class ServiceController implements Serializable {
   }
 
   //Deletes the service at the given id
-  @ApiOperation(value="This operation deletes a service entity.")
+  @ApiOperation(value = "Deletes the service with the given id from the database.")
   @DeleteMapping("/service/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteService(@PathVariable String id) {
@@ -276,7 +277,7 @@ public class ServiceController implements Serializable {
   }
 
   //Deletes all services in the database
-  @ApiOperation(value="This operation deletes all service entities.")
+  @ApiOperation(value = "Deletes all service entities in the database.")
   @DeleteMapping("/service")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteServices() {
@@ -285,7 +286,7 @@ public class ServiceController implements Serializable {
 
 
 
-
+  @ApiOperation(value= "Seeds the database with some randomly generated services. Count is the number of services.")
   @GetMapping("/seed/{count}")
   @Transactional
   @ResponseStatus(HttpStatus.CREATED)
