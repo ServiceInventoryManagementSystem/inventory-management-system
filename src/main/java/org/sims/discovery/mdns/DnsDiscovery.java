@@ -22,6 +22,7 @@ import javax.validation.constraints.NotEmpty;
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
+import org.springframework.core.env.Environment;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -36,6 +37,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   private boolean running = false;
   private Subject<IService> dnsSubject;
   private Subject<IService> serviceAddSubject = PublishSubject.create();
+  private Subject<IService> serviceUpdateSubject = PublishSubject.create();
   private Subject<IService> serviceRemoveSubject = PublishSubject.create();
   
   private DnsSettings settings;
@@ -53,19 +55,19 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   }
   
   public Observable<IService> serviceAdded(){
-    return serviceAddSubject.distinct((IService s) -> {
+    return serviceAddSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
-    });
+    });*/
   } // emitts when service is created
 
   public Observable<IService> serviceRemoved(){
-    return serviceRemoveSubject.distinct((IService s) -> {
+    return serviceRemoveSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
-    });
+    });*/
   } // emitts when service no longer exists
 
   public Observable<IService> serviceUpdated(){
-    throw new UnsupportedOperationException("This method is not implemented");
+    return serviceUpdateSubject;
   }
   
 
@@ -166,7 +168,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println("----------------------------------");
     // Should use serviceUpdateSubject instead
     DnsService service = new DnsService(event.getInfo());
-    serviceAddSubject.onNext(service);
+    serviceUpdateSubject.onNext(service);
   }
 
   public String getTypeDescriptor(){
@@ -177,19 +179,35 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   static public class DnsSettings extends DiscoverySettings{
     private String[] types;
     private InetAddress host;
-    private String name;
+    private String name = "DnsDiscovery";
     
+
+    public DnsSettings(InetAddress host){
+      this(host, "DnsDiscovery", "_http._tcp.local.");
+    }
+
     public DnsSettings(InetAddress host, String name, String... types){
       this.host = host;
       this.name = name;
       this.types = types;
     }
+
     public DnsSettings() throws UnknownHostException{
       this("_http._tcp.local.");
     }
 
     public DnsSettings(String... types) throws UnknownHostException{
       this(Inet4Address.getLocalHost(), "DnsDiscovery", types);
+    }
+
+    public DnsSettings(InetAddress host, Environment env){
+      String typeString = env.getProperty("sims.mdns.types");
+      if(typeString != null){
+        types = typeString.split("\\s*[,|]\\s*");
+      }else {
+        types = new String[]{"_http._tcp.local."};
+      }
+      this.host = host;
     }
   }
 }

@@ -54,7 +54,7 @@ public class DiscoveryManager{
   }
   
   public DiscoveryManager(IResourceManager resourceManager){
-    this(resourceManager, 60);
+    this(resourceManager, 10);
   }
 
   // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
@@ -82,7 +82,9 @@ public class DiscoveryManager{
         IDiscoveryService service = discovery.getConstructor(new Class[]{DiscoverySettings.class}).newInstance(serviceSettings.get(discovery));
         discoveryServices.add(service);
         subscriptions.add(service.serviceAdded().subscribe(this::addService));
+        subscriptions.add(service.serviceUpdated().subscribe(this::updateService));
         subscriptions.add(service.serviceRemoved().subscribe(this::removeService));
+
       }catch(Exception e) {
         System.err.println(e);
       }
@@ -110,6 +112,7 @@ public class DiscoveryManager{
         }
       }
     };
+    probingThread.start();
   }
 
   private void stopProbing(){
@@ -171,6 +174,7 @@ public class DiscoveryManager{
 
   public void updateService(IService service){
     System.out.println("Updating service...");
+    addService(service);
   }
 
   public void removeService(IService service){
