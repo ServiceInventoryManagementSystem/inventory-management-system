@@ -33,6 +33,7 @@ public class WsService extends ServiceAdapter{
     this.service = service;
     href = service.getXAddrs().get(0);
     ref = service.getEndpointReference().getAddress().toString();
+    name = service.getPortTypes().get(0).toString();
   }
 
 
