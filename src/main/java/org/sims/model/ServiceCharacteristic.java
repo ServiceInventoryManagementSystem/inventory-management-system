@@ -1,5 +1,6 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,6 +19,8 @@ public class ServiceCharacteristic {
   private String value;
 
   @ManyToOne
+  @JsonBackReference
+  @JoinColumn(name="service_id")
   private Service service;
 
   public String getName() {
@@ -50,7 +53,7 @@ public class ServiceCharacteristic {
     return id;
   }
 
-  @JsonIgnore
+//  @JsonIgnore
   public void setId(Long id) {
     this.id = id;
   }

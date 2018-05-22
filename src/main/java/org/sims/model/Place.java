@@ -1,5 +1,6 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -19,6 +20,7 @@ public class Place {
   private String role;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
   @JoinColumn(name = "service_id")
   private Service service;
 

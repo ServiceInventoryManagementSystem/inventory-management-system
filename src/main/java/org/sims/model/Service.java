@@ -2,6 +2,7 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.CreationTimestamp;
@@ -69,16 +70,23 @@ public class Service {
 
 
   //--------------------------------------OneToMany-------------------------------------------------------------------
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Note> notes = new HashSet<>();
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Place> places = new HashSet<>();
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-  private Set<ServiceCharacteristic> serviceCharacteristics = new HashSet<>();
+//  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+//  private List<ServiceCharacteristic> serviceCharacteristics;
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ServiceCharacteristic> serviceCharacteristics = new ArrayList<>();
+
+//  @JsonManagedReference
+  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
   @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
@@ -95,19 +103,19 @@ public class Service {
 
   //----------------------------------------ManyToMany----------------------------------------------------------------
 
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(name = "SERVICE_RELATED_PARTY",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
           inverseJoinColumns = @JoinColumn(name = "RELATED_PARTY_ID"))
   private Set<RelatedParty> relatedParties = new HashSet<>();
 
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(name = "SERVICE_SUPPORTING_RESOURCE",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
           inverseJoinColumns = @JoinColumn(name = "SUPPORTING_RESOURCE_ID"))
   private List<SupportingResource> supportingResources = new ArrayList<>();
 
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(name = "SERVICE_SUPPORTING_SERVICE",
           joinColumns = @JoinColumn(name = "SERVICE_ID"),
           inverseJoinColumns = @JoinColumn(name = "SUPPORTING_SERVICE_ID"))
@@ -267,11 +275,11 @@ public class Service {
   }
 
   @JsonProperty("serviceCharacteristic")
-  public Set<ServiceCharacteristic> getServiceCharacteristics() {
+  public List<ServiceCharacteristic> getServiceCharacteristics() {
     return serviceCharacteristics;
   }
   @JsonProperty("serviceCharacteristic")
-  public void setServiceCharacteristics(Set<ServiceCharacteristic> serviceCharacteristics) {
+  public void setServiceCharacteristics(List<ServiceCharacteristic> serviceCharacteristics) {
     this.serviceCharacteristics = serviceCharacteristics;
   }
 
