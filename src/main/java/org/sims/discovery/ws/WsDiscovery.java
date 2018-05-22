@@ -44,6 +44,7 @@ public class WsDiscovery implements IDiscoveryService{
   
   private Subject<IService> serviceAddSubject = PublishSubject.create();
   private Subject<IService> serviceRemoveSubject = PublishSubject.create();
+  private Subject<IService> serviceUpdateSubject = PublishSubject.create();
   
   private HashMap<String, IService> serviceMap = new HashMap<String, IService>();
 
@@ -63,19 +64,19 @@ public class WsDiscovery implements IDiscoveryService{
     }
   }
   public Observable<IService> serviceAdded(){
-    return serviceAddSubject.distinct((IService s) -> {
+    return serviceAddSubject/*.distinct((IService s) -> {
       return s.getLocalReference();
-    });
+    });*/
   }
   
   public Observable<IService> serviceRemoved(){
-    return serviceRemoveSubject.distinct((IService s) -> {
+    return serviceRemoveSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
-    });
+    });*/
   }
 
   public Observable<IService> serviceUpdated(){
-    throw new UnsupportedOperationException("This method is not implemented");
+    return serviceUpdated();
   }
 
   public boolean isRunning(){

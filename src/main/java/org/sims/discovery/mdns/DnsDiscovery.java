@@ -36,6 +36,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   private boolean running = false;
   private Subject<IService> dnsSubject;
   private Subject<IService> serviceAddSubject = PublishSubject.create();
+  private Subject<IService> serviceUpdateSubject = PublishSubject.create();
   private Subject<IService> serviceRemoveSubject = PublishSubject.create();
   
   private DnsSettings settings;
@@ -53,19 +54,19 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   }
   
   public Observable<IService> serviceAdded(){
-    return serviceAddSubject.distinct((IService s) -> {
+    return serviceAddSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
-    });
+    });*/
   } // emitts when service is created
-
+0
   public Observable<IService> serviceRemoved(){
-    return serviceRemoveSubject.distinct((IService s) -> {
+    return serviceRemoveSubject;/*.distinct((IService s) -> {
       return s.getLocalReference();
-    });
+    });*/
   } // emitts when service no longer exists
 
   public Observable<IService> serviceUpdated(){
-    throw new UnsupportedOperationException("This method is not implemented");
+    return serviceUpdateSubject;
   }
   
 
@@ -166,7 +167,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     System.out.println("----------------------------------");
     // Should use serviceUpdateSubject instead
     DnsService service = new DnsService(event.getInfo());
-    serviceAddSubject.onNext(service);
+    serviceUpdateSubject.onNext(service);
   }
 
   public String getTypeDescriptor(){
