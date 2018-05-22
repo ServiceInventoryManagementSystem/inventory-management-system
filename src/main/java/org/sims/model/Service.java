@@ -22,16 +22,16 @@ public class Service {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-//  private String uuid;
-//
-//  @JsonIgnore
-//  public String getUuid() {
-//    return uuid;
-//  }
-//
-//  public void setUuid(String uuid) {
-//    this.uuid = uuid;
-//  }
+  private String uuid;
+
+  @JsonIgnore
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
