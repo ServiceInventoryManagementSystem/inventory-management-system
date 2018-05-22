@@ -4,8 +4,8 @@ INSERT INTO SERVICE_SPECIFICATION (id, json_id, href, name, version) VALUES (2, 
 INSERT INTO SERVICE_ORDER (id, json_id, href) VALUES (1, 1, 'href1');
 INSERT INTO SERVICE_ORDER (id, json_id, href) VALUES (2, 2, 'href2');
 
-INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_id, service_specification_id) VALUES (1, 'CFS', 'Description of service 1', '2017-11-15T08:22:12+01:00', true, 'http://server:port/serviceInventoryManagement/service/1', true, true, 'name1', '2017-11-15T08:22:12+01:00', '2017-11-15T08:22:12+01:00', 'startMode1', 'state1', 'type1', 2, 1);
-INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_id, service_specification_id) VALUES (2, 'RFS', 'Description of service 2', '2017-11-15T08:22:12+01:00', false, 'http://server:port/serviceInventoryManagement/service/2', false, false, 'name2', '2017-11-15T08:22:12+01:00', '2017-11-15T08:22:12+01:00', 'startMode2', 'state2', 'type2', 1, 2);
+INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_id, service_specification_id) VALUES (1, 'CFS', 'Description of service 1', '2017-11-15T08:22:12+01:00', true, 'http://server:port/serviceInventoryManagement/service/1', true, true, 'Email', '2017-11-15T08:22:12+01:00', '2017-11-15T08:22:12+01:00', 'startMode1', 'state1', 'type1', 2, 1);
+INSERT INTO SERVICE (id, category, description, end_date, has_started, href, is_service_enabled, is_stateful, name, order_date, start_date, start_mode, state, type, service_order_id, service_specification_id) VALUES (2, 'RFS', 'Description of service 2', '2017-11-15T08:22:12+01:00', false, 'http://server:port/serviceInventoryManagement/service/2', false, false, 'Search', '2017-11-15T08:22:12+01:00', '2017-11-15T08:22:12+01:00', 'startMode2', 'state2', 'type2', 1, 2);
 
 INSERT INTO RELATED_PARTY (id, json_id, href, name, role, valid_for) VALUES (1, 1, 'href1', 'name1', 'role1', 'validFor1');
 INSERT INTO RELATED_PARTY (id, json_id, href, name, role, valid_for) VALUES (2, 2, 'href2', 'name2', 'role2', 'validFor2');
@@ -30,9 +30,9 @@ INSERT INTO SERVICE_REF (id, json_id, href) VALUES (1, 1, 'href1');
 INSERT INTO SERVICE_REF (id, json_id, href) VALUES (2, 2, 'href2');
 INSERT INTO SERVICE_REF (id, json_id, href) VALUES (3, 3, 'href3');
 
-INSERT INTO SERVICE_RELATIONSHIP (ID, TYPE, SERVICE_ID, SERVICE_REF_ID) VALUES (1, 'type1', 1, 1);
-INSERT INTO SERVICE_RELATIONSHIP (ID, TYPE, SERVICE_ID, SERVICE_REF_ID) VALUES (2, 'type2', 2, 2);
-INSERT INTO SERVICE_RELATIONSHIP (ID, TYPE, SERVICE_ID, SERVICE_REF_ID) VALUES (3, 'type3', 2, 3);
+INSERT INTO SERVICE_RELATIONSHIP (ID, TYPE, owning_SERVICE_ID, SERVICE_ID) VALUES (1, 'type1', 1, 1);
+INSERT INTO SERVICE_RELATIONSHIP (ID, TYPE, owning_SERVICE_ID, SERVICE_ID) VALUES (2, 'type2', 2, 2);
+INSERT INTO SERVICE_RELATIONSHIP (ID, TYPE, owning_SERVICE_ID, SERVICE_ID) VALUES (3, 'type3', 2, 3);
 
 INSERT INTO SUPPORTING_RESOURCE (id, json_id, href, name) VALUES (1, 1, 'href1', 'name1');
 INSERT INTO SUPPORTING_RESOURCE (id, json_id, href, name) VALUES (2, 2, 'href2', 'name2');
