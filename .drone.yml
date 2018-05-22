@@ -26,12 +26,25 @@ pipeline:
         - deployment
         - tag
         
-      branch:
-        - staging
 
     commands:
       - gradle build --no-daemon
   
+  build-zip:
+    image: kramos/alpine-zip
+    group: docker
+    when:
+      event:
+        - tag
+    commands:
+      - cp -r ./runners ./deploy
+      - cp ./build/libs/* ./deploy
+      - cd ./deploy
+      - for file in *.txt; do mv -- "$file" "${file%%.txt}" done
+      - cd ..
+      - zip -r sims-api_${DRONE_TAG}.zip ./deploy
+
+
   docker-build:
     group: docker
     image: plugins/docker
@@ -56,8 +69,6 @@ pipeline:
     when:
       event:
         - tag
-      branch:
-        - staging
       
     repo: docker.faavne.no/sims
     registry: docker.faavne.no
@@ -67,8 +78,25 @@ pipeline:
       - ${DRONE_TAG}
       - stable
 
+  deploy-zip:
+    group: deploy
+    image: appleboy/drone-scp
+    host: faavne.no
+    username: root
+    key_path: /ssh/id_rsa
+    when:
+      event:
+        - tag
+    target:
+      - /mnt/nginx-fs/files/public/sims/releases/sims-api
+    source:
+      - ./sims-api_${DRONE_TAG}.zip
+    volumes:
+      - /root/.ssh/id_rsa:/ssh/id_rsa
+
   deploy:
     image: appleboy/drone-ssh
+    group: deploy
     host: faavne.no
     port: 22
     username: root
