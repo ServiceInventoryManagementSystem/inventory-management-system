@@ -86,14 +86,12 @@ public class Service {
   @OneToMany(mappedBy = "owningService", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-  private Set<SpecificEvent> specificEvents = new HashSet<>();
-
+//  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+//  private Set<SpecificEvent> specificEvents = new HashSet<>();
 
 
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
-//  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
   private ServiceOrder serviceOrder;
 
@@ -121,8 +119,7 @@ public class Service {
 
   //-----------------------------------------Constructor--------------------------------------------------------------
 
-  public Service() {
-  }
+  public Service() {}
 
 
   //-----------------------------Getters and Setters for non-relations------------------------------------------------

@@ -1,25 +1,16 @@
 package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Component
 public class SpecificEvent {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private String id;
 
-  @ManyToOne(cascade = {CascadeType.DETACH})
   private Service service;
-
-  @ManyToOne
-  @JoinColumn(name = "specific_resource_id")
-  private SpecificResource specificResource;
-
-  @OneToMany(mappedBy = "specificEvent", cascade = CascadeType.ALL)
   private Set<SpecificNotification> specificNotifications = new HashSet<>();
 
   public Service getService() {

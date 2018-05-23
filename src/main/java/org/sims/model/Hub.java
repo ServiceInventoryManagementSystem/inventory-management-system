@@ -15,16 +15,20 @@ public class Hub {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-  @JsonProperty("id")
-  private String serviceId;
   private String callback;
 
-  public String getServiceId() {
-    return serviceId;
+  private String query = null;
+
+  public String getId() {
+    return id;
   }
 
-  public void setServiceId(String serviceId) {
-    this.serviceId = serviceId;
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getQuery() {
+    return query;
   }
 
   public String getCallback() {

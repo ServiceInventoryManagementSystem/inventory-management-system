@@ -96,6 +96,8 @@ dependencies {
 //    compile 'io.springfox.ui:springfox-swagger-ui-rfc6570:1.0.0'
 
     compile("org.apache.commons:commons-lang3:3.0")
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
+
 
     compile(group: "com.github.fge", name: "json-patch", version: "1.9");
 

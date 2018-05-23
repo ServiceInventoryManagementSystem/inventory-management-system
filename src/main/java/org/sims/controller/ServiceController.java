@@ -8,15 +8,22 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.sims.controller.common.JsonMergePatcher;
 import org.sims.controller.common.JsonPatcher;
 import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
@@ -24,12 +31,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.MediaTypeNotSupportedStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Random;
@@ -56,7 +66,7 @@ public class ServiceController implements Serializable {
   private JsonMergePatcher jsonMergePatcher;
 
   private SpecificNotificationRepository specificNotificationRepository;
-  private SpecificEventRepository specificEventRepository;
+//  private SpecificEventRepository specificEventRepository;
 
 
   @Autowired
@@ -69,8 +79,8 @@ public class ServiceController implements Serializable {
                            SupportingResourceRepository supportingResourceRepository,
                            SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
                            JsonMergePatcher jsonMergePatcher,
-                           SpecificNotificationRepository specificNotificationRepository,
-                           SpecificEventRepository specificEventRepository) {
+                           SpecificNotificationRepository specificNotificationRepository/*,
+                           SpecificEventRepository specificEventRepository*/) {
     this.serviceRepository = serviceRepository;
     this.noteRepository = noteRepository;
     this.placeRepository = placeRepository;
@@ -84,8 +94,8 @@ public class ServiceController implements Serializable {
     this.supportingServiceRepository = supportingServiceRepository;
     this.jsonPatcher = jsonPatcher;
     this.jsonMergePatcher = jsonMergePatcher;
-    this.specificNotificationRepository = specificNotificationRepository;
-    this.specificEventRepository = specificEventRepository;
+    this.specificNotificationRepository = specificNotificationRepository;/*
+    this.specificEventRepository = specificEventRepository;*/
   }
 
   //Method to return only the specified fields
@@ -169,15 +179,30 @@ public class ServiceController implements Serializable {
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(newService);
     mappingJacksonValue.setFilters(filters);
 
-//    SpecificNotification specificNotification = new SpecificNotification();
-//    LocalDate localDate = LocalDate.now();
-//    specificNotification.setEventTime(localDate.toString());
-//    specificNotification.setEventType("ServiceCreationNotification");
-//    SpecificEvent specificEvent = new SpecificEvent();
-//    specificEvent.setService(newService);
-//    specificNotification.setSpecificEvent(specificEvent);
-//    specificNotificationRepository.save(specificNotification);
+    Event event = new Event();
+    event.setEventType("ServiceCreationNotification");
 
+    SpecificNotification specificNotification = new SpecificNotification();
+    specificNotification.setEventType("ServiceCreationNotification");
+    SpecificEvent specificEvent = new SpecificEvent();
+    specificEvent.setService(newService);
+    specificNotification.setSpecificEvent(specificEvent);
+    event.setSpecificNotification(specificNotification);
+    specificNotificationRepository.save(specificNotification);
+    System.out.println(specificNotification);
+
+    System.out.println("Before restTemplate");
+    RestTemplate restTemplate = new RestTemplate();
+    HttpEntity<Event> request = new HttpEntity<>(event);
+    System.out.println(request);
+    System.out.println("Before postForLocation");
+
+    MappingJacksonValue mjv = new MappingJacksonValue(event);
+    mjv.setFilters(filters);
+
+    String response = restTemplate.postForObject("http://ptsv2.com/t/9n0am-1527094808", mjv.getValue(), String.class);
+
+    System.out.println(response);
     return mappingJacksonValue;
   }
 
