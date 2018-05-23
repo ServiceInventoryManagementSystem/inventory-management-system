@@ -15,8 +15,8 @@ $env:SIMS_PROBE_IV=10
 $env:SIMS_MDNS_TYPES="_http._tcp.local.|localhost._http._tcp.local."
 
 # Authentication
-$env:SIMS_AUTH_USERNAME=username
-$env:SIMS_AUTH_PASSWORD=password
+$env:SIMS_AUTH_USERNAME="admin"
+$env:SIMS_AUTH_PASSWORD="password"
 
 # What HTTP actions do we want to allow (OPTIONS should not be restricted!)
 # Add all actions to disable security

@@ -15,7 +15,7 @@ export SIMS_PROBE_IV=10
 export SIMS_MDNS_TYPES="_http._tcp.local.|localhost._http._tcp.local."
 
 # Authentication
-export SIMS_AUTH_USERNAME=username
+export SIMS_AUTH_USERNAME=admin
 export SIMS_AUTH_PASSWORD=password
 
 # What HTTP actions do we want to allow (OPTIONS should not be restricted!)
