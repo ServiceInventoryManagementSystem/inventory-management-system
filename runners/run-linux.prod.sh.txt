@@ -14,6 +14,15 @@ export SIMS_PROBE_IV=10
 # use , or | as list seperator
 export SIMS_MDNS_TYPES="_http._tcp.local.|localhost._http._tcp.local."
 
+# Authentication
+export SIMS_AUTH_USERNAME=username
+export SIMS_AUTH_PASSWORD=password
+
+# What HTTP actions do we want to allow (OPTIONS should not be restricted!)
+# Add all actions to disable security
+# use , or | as list seperator
+export SIMS_AUTH_ALLOW="OPTIONS|GET|HEAD"
+
 
 # Extra prod config
 export SIMS_DB_HOST=
@@ -23,3 +32,5 @@ export SIMS_DB_PASS=
 
 
 java -jar ./sims-api.jar --spring.profiles.active=prod
+
+
