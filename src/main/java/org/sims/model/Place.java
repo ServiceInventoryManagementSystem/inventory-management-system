@@ -1,5 +1,6 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -10,14 +11,16 @@ import javax.persistence.*;
 public class Place {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ApiModelProperty(notes="Id of the place")
-  private String id;
+  private Long id;
+
   @ApiModelProperty(notes="Referance of a place (for instance in google map).")
   private String href;
+
   @ApiModelProperty(notes="Role of the place (for instance delivery geographical place.)")
   private String role;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
   @JoinColumn(name = "service_id")
   private Service service;
 
@@ -31,14 +34,6 @@ public class Place {
 
   public void setService(Service service) {
     this.service = service;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getHref() {
@@ -55,5 +50,15 @@ public class Place {
 
   public void setRole(String role) {
     this.role = role;
+  }
+
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
+
+  @JsonIgnore
+  public void setId(Long id) {
+    this.id = id;
   }
 }

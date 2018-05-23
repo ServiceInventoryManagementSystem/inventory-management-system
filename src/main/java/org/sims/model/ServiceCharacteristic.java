@@ -1,5 +1,6 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -10,23 +11,17 @@ import javax.persistence.*;
 public class ServiceCharacteristic {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ApiModelProperty(notes="Id of the the characteristic.")
-  private String id;
+  private Long id;
+
   @ApiModelProperty(notes="Name of the characteristic.")
   private String name;
   @ApiModelProperty(notes="Value of the characteristic.")
   private String value;
 
   @ManyToOne
+  @JsonBackReference
+  @JoinColumn(name="service_id")
   private Service service;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public String getName() {
     return name;
@@ -51,5 +46,15 @@ public class ServiceCharacteristic {
 
   public void setService(Service service) {
     this.service = service;
+  }
+
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
+
+//  @JsonIgnore
+  public void setId(Long id) {
+    this.id = id;
   }
 }

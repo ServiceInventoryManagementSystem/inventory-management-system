@@ -63,10 +63,11 @@ dependencies {
 
 
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-hateoas')
 
-//    compile("org.springframework.boot:spring-boot-starter-data-rest")
+    compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile('org.springframework.boot:spring-boot-starter-actuator')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
@@ -135,5 +136,5 @@ sourceSets {
 
 //jar {
 //    baseName = "sims-rest"
-//    version = "0.1.0"
+//    version = "1.0.0-SNAPSHOT"
 //}

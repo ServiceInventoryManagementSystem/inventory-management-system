@@ -1,0 +1,26 @@
+#What address to bind the server to
+$env:SIMS_ADDR="localhost"
+$env:SIMS_PORT=3000
+
+# What interface\address should sims use for discovery
+# Use either SIMS_BIND_IF or SIMS_BIND_IP
+$env:SIMS_BIND_IF=
+$env:SIMS_BIND_IP="localhost"
+
+# probing interval in seconds
+$env:SIMS_PROBE_IV=10
+
+# mdns service types to look for 
+# use , or | as list seperator
+$env:SIMS_MDNS_TYPES="_http._tcp.local.|localhost._http._tcp.local."
+
+# Authentication
+$env:SIMS_AUTH_USERNAME=username
+$env:SIMS_AUTH_PASSWORD=password
+
+# What HTTP actions do we want to allow (OPTIONS should not be restricted!)
+# Add all actions to disable security
+# use , or | as list seperator
+$env:SIMS_AUTH_ALLOW="OPTIONS|GET|HEAD"
+
+java -jar ./sims-api.jar --spring.profiles.active=env

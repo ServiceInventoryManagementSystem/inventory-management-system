@@ -1,5 +1,8 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -8,26 +11,17 @@ import javax.persistence.*;
 public class ServiceRelationship {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ApiModelProperty(notes="")
-  private String id;
+  private Long id;
 
-  @ApiModelProperty(notes="")
   private String type;
 
-  //TODO find a better name
-  @ManyToOne
-  private Service serviceRel;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
+  @JoinColumn(name = "owning_service_id")
+  private Service owningService;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   private ServiceRef service;
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public String getType() {
     return type;
@@ -37,20 +31,30 @@ public class ServiceRelationship {
     this.type = type;
   }
 
-//  @JsonIgnore
-//  public Service getService() {
-//    return service;
-//  }
+  @JsonIgnore
+  public Service getOwningService() {
+    return owningService;
+  }
 
-  public void setServiceRel(Service serviceRel) {
-    this.serviceRel = serviceRel;
+  public void setOwningService(Service owningService) {
+    this.owningService = owningService;
   }
 
   public ServiceRef getService() {
     return service;
   }
 
-  public void setService(ServiceRef service) {
+  public void setServiceRef(ServiceRef service) {
     this.service = service;
+  }
+
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
+
+  @JsonIgnore
+  public void setId(Long id) {
+    this.id = id;
   }
 }

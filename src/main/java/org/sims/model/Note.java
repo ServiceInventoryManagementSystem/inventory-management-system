@@ -1,27 +1,29 @@
 package org.sims.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 @Entity
 public class Note {
   @Id
-//  @ApiModelProperty(notes="Id of the note.")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private String id;
+  private Long id;
 
   @ApiModelProperty(notes="Author of the note.")
   private String author;
 
   @ApiModelProperty(notes="Date of the note.")
-  private String date;
+  private OffsetDateTime date;
 
   @ApiModelProperty(notes="Text of the note.")
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JsonBackReference
   @JoinColumn(name = "service_id")
   private Service service;
 
@@ -37,14 +39,6 @@ public class Note {
     this.service = service;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getAuthor() {
     return author;
   }
@@ -53,11 +47,11 @@ public class Note {
     this.author = author;
   }
 
-  public String getDate() {
+  public OffsetDateTime getDate() {
     return date;
   }
 
-  public void setDate(String date) {
+  public void setDate(OffsetDateTime date) {
     this.date = date;
   }
 
@@ -67,5 +61,15 @@ public class Note {
 
   public void setText(String text) {
     this.text = text;
+  }
+
+  @JsonIgnore
+  public Long getId() {
+    return id;
+  }
+
+  @JsonIgnore
+  public void setId(Long id) {
+    this.id = id;
   }
 }

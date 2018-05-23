@@ -1,5 +1,8 @@
 package org.sims.discovery.ws;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +25,7 @@ import com.ms.wsdiscovery.WsDiscoveryConstants;
 
 import org.reactivestreams.Publisher;
 import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IService;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -41,15 +44,17 @@ public class WsDiscovery implements IDiscoveryService{
   
   private Subject<IService> serviceAddSubject = PublishSubject.create();
   private Subject<IService> serviceRemoveSubject = PublishSubject.create();
+  private Subject<IService> serviceUpdateSubject = PublishSubject.create();
   
   private HashMap<String, IService> serviceMap = new HashMap<String, IService>();
 
 
   private boolean run = false;
   private Thread notifyThread;
-  
-  public WsDiscovery(){
+  private WsSettings settings;
+  public WsDiscovery(DiscoverySettings settings){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
+    this.settings = (WsSettings)settings;
     try{
       server = new WsDiscoveryServer();
       server.start();
@@ -59,19 +64,19 @@ public class WsDiscovery implements IDiscoveryService{
     }
   }
   public Observable<IService> serviceAdded(){
-    return serviceAddSubject.distinct((IService s) -> {
-      return s.getUUID();
-    });
+    return serviceAddSubject;/*.distinct((IService s) -> {
+      return s.getLocalReference();
+    });*/
   }
   
   public Observable<IService> serviceRemoved(){
-    return serviceRemoveSubject.distinct((IService s) -> {
-      return s.getUUID();
-    });
+    return serviceRemoveSubject;/*.distinct((IService s) -> {
+      return s.getLocalReference();
+    });*/
   }
 
   public Observable<IService> serviceUpdated(){
-    throw new UnsupportedOperationException("This method is not implemented");
+    return serviceUpdateSubject;
   }
 
   public boolean isRunning(){
@@ -139,11 +144,6 @@ public class WsDiscovery implements IDiscoveryService{
 
   public void stop(){
     if(notifyThread != null){
-      /*try{
-        notifyThread.join();
-      } catch(Exception e){
-        System.err.println(e);
-      }*/
       run = false;
     }
   }
@@ -199,6 +199,17 @@ public class WsDiscovery implements IDiscoveryService{
 
   public String getTypeDescriptor(){
     return "WS-DISCOVERY";
+  }
+
+  static public class WsSettings extends DiscoverySettings{
+    private InetAddress  host; 
+    public WsSettings(InetAddress host){
+      this.host = host;
+    }
+
+    public WsSettings() throws UnknownHostException{
+      this(Inet4Address.getLocalHost());
+    }
   }
 
 }

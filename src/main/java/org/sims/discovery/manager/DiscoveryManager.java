@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 import org.reactivestreams.Subscription;
 import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.IService;
+import org.sims.discovery.models.IService;
+import org.sims.discovery.IDiscoveryService.DiscoverySettings;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,11 @@ import io.reactivex.disposables.Disposable;
 // Class that manages multiple discovery mechanisms
 public class DiscoveryManager{
   
-  @Autowired
-  ServiceRepository serviceRepo;
 
   List<IDiscoveryService> discoveryServices = new ArrayList<IDiscoveryService>();
   Set<Class<? extends IDiscoveryService>> serviceClasses = new HashSet<Class<? extends IDiscoveryService>>();
 
+  HashMap<Class<? extends IDiscoveryService>, DiscoverySettings> serviceSettings = new HashMap<Class<? extends IDiscoveryService>, DiscoverySettings>();
   // Map IService to database entry 
   Map<IService, Long> databaseMap = new HashMap<IService, Long>(50);
   
@@ -42,38 +42,49 @@ public class DiscoveryManager{
   private Thread probingThread;
   private boolean runProbe = false;
 
+  private IResourceManager resourceManager;
 
   // is the manger initialized?
   private boolean init = false;
 
   // probeInterval is a prefered value
-  public DiscoveryManager(float probeInterval){
+  public DiscoveryManager(IResourceManager resourceManager, float probeInterval){
+    this.resourceManager = resourceManager;
     this.probeInterval = probeInterval;
   }
   
-  public DiscoveryManager(){
-    this(60);
+  public DiscoveryManager(IResourceManager resourceManager){
+    this(resourceManager, 10);
   }
 
   // Register a discovery mechanism to be used, if manager is already initialized all otehr mechanisms
   // have to be disposed before calling initAll
-  public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
+  public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass, DiscoverySettings settings){
     
     serviceClasses.add(serviceClass);
-    // find all services managed by this class
-    
+    serviceSettings.put(serviceClass, settings);
+  }
+
+  public void registerDiscovery(Class<? extends IDiscoveryService> serviceClass){
+    registerDiscovery(serviceClass, null);
   }
 
   public void initAll(){
     if(init){
       throw new IllegalStateException("Manager has already been initialized");
     }
+
+    this.resourceManager.getOwnedServices();
+
+
     for(Class<? extends IDiscoveryService> discovery : serviceClasses){
       try{
-        IDiscoveryService service = discovery.getConstructor().newInstance();
+        IDiscoveryService service = discovery.getConstructor(new Class[]{DiscoverySettings.class}).newInstance(serviceSettings.get(discovery));
         discoveryServices.add(service);
         subscriptions.add(service.serviceAdded().subscribe(this::addService));
+        subscriptions.add(service.serviceUpdated().subscribe(this::updateService));
         subscriptions.add(service.serviceRemoved().subscribe(this::removeService));
+
       }catch(Exception e) {
         System.err.println(e);
       }
@@ -101,6 +112,7 @@ public class DiscoveryManager{
         }
       }
     };
+    probingThread.start();
   }
 
   private void stopProbing(){
@@ -151,49 +163,23 @@ public class DiscoveryManager{
       .collect(Collectors.toList());
   }
 
-  //Service was discovered
-  private void addService(IService s){
-    String UUID = s.getUUID();
-    Service example = new Service();
-    example.setUuid(UUID);
-
-//    Service entry = serviceRepo.findOne(Example.of(example));
-    Service entry = serviceRepo.getByUuid(UUID);
-
-    //Service entry = new Service();
-    if(entry == null){
-      System.out.println("Service does not already exist creating");
-      entry = new Service();
-      // Map IService to Service, should be moved to helper method
-      entry.setUuid(UUID);
-      entry.setHasStarted(s.hasStarted());
-      entry.setDescription(s.getDescription());
-      entry.setCategory("MANAGED");
-    }
-    entry.setName(s.getName());
-    entry.setHref(s.getHref());
-      
-    serviceRepo.save(entry);
-    
+  public String addService(IService service){
+    System.out.println("Adding service... " + service.getName());
+    resourceManager.save(service).subscribe((IService s) -> {
+      System.out.println("Service saved to db id = " + s.getId() + " " + s.getLocalReference());
+      serviceMap.put(service.getLocalReference(), service);
+    });
+    return "";
   }
 
-  //Service was lost
-  private void removeService(IService s){
-    String UUID = s.getUUID();
-    Service example = new Service();
-    example.setUuid(UUID);
-
-    Service res = serviceRepo.getByUuid(UUID);
-    if(res == null){
-      System.out.println("Service remove: was not tracked");
-    } else {
-      // Set service state to 'terminated'
-      System.out.println("Service remove: state set to terminated");
-      res.setState("terminated");
-      serviceRepo.save(res);
-    }
-  
+  public void updateService(IService service){
+    System.out.println("Updating service...");
+    addService(service);
   }
 
+  public void removeService(IService service){
+    System.out.println("Removing service... " + service.getName());
+    resourceManager.removeService(service);
+  }
 
 }
