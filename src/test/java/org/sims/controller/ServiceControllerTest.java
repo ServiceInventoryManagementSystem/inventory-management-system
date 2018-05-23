@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class ServiceControllerTest {
   }
 
   @Test
-  public void getService() {
+  public void getServiceTest() {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
     String args = "";
@@ -55,7 +56,7 @@ public class ServiceControllerTest {
   }
 
   @Test
-  public void getServices() {
+  public void getServicesTest() {
     QService service = QService.service;
     Predicate predicate = service.isNotNull();
     String args = "";
@@ -73,7 +74,8 @@ public class ServiceControllerTest {
   }
 
   @Test
-  public void createService() {
+  @DirtiesContext
+  public void createServiceTest() {
     Service service = new Service();
     service.setName("createdServiceName");
     service.setCategory("createdServiceCategory");
@@ -94,8 +96,39 @@ public class ServiceControllerTest {
     assertEquals("createdServiceCategory", createdService.getCategory());
   }
 
+  @Test
+  @DirtiesContext
+  public void patchServiceTest() {
+    QService qService = QService.service;
+    Predicate predicate = qService.isNotNull();
+
+    String args = "";
+    MappingJacksonValue preMappingJacksonValue = serviceController.getService("1", args, predicate);
+    Object preObject = preMappingJacksonValue.getValue();
+    Optional<Service> preOptionalService = preObject instanceof Optional ? ((Optional) preObject) : Optional.empty();
+
+    if(!preOptionalService.isPresent()) {
+      fail();
+    }
+    Service preService = preOptionalService.get();
+    assertEquals("Email", preService.getName());
+
+    serviceController.patchService("application/merge-patch+json", "1", "{\"name\": \"postPatchName\"}");
+    MappingJacksonValue postMappingJacksonValue = serviceController.getService("1", args, predicate);
+    Object postObject = postMappingJacksonValue.getValue();
+    Optional<Service> postOptionalService = postObject instanceof Optional ? ((Optional) postObject) : Optional.empty();
+
+    if (!postOptionalService.isPresent()) {
+      fail();
+    }
+
+    Service postService = postOptionalService.get();
+    assertEquals("postPatchName", postService.getName());
+  }
+
   @Test(expected = ResourceNotFoundException.class)
-  public void deleteService() {
+  @DirtiesContext
+  public void deleteServiceTest() {
     Service service = new Service();
     service.setName("createdServiceName");
     service.setCategory("createdServiceCategory");
@@ -124,34 +157,50 @@ public class ServiceControllerTest {
     assertTrue(!optionalEmptyService.isPresent());
   }
 
-  /*
   @Test
-  public void patchService() {
-    QService qService = QService.service;
-    Predicate predicate = qService.isNotNull();
-
+  @DirtiesContext
+  public void deleteAllServicesTest() {
+    serviceController.deleteServices();
+    QService service = QService.service;
+    Predicate predicate = service.isNotNull();
     String args = "";
-    MappingJacksonValue preMappingJacksonValue = serviceController.getService("1", args, predicate);
-    Object preObject = preMappingJacksonValue.getValue();
-    Optional<Service> preOptionalService = preObject instanceof Optional ? ((Optional) preObject) : Optional.empty();
-
-    if(!preOptionalService.isPresent()) {
+    MappingJacksonValue mjv = serviceController.getServices(args, predicate);
+    if (mjv == null) {
       fail();
     }
-    Service preService = preOptionalService.get();
-    assertEquals("name1", preService.getName());
-
-    serviceController.patchService("application/merge-patch+json", "1", "{\"name\": \"postPatchName\"}");
-    MappingJacksonValue postMappingJacksonValue = serviceController.getService("1", args, predicate);
-    Object postObject = postMappingJacksonValue.getValue();
-    Optional<Service> postOptionalService = postObject instanceof Optional ? ((Optional) postObject) : Optional.empty();
-
-    if (!postOptionalService.isPresent()) {
+    Object o = mjv.getValue();
+    List<Service> serv = o instanceof List ? ((List) o) : null;
+    if(serv == null) {
       fail();
     }
-
-    Service postService = postOptionalService.get();
-    assertEquals("postPatchName", postService.getName());
+    assert serv.isEmpty();
   }
-  */
+
+  @Test
+  @DirtiesContext
+  public void seedDatabaseTest() {
+    QService service = QService.service;
+    Predicate predicate = service.isNotNull();
+    String args = "";
+    MappingJacksonValue mjv = serviceController.getServices(args, predicate);
+    Object o = mjv.getValue();
+    List<Service> serv = o instanceof List ? ((List) o) : null;
+
+    int preSeedCount = serv.size();
+
+    serviceController.seed(50);
+
+    mjv = serviceController.getServices(args, predicate);
+
+    o = mjv.getValue();
+    serv = o instanceof List ? ((List) o) : null;
+
+    assert serv.size() == preSeedCount + 50;
+
+
+  }
+
+
+
+
 }

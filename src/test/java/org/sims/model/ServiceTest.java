@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.OffsetDateTime;
+
 import static org.junit.Assert.*;
 
 
@@ -42,5 +44,9 @@ public class ServiceTest {
     String description = service.getDescription();
     assertEquals("Broadband", service.getDescription());
     assertEquals("Broadband", description);
+
+    OffsetDateTime odt = OffsetDateTime.parse("2017-11-15T08:22:12+01:00");
+    service.setEndDate(odt);
+    assertEquals(odt, service.getEndDate());
   }
 }
