@@ -186,55 +186,12 @@ public class ServiceController implements Serializable {
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(newService);
     mappingJacksonValue.setFilters(filters);
 
-//    Event event = new Event();
-//    event.setEventType("ServiceCreationNotification");
-//    SpecificNotification specificNotification = new SpecificNotification();
-//    specificNotification.setEventType("ServiceCreationNotification");
-//    SpecificEvent specificEvent = new SpecificEvent();
-//    specificEvent.setServiceMjv(mappingJacksonValue);
-//    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
-//    event.setSpecificNotification(savedSpecificNotification);
-//
-//    MappingJacksonValue mjv = new MappingJacksonValue(event);
-//    mjv.setFilters(filters);
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
-//
-//    RestTemplate restTemplate = new RestTemplate();
-//    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
-//    System.out.println(response);
-
-//    sendNotification("ServiceCreationNotification", newService);
-
-
-//    Event event = new Event();
-//    event.setEventType("ServiceCreationNotification");
-//
-//    SpecificNotification specificNotification = new SpecificNotification();
-//    specificNotification.setEventType("ServiceCreationNotification");
-//    SpecificEvent specificEvent = new SpecificEvent();
-//    specificEvent.setService(newService);
-//    specificNotification.setSpecificEvent(specificEvent);
-//    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
-//    event.setSpecificNotification(savedSpecificNotification);
-//
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.setContentType(MediaType.APPLICATION_JSON);
-//    MappingJacksonValue mjv = new MappingJacksonValue(event);
-//    mjv.setFilters(filters);
-//
-//    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
-//    RestTemplate restTemplate = new RestTemplate();
-//    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
-//    System.out.println(response);
-
     sendNotification("ServiceCreationNotification", newService, filters);
-
 
     return mappingJacksonValue;
   }
 
+  // Sends a notification to all the callback addresses in the hub repository
   private void sendNotification(String eventType, Service service, SimpleFilterProvider filters) {
     Event event = new Event();
     event.setEventType(eventType);
@@ -283,7 +240,10 @@ public class ServiceController implements Serializable {
       Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
       SimpleFilterProvider filters = new SimpleFilterProvider();
       filters.setFailOnUnknownId(false);
-      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+      Service patchedService = serviceRepository.save(patched.get());
+      sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+
+      MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(patchedService);
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
     }
@@ -293,14 +253,20 @@ public class ServiceController implements Serializable {
         filters.setFailOnUnknownId(false);
         if (updateResource.startsWith("[")) {
           Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
-          MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+          Service patchedService = serviceRepository.save(patched.get());
+          sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+
+          MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(patchedService);
           mappingJacksonValue.setFilters(filters);
           return mappingJacksonValue;
         }
         else {
           String updateResourceAsArray = "[" + updateResource + "]";
           Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
-          MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
+          Service patchedService = serviceRepository.save(patched.get());
+          sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+
+          MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(patchedService);
           mappingJacksonValue.setFilters(filters);
           return mappingJacksonValue;
         }
@@ -327,7 +293,17 @@ public class ServiceController implements Serializable {
     if(!optionalService.isPresent()) {
       throw new ResourceNotFoundException();
     }
-    serviceRepository.delete(optionalService.get());
+    Service service = optionalService.get();
+
+    SimpleFilterProvider filters = new SimpleFilterProvider();
+    filters.setFailOnUnknownId(false);
+    sendNotification("ServiceRemoveNotification", optionalService.get(), filters);
+
+
+
+    serviceRepository.delete(service);
+
+
   }
 
   //Deletes all services in the database
@@ -337,7 +313,6 @@ public class ServiceController implements Serializable {
   public void deleteServices() {
     serviceRepository.deleteAll();
   }
-
 
 
   @ApiOperation(value= "Seeds the database with some randomly generated services. Count is the number of services.")
