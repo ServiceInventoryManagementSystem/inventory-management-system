@@ -20,10 +20,13 @@ import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -122,25 +125,27 @@ public class ServiceController implements Serializable {
   }
 
 
+
+
   @ApiOperation(value = "Returns all service entities. ?fields= determines the fields that are returned. Querying is currently not supported in Swagger UI")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(
           @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
           @RequestParam(value = "fields", required = false) String fields,
+          @PageableDefault(size = 10000) Pageable pageable,
           @QuerydslPredicate(root = Service.class) Predicate predicate) {
-    System.out.println("Predicate = " + predicate);
-    System.out.println("Fields = " + fields);
 
-    Iterable<Service> services = serviceRepository.findAll(predicate);
-    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(services);
+    Iterable<Service> services = serviceRepository.findAll(predicate, pageable);
+    List<Service> servicePage = ((Page<Service>) services).getContent();
+
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(servicePage);
 
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     if(fields != null) {
       params.add("fields", fields);
     }
 
-    System.out.println("MultiValueMap = " + params);
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 
