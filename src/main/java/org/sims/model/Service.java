@@ -89,9 +89,6 @@ public class Service implements Serializable {
   @OneToMany(mappedBy = "owningService", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
-//  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-//  private Set<SpecificEvent> specificEvents = new HashSet<>();
-
 
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
@@ -324,12 +321,4 @@ public class Service implements Serializable {
   public void setSupportingServices(List<SupportingService> supportingServices) {
     this.supportingServices = supportingServices;
   }
-
-  //  public Set<SpecificEvent> getSpecificEvents() {
-//    return specificEvents;
-//  }
-//
-//  public void setSpecificEvents(Set<SpecificEvent> specificEvents) {
-//    this.specificEvents = specificEvents;
-//  }
 }
