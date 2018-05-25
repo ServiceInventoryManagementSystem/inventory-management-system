@@ -3,8 +3,10 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
-public class Event {
+public class Event implements Serializable {
   @JsonProperty("event")
   private SpecificNotification specificNotification;
 

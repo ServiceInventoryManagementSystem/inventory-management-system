@@ -6,10 +6,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 @Entity
-public class SpecificNotification {
+public class SpecificNotification implements Serializable {
   @JsonProperty("eventId")
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

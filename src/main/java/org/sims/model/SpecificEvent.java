@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class SpecificEvent {
+public class SpecificEvent implements Serializable {
 
   private Service service;
-  private Set<SpecificNotification> specificNotifications = new HashSet<>();
+  private SpecificNotification specificNotification;
 
   public Service getService() {
     return service;
@@ -22,11 +23,11 @@ public class SpecificEvent {
   }
 
   @JsonIgnore
-  public Set<SpecificNotification> getSpecificNotifications() {
-    return specificNotifications;
+  public SpecificNotification getSpecificNotification() {
+    return specificNotification;
   }
 
-  public void setSpecificNotifications(Set<SpecificNotification> specificNotifications) {
-    this.specificNotifications = specificNotifications;
+  public void setSpecificNotifications(SpecificNotification specificNotification) {
+    this.specificNotification = specificNotification;
   }
 }

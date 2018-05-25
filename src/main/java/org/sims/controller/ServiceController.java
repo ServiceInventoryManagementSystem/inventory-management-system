@@ -1,6 +1,7 @@
 package org.sims.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatchException;
@@ -23,8 +24,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +43,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 
 @RestController
@@ -61,6 +62,7 @@ public class ServiceController implements Serializable {
   private final ServiceSpecificationRepository serviceSpecificationRepository;
   private final SupportingResourceRepository supportingResourceRepository;
   private final SupportingServiceRepository supportingServiceRepository;
+  private final ObjectMapper objectMapper;
 
   private JsonPatcher jsonPatcher;
   private JsonMergePatcher jsonMergePatcher;
@@ -80,7 +82,8 @@ public class ServiceController implements Serializable {
                            SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
                            JsonMergePatcher jsonMergePatcher,
                            SpecificNotificationRepository specificNotificationRepository/*,
-                           SpecificEventRepository specificEventRepository*/) {
+                           SpecificEventRepository specificEventRepository*/,
+                           ObjectMapper objectMapper) {
     this.serviceRepository = serviceRepository;
     this.noteRepository = noteRepository;
     this.placeRepository = placeRepository;
@@ -96,6 +99,7 @@ public class ServiceController implements Serializable {
     this.jsonMergePatcher = jsonMergePatcher;
     this.specificNotificationRepository = specificNotificationRepository;/*
     this.specificEventRepository = specificEventRepository;*/
+    this.objectMapper = objectMapper;
   }
 
   //Method to return only the specified fields
@@ -179,6 +183,28 @@ public class ServiceController implements Serializable {
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(newService);
     mappingJacksonValue.setFilters(filters);
 
+//    Event event = new Event();
+//    event.setEventType("ServiceCreationNotification");
+//    SpecificNotification specificNotification = new SpecificNotification();
+//    specificNotification.setEventType("ServiceCreationNotification");
+//    SpecificEvent specificEvent = new SpecificEvent();
+//    specificEvent.setServiceMjv(mappingJacksonValue);
+//    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
+//    event.setSpecificNotification(savedSpecificNotification);
+//
+//    MappingJacksonValue mjv = new MappingJacksonValue(event);
+//    mjv.setFilters(filters);
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
+//
+//    RestTemplate restTemplate = new RestTemplate();
+//    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
+//    System.out.println(response);
+
+//    sendNotification("ServiceCreationNotification", newService);
+
+
     Event event = new Event();
     event.setEventType("ServiceCreationNotification");
 
@@ -187,24 +213,48 @@ public class ServiceController implements Serializable {
     SpecificEvent specificEvent = new SpecificEvent();
     specificEvent.setService(newService);
     specificNotification.setSpecificEvent(specificEvent);
-    event.setSpecificNotification(specificNotification);
-    specificNotificationRepository.save(specificNotification);
-    System.out.println(specificNotification);
+    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
+    event.setSpecificNotification(savedSpecificNotification);
 
-    System.out.println("Before restTemplate");
-    RestTemplate restTemplate = new RestTemplate();
-    HttpEntity<Event> request = new HttpEntity<>(event);
-    System.out.println(request);
-    System.out.println("Before postForLocation");
-
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
     MappingJacksonValue mjv = new MappingJacksonValue(event);
     mjv.setFilters(filters);
 
-    String response = restTemplate.postForObject("http://ptsv2.com/t/9n0am-1527094808", mjv.getValue(), String.class);
-
+    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
+    RestTemplate restTemplate = new RestTemplate();
+    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
     System.out.println(response);
+
+
     return mappingJacksonValue;
   }
+
+//  private void sendNotif(HttpEntity<MappingJacksonValue> request) {
+//
+//  }
+//
+//  private void sendNotification(String eventType, Service service) {
+//    SimpleFilterProvider filters = new SimpleFilterProvider();
+//    filters.setFailOnUnknownId(false);
+//    Event event = new Event();
+//    event.setEventType(eventType);
+//    SpecificNotification specificNotification = new SpecificNotification();
+//    specificNotification.setEventType(eventType);
+//    SpecificEvent specificEvent = new SpecificEvent();
+//    specificEvent.setService(service);
+//    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
+//    event.setSpecificNotification(savedSpecificNotification);
+//    HttpHeaders headers = new HttpHeaders();
+//    headers.setContentType(MediaType.APPLICATION_JSON);
+//    MappingJacksonValue mjv = new MappingJacksonValue(event);
+//    mjv.setFilters(filters);
+//
+//    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
+//    RestTemplate restTemplate = new RestTemplate();
+//    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
+//    System.out.println(response);
+//  }
 
 
   @ApiOperation(value = "Partially updates a service resource with the given id. Currently only RFC 7386 is supported in Swagger UI",

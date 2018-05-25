@@ -6,9 +6,10 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.jdo.annotations.Unique;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class ServiceSpecification {
+public class ServiceSpecification implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
