@@ -63,6 +63,7 @@ public class ServiceController implements Serializable {
   private final SupportingResourceRepository supportingResourceRepository;
   private final SupportingServiceRepository supportingServiceRepository;
   private final ObjectMapper objectMapper;
+  private final HubRepository hubRepository;
 
   private JsonPatcher jsonPatcher;
   private JsonMergePatcher jsonMergePatcher;
@@ -83,7 +84,8 @@ public class ServiceController implements Serializable {
                            JsonMergePatcher jsonMergePatcher,
                            SpecificNotificationRepository specificNotificationRepository/*,
                            SpecificEventRepository specificEventRepository*/,
-                           ObjectMapper objectMapper) {
+                           ObjectMapper objectMapper,
+                           HubRepository hubRepository) {
     this.serviceRepository = serviceRepository;
     this.noteRepository = noteRepository;
     this.placeRepository = placeRepository;
@@ -100,6 +102,7 @@ public class ServiceController implements Serializable {
     this.specificNotificationRepository = specificNotificationRepository;/*
     this.specificEventRepository = specificEventRepository;*/
     this.objectMapper = objectMapper;
+    this.hubRepository = hubRepository;
   }
 
   //Method to return only the specified fields
@@ -205,46 +208,17 @@ public class ServiceController implements Serializable {
 //    sendNotification("ServiceCreationNotification", newService);
 
 
-    Event event = new Event();
-    event.setEventType("ServiceCreationNotification");
-
-    SpecificNotification specificNotification = new SpecificNotification();
-    specificNotification.setEventType("ServiceCreationNotification");
-    SpecificEvent specificEvent = new SpecificEvent();
-    specificEvent.setService(newService);
-    specificNotification.setSpecificEvent(specificEvent);
-    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
-    event.setSpecificNotification(savedSpecificNotification);
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    MappingJacksonValue mjv = new MappingJacksonValue(event);
-    mjv.setFilters(filters);
-
-    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
-    RestTemplate restTemplate = new RestTemplate();
-    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
-    System.out.println(response);
-
-
-    return mappingJacksonValue;
-  }
-
-//  private void sendNotif(HttpEntity<MappingJacksonValue> request) {
-//
-//  }
-//
-//  private void sendNotification(String eventType, Service service) {
-//    SimpleFilterProvider filters = new SimpleFilterProvider();
-//    filters.setFailOnUnknownId(false);
 //    Event event = new Event();
-//    event.setEventType(eventType);
+//    event.setEventType("ServiceCreationNotification");
+//
 //    SpecificNotification specificNotification = new SpecificNotification();
-//    specificNotification.setEventType(eventType);
+//    specificNotification.setEventType("ServiceCreationNotification");
 //    SpecificEvent specificEvent = new SpecificEvent();
-//    specificEvent.setService(service);
+//    specificEvent.setService(newService);
+//    specificNotification.setSpecificEvent(specificEvent);
 //    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
 //    event.setSpecificNotification(savedSpecificNotification);
+//
 //    HttpHeaders headers = new HttpHeaders();
 //    headers.setContentType(MediaType.APPLICATION_JSON);
 //    MappingJacksonValue mjv = new MappingJacksonValue(event);
@@ -254,7 +228,42 @@ public class ServiceController implements Serializable {
 //    RestTemplate restTemplate = new RestTemplate();
 //    String response = restTemplate.postForObject("http://ptsv2.com/t/n78l5-1527257727/post", request, String.class);
 //    System.out.println(response);
-//  }
+
+    sendNotification("ServiceCreationNotification", newService, filters);
+
+
+    return mappingJacksonValue;
+  }
+
+  private void sendNotification(String eventType, Service service, SimpleFilterProvider filters) {
+    Event event = new Event();
+    event.setEventType(eventType);
+
+    SpecificNotification specificNotification = new SpecificNotification();
+    specificNotification.setEventType(eventType);
+    SpecificEvent specificEvent = new SpecificEvent();
+    specificEvent.setService(service);
+    specificNotification.setSpecificEvent(specificEvent);
+    SpecificNotification savedSpecificNotification = specificNotificationRepository.save(specificNotification);
+    event.setSpecificNotification(savedSpecificNotification);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    MappingJacksonValue mjv = new MappingJacksonValue(event);
+    mjv.setFilters(filters);
+
+    HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
+    RestTemplate restTemplate = new RestTemplate();
+
+    Iterable<Hub> hubIterable = hubRepository.findAll();
+    for (Hub hub: hubIterable) {
+      try {
+      restTemplate.postForObject(hub.getCallback(), request, String.class);
+      }
+      catch (Exception e){
+        System.err.println(e);
+      }
+    }
+  }
 
 
   @ApiOperation(value = "Partially updates a service resource with the given id. Currently only RFC 7386 is supported in Swagger UI",
@@ -276,14 +285,6 @@ public class ServiceController implements Serializable {
       filters.setFailOnUnknownId(false);
       MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
       mappingJacksonValue.setFilters(filters);
-//      SpecificNotification specificNotification = new SpecificNotification();
-//      LocalDate localDate = LocalDate.now();
-//      specificNotification.setEventTime(localDate.toString());
-//      specificNotification.setEventType("ServiceAttributeValueChangeNotification");
-//      SpecificEvent specificEvent = new SpecificEvent();
-//      specificEvent.setService(patched.get());
-//      specificNotification.setSpecificEvent(specificEvent);
-//      specificNotificationRepository.save(specificNotification);
       return mappingJacksonValue;
     }
     else if (contentType.equals("application/json-patch+json")) {
@@ -294,14 +295,6 @@ public class ServiceController implements Serializable {
           Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
           mappingJacksonValue.setFilters(filters);
-//          SpecificNotification specificNotification = new SpecificNotification();
-//          LocalDate localDate = LocalDate.now();
-//          specificNotification.setEventTime(localDate.toString());
-//          specificNotification.setEventType("ServiceAttributeValueChangeNotification");
-//          SpecificEvent specificEvent = new SpecificEvent();
-//          specificEvent.setService(patched.get());
-//          specificNotification.setSpecificEvent(specificEvent);
-//          specificNotificationRepository.save(specificNotification);
           return mappingJacksonValue;
         }
         else {
@@ -309,14 +302,6 @@ public class ServiceController implements Serializable {
           Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(serviceRepository.save(patched.get()));
           mappingJacksonValue.setFilters(filters);
-//          SpecificNotification specificNotification = new SpecificNotification();
-//          LocalDate localDate = LocalDate.now();
-//          specificNotification.setEventTime(localDate.toString());
-//          specificNotification.setEventType("ServiceAttributeValueChangeNotification");
-//          SpecificEvent specificEvent = new SpecificEvent();
-//          specificEvent.setService(patched.get());
-//          specificNotification.setSpecificEvent(specificEvent);
-//          specificNotificationRepository.save(specificNotification);
           return mappingJacksonValue;
         }
       }
@@ -342,14 +327,6 @@ public class ServiceController implements Serializable {
     if(!optionalService.isPresent()) {
       throw new ResourceNotFoundException();
     }
-//    SpecificNotification specificNotification = new SpecificNotification();
-//    LocalDate localDate = LocalDate.now();
-//    specificNotification.setEventTime(localDate.toString());
-//    specificNotification.setEventType("ServiceRemoveNotification");
-//    SpecificEvent specificEvent = new SpecificEvent();
-//    specificEvent.setService(optionalService.get());
-//    specificNotification.setSpecificEvent(specificEvent);
-//    specificNotificationRepository.save(specificNotification);
     serviceRepository.delete(optionalService.get());
   }
 
