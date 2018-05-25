@@ -73,7 +73,8 @@ public class HybernateResourceManager extends BasicResourceManager{
     
     if(remoteId == null) {
     } else {
-      model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.findOne(getExample(remoteId)).get()});  
+      model.setId(remoteId);
+      //model = MagicWrapper.createProxy(Service.class, true, new Service[]{model, serviceRepo.findOne(getExample(remoteId)).get()});  
     }
 
     serviceRepo.save(model);
