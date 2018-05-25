@@ -133,8 +133,15 @@ public class ServiceController implements Serializable {
   public MappingJacksonValue getServices(
           @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
           @RequestParam(value = "fields", required = false) String fields,
-          @PageableDefault(size = 10000) Pageable pageable,
-          @QuerydslPredicate(root = Service.class) Predicate predicate) {
+//          @RequestParam(required = false)
+          @QuerydslPredicate(root = Service.class) Predicate predicate,
+          @PageableDefault(size = 10000) Pageable pageable) {
+
+    System.out.println(predicate);
+    System.out.println(predicate);
+    System.out.println(predicate);
+    System.out.println(predicate);
+    System.out.println(predicate);
 
     Iterable<Service> services = serviceRepository.findAll(predicate, pageable);
     List<Service> servicePage = ((Page<Service>) services).getContent();

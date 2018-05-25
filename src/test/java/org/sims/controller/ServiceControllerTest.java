@@ -9,6 +9,8 @@
 //import org.sims.model.Service;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.data.domain.AbstractPageRequest;
+//import org.springframework.data.domain.PageRequest;
 //import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 //import org.springframework.http.converter.json.MappingJacksonValue;
 //import org.springframework.test.annotation.DirtiesContext;
@@ -60,7 +62,10 @@
 //    QService service = QService.service;
 //    Predicate predicate = service.isNotNull();
 //    String args = "";
-//    MappingJacksonValue mjv = serviceController.getServices(args, predicate);
+//
+//    AbstractPageRequest abstractPageRequest = PageRequest.of(1000, 0);
+//
+//    MappingJacksonValue mjv = serviceController.getServices(args, abstractPageRequest, predicate);
 //    if (mjv == null) {
 //      fail();
 //    }
@@ -164,7 +169,10 @@
 //    QService service = QService.service;
 //    Predicate predicate = service.isNotNull();
 //    String args = "";
-//    MappingJacksonValue mjv = serviceController.getServices(args, predicate);
+//
+//    AbstractPageRequest abstractPageRequest = PageRequest.of(1000, 0);
+//
+//    MappingJacksonValue mjv = serviceController.getServices(args, abstractPageRequest, predicate);
 //    if (mjv == null) {
 //      fail();
 //    }
@@ -182,7 +190,8 @@
 //    QService service = QService.service;
 //    Predicate predicate = service.isNotNull();
 //    String args = "";
-//    MappingJacksonValue mjv = serviceController.getServices(args, predicate);
+//    AbstractPageRequest abstractPageRequest = PageRequest.of(1000, 0);
+//    MappingJacksonValue mjv = serviceController.getServices(args, abstractPageRequest, predicate);
 //    Object o = mjv.getValue();
 //    List<Service> serv = o instanceof List ? ((List) o) : null;
 //
@@ -190,7 +199,7 @@
 //
 //    serviceController.seed(50);
 //
-//    mjv = serviceController.getServices(args, predicate);
+//    mjv = serviceController.getServices(args, abstractPageRequest, predicate);
 //
 //    o = mjv.getValue();
 //    serv = o instanceof List ? ((List) o) : null;
