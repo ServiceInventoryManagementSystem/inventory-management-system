@@ -9,44 +9,33 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.sims.controller.common.JsonMergePatcher;
 import org.sims.controller.common.JsonPatcher;
 import org.sims.model.*;
 import org.sims.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.*;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.MediaTypeNotSupportedStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 
 @RestController
@@ -135,13 +124,7 @@ public class ServiceController implements Serializable {
           @RequestParam(value = "fields", required = false) String fields,
 //          @RequestParam(required = false)
           @QuerydslPredicate(root = Service.class) Predicate predicate,
-          @PageableDefault(size = 10000) Pageable pageable) {
-
-    System.out.println(predicate);
-    System.out.println(predicate);
-    System.out.println(predicate);
-    System.out.println(predicate);
-    System.out.println(predicate);
+          @PageableDefault(size = 1000000) Pageable pageable) {
 
     Iterable<Service> services = serviceRepository.findAll(predicate, pageable);
     List<Service> servicePage = ((Page<Service>) services).getContent();

@@ -1,39 +1,23 @@
 package org.sims.discovery.ws;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-
-import javax.print.attribute.HashAttributeSet;
-import javax.sql.rowset.serial.SerialArray;
-
+import com.ms.wsdiscovery.WsDiscoveryConstants;
 import com.ms.wsdiscovery.WsDiscoveryServer;
 import com.ms.wsdiscovery.exception.WsDiscoveryException;
 import com.ms.wsdiscovery.servicedirectory.WsDiscoveryService;
-import com.ms.wsdiscovery.servicedirectory.WsDiscoveryServiceDirectory;
 import com.ms.wsdiscovery.servicedirectory.interfaces.IWsDiscoveryServiceDirectory;
-import com.ms.wsdiscovery.WsDiscoveryConstants;
-
-
-import org.reactivestreams.Publisher;
-import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.models.IService;
-
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.ReplaySubject;
 import io.reactivex.subjects.Subject;
+import org.sims.discovery.IDiscoveryService;
+import org.sims.discovery.models.IService;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
+import java.util.logging.Level;
 
 
 public class WsDiscovery implements IDiscoveryService{

@@ -1,13 +1,10 @@
 package org.sims.discovery.manager;
 
-import java.util.HashMap;
-import java.util.List;
-
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import org.sims.discovery.models.IService;
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
+import java.util.List;
 
 // Interface for resource manager, provides a way to save and fetch active services
 public interface IResourceManager{

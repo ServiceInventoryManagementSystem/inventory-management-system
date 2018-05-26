@@ -1,13 +1,10 @@
 package org.sims.discovery;
-import java.util.HashMap;
-import java.util.List;
-
-import org.reactivestreams.Publisher;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-
 import org.sims.discovery.models.IService;
+
+import java.util.List;
 
 public interface IDiscoveryService{
 

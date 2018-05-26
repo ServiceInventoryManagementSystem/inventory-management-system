@@ -3,10 +3,7 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class SpecificEvent implements Serializable {

@@ -1,6 +1,5 @@
 package org.sims.discovery.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BasicService extends ServiceAdapter{
