@@ -1,10 +1,9 @@
 package org.sims.discovery.models;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
 
 public interface IService extends IHasId{
 

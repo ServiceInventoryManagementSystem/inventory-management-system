@@ -1,18 +1,14 @@
 package org.sims.discovery.ws;
 
-import java.net.URI;
+import com.ms.wsdiscovery.servicedirectory.WsDiscoveryService;
+import org.sims.discovery.models.IRelatedParty;
+import org.sims.discovery.models.ServiceAdapter;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import com.ms.wsdiscovery.servicedirectory.WsDiscoveryService;
-
-import org.sims.discovery.models.IRelatedParty;
-import org.sims.discovery.models.BasicService;;
-import org.sims.discovery.models.ServiceAdapter;
-import org.sims.model.RelatedParty;
+;
 
 
 

@@ -1,42 +1,10 @@
 package org.sims.discovery.manager;
 
-import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.IOError;
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.imageio.IIOException;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonPointer;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.JsonParser.NumberType;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Basic;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.sun.xml.messaging.saaj.util.Base64;
-
-import org.sims.discovery.models.BasicService;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 import org.sims.discovery.models.IHasId;
 import org.sims.discovery.models.IRelatedParty;
 import org.sims.discovery.models.IService;
-import org.sims.discovery.models.ServiceWrapper;
 import org.sims.model.RelatedParty;
 import org.sims.model.Service;
 import org.sims.repository.ServiceRepository;
@@ -44,9 +12,8 @@ import org.sims.utils.MagicWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HybernateResourceManager extends BasicResourceManager{
   @Autowired

@@ -1,17 +1,15 @@
 package org.sims.discovery.manager;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
-
-import org.sims.discovery.models.IService;
-
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import org.sims.discovery.models.IService;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 
 
 public abstract class BasicResourceManager implements IResourceManager{

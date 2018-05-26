@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,7 +17,7 @@ import java.util.Set;
 
 @Entity
 @JsonFilter("service")
-public class Service {
+public class Service implements Serializable {
   @ApiModelProperty(notes="'id' is the ID created for the service.")
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +37,7 @@ public class Service {
   @ApiModelProperty(notes="Is it a customer facing or resource facing service.")
   private String category;
   @ApiModelProperty(notes="free-text description of the service.")
+  @Type(type="text")
   private String description;
 
   @ApiModelProperty(notes="endDate is the date when the service ends.")
@@ -85,14 +88,9 @@ public class Service {
   @OneToMany(mappedBy = "owningService", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<ServiceRelationship> serviceRelationships = new HashSet<>();
 
-  @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
-  private Set<SpecificEvent> specificEvents = new HashSet<>();
-
-
 
   //----------------------------------------ManyToOne-----------------------------------------------------------------
 
-//  @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST})
   @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE})
   private ServiceOrder serviceOrder;
 
@@ -120,8 +118,7 @@ public class Service {
 
   //-----------------------------------------Constructor--------------------------------------------------------------
 
-  public Service() {
-  }
+  public Service() {}
 
 
   //-----------------------------Getters and Setters for non-relations------------------------------------------------
@@ -323,12 +320,4 @@ public class Service {
   public void setSupportingServices(List<SupportingService> supportingServices) {
     this.supportingServices = supportingServices;
   }
-
-  //  public Set<SpecificEvent> getSpecificEvents() {
-//    return specificEvents;
-//  }
-//
-//  public void setSpecificEvents(Set<SpecificEvent> specificEvents) {
-//    this.specificEvents = specificEvents;
-//  }
 }

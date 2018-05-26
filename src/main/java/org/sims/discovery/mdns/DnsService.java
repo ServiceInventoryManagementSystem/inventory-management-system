@@ -1,14 +1,12 @@
 package org.sims.discovery.mdns;
 
+import org.sims.discovery.models.IRelatedParty;
+import org.sims.discovery.models.ServiceAdapter;
+
+import javax.jmdns.ServiceInfo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.jmdns.ServiceInfo;
-
-import org.sims.discovery.models.IRelatedParty;
-import org.sims.discovery.models.IService;
-import org.sims.discovery.models.ServiceAdapter;
 
 
 public class DnsService extends ServiceAdapter{

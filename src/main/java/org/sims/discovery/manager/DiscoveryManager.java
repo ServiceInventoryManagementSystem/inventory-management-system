@@ -1,23 +1,12 @@
 package org.sims.discovery.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.reactivestreams.Subscription;
-import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.models.IService;
-import org.sims.discovery.IDiscoveryService.DiscoverySettings;
-import org.sims.model.Service;
-import org.sims.repository.ServiceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-
 import io.reactivex.disposables.Disposable;
+import org.sims.discovery.IDiscoveryService;
+import org.sims.discovery.IDiscoveryService.DiscoverySettings;
+import org.sims.discovery.models.IService;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 // Class that manages multiple discovery mechanisms

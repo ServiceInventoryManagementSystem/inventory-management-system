@@ -1,33 +1,22 @@
 package org.sims.discovery.mdns;
 
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
-import javax.jmdns.JmDNS;
-import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceInfo;
-import javax.jmdns.ServiceListener;
-import javax.jmdns.impl.DNSCache;
-import javax.jmdns.impl.DNSEntry;
-import javax.jmdns.impl.JmDNSImpl;
-import javax.validation.constraints.NotEmpty;
-
-import org.sims.discovery.IDiscoveryService;
-import org.sims.discovery.models.IRelatedParty;
-import org.sims.discovery.models.IService;
-import org.springframework.core.env.Environment;
-
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+import org.sims.discovery.IDiscoveryService;
+import org.sims.discovery.models.IService;
+import org.springframework.core.env.Environment;
+
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceInfo;
+import javax.jmdns.ServiceListener;
+import javax.jmdns.impl.JmDNSImpl;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DnsDiscovery implements IDiscoveryService, ServiceListener{

@@ -2,34 +2,35 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 @Entity
-public class SpecificNotification {
+public class SpecificNotification implements Serializable {
   @JsonProperty("eventId")
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-  private String eventTime;
+  @CreationTimestamp
+  private OffsetDateTime eventTime;
   private String eventType;
 
-  @JsonIgnore
-  private String fieldPath;
-  @JsonIgnore
-  private String resourcePath;
+  @Transient
+  private Event event;
 
+  @Transient
   @JsonProperty("event")
-  @ManyToOne(cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "specific_event_id")
   private SpecificEvent specificEvent;
 
-  public String getEventTime() {
+  public OffsetDateTime getEventTime() {
     return eventTime;
   }
 
-  public void setEventTime(String eventTime) {
+  public void setEventTime(OffsetDateTime eventTime) {
     this.eventTime = eventTime;
   }
 
@@ -41,22 +42,6 @@ public class SpecificNotification {
     this.eventType = eventType;
   }
 
-  public String getFieldPath() {
-    return fieldPath;
-  }
-
-  public void setFieldPath(String fieldPath) {
-    this.fieldPath = fieldPath;
-  }
-
-  public String getResourcePath() {
-    return resourcePath;
-  }
-
-  public void setResourcePath(String resourcePath) {
-    this.resourcePath = resourcePath;
-  }
-
   public SpecificEvent getSpecificEvent() {
     return specificEvent;
   }
@@ -64,4 +49,14 @@ public class SpecificNotification {
   public void setSpecificEvent(SpecificEvent specificEvent) {
     this.specificEvent = specificEvent;
   }
+
+  @JsonIgnore
+  public Event getEvent() {
+    return event;
+  }
+
+  public void setEvent(Event event) {
+    this.event = event;
+  }
 }
+
