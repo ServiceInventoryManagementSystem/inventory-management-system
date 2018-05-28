@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ServiceRelationshipTest {
+  // This test was not performed with OpenPojo. When returning a service, the serviceRelationship object
+  // should contain a reference to another service. This would normally be solved by using @JsonProperty(""), but
+  // this caused some issues. Spring returns the properties based on the getter's name, so the easiest fix was to rename
+  // the serviceRef getter to getService().
   @Test
   public void validateSettersAndGetters() {
     Service service = new Service();
