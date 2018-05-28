@@ -42,54 +42,60 @@ import java.util.*;
 public class ServiceController implements Serializable {
 
   private final ServiceRepository serviceRepository;
+  private final RelatedPartyRepository relatedPartyRepository;
+  private final ServiceSpecificationRepository serviceSpecificationRepository;
+  private final HubRepository hubRepository;
+  private JsonPatcher jsonPatcher;
+  private JsonMergePatcher jsonMergePatcher;
+  private SpecificNotificationRepository specificNotificationRepository;
   private final NoteRepository noteRepository;
   private final PlaceRepository placeRepository;
-  private final RelatedPartyRepository relatedPartyRepository;
   private final ServiceCharacteristicRepository serviceCharacteristicRepository;
+
+  // Repositories are commented out because they're not used. Uncomment to implement in seed method.
+  /*
   private final ServiceOrderRepository serviceOrderRepository;
   private final ServiceRefRepository serviceRefRepository;
   private final ServiceRelationshipRepository serviceRelationshipRepository;
-  private final ServiceSpecificationRepository serviceSpecificationRepository;
   private final SupportingResourceRepository supportingResourceRepository;
   private final SupportingServiceRepository supportingServiceRepository;
-  private final ObjectMapper objectMapper;
-  private final HubRepository hubRepository;
-
-  private JsonPatcher jsonPatcher;
-  private JsonMergePatcher jsonMergePatcher;
-
-  private SpecificNotificationRepository specificNotificationRepository;
-
+  */
 
   @Autowired
-  public ServiceController(ServiceRepository serviceRepository, NoteRepository noteRepository,
-                           PlaceRepository placeRepository, RelatedPartyRepository relatedPartyRepository,
-                           ServiceCharacteristicRepository serviceCharacteristicRepository,
-                           ServiceOrderRepository serviceOrderRepository, ServiceRefRepository serviceRefRepository,
-                           ServiceRelationshipRepository serviceRelationshipRepository,
+  public ServiceController(ServiceRepository serviceRepository,
+                           RelatedPartyRepository relatedPartyRepository,
                            ServiceSpecificationRepository serviceSpecificationRepository,
-                           SupportingResourceRepository supportingResourceRepository,
-                           SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
+                           JsonPatcher jsonPatcher,
                            JsonMergePatcher jsonMergePatcher,
                            SpecificNotificationRepository specificNotificationRepository,
-                           ObjectMapper objectMapper,
-                           HubRepository hubRepository) {
+                           HubRepository hubRepository,
+                           NoteRepository noteRepository,
+                           PlaceRepository placeRepository,
+                           ServiceCharacteristicRepository serviceCharacteristicRepository
+
+                           /*
+                           ServiceOrderRepository serviceOrderRepository,
+                           ServiceRefRepository serviceRefRepository,
+                           ServiceRelationshipRepository serviceRelationshipRepository,
+                           SupportingResourceRepository supportingResourceRepository,
+                           SupportingServiceRepository supportingServiceRepository*/) {
     this.serviceRepository = serviceRepository;
-    this.noteRepository = noteRepository;
-    this.placeRepository = placeRepository;
     this.relatedPartyRepository = relatedPartyRepository;
-    this.serviceCharacteristicRepository = serviceCharacteristicRepository;
-    this.serviceOrderRepository = serviceOrderRepository;
-    this.serviceRefRepository = serviceRefRepository;
-    this.serviceRelationshipRepository = serviceRelationshipRepository;
     this.serviceSpecificationRepository = serviceSpecificationRepository;
-    this.supportingResourceRepository = supportingResourceRepository;
-    this.supportingServiceRepository = supportingServiceRepository;
     this.jsonPatcher = jsonPatcher;
     this.jsonMergePatcher = jsonMergePatcher;
     this.specificNotificationRepository = specificNotificationRepository;
-    this.objectMapper = objectMapper;
     this.hubRepository = hubRepository;
+    this.noteRepository = noteRepository;
+    this.placeRepository = placeRepository;
+    this.serviceCharacteristicRepository = serviceCharacteristicRepository;
+    /*
+    this.serviceOrderRepository = serviceOrderRepository;
+    this.serviceRefRepository = serviceRefRepository;
+    this.serviceRelationshipRepository = serviceRelationshipRepository;
+    this.supportingResourceRepository = supportingResourceRepository;
+    this.supportingServiceRepository = supportingServiceRepository;
+    */
   }
 
   // Method to return only the specified fields
@@ -368,8 +374,35 @@ public class ServiceController implements Serializable {
       Set<Service> services = new HashSet<>();
       services.add(service);
       relatedParty.setServices(services);
-
       relatedPartyRepository.save(relatedParty);
+
+      Place place = new Place();
+      place.setHref("http://place.com");
+      place.setRole("role");
+      place.setService(service);
+      placeRepository.save(place);
+      Set<Place> places = new HashSet<>();
+      places.add(place);
+      service.setPlaces(places);
+
+      Note note = new Note();
+      note.setAuthor("Author");
+      note.setText("Note text");
+      note.setService(service);
+      noteRepository.save(note);
+      Set<Note> notes = new HashSet<>();
+      notes.add(note);
+      service.setNotes(notes);
+
+      ServiceCharacteristic serviceCharacteristic = new ServiceCharacteristic();
+      serviceCharacteristic.setService(service);
+      serviceCharacteristic.setName("Speed");
+      serviceCharacteristic.setValue("16M");
+      serviceCharacteristicRepository.save(serviceCharacteristic);
+      List<ServiceCharacteristic> serviceCharacteristics = new ArrayList<>();
+      serviceCharacteristics.add(serviceCharacteristic);
+      service.setServiceCharacteristics(serviceCharacteristics);
+
 
       serviceRepository.save(service);
     }
