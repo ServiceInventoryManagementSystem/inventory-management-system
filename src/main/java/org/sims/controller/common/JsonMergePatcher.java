@@ -34,11 +34,6 @@ public class JsonMergePatcher {
       final JsonMergePatch patch = mapper.readValue(json, JsonMergePatch.class);
       patchedNode = patch.apply(mapper.convertValue(target, JsonNode.class));
     } catch (IOException | JsonPatchException e) {
-      System.out.println("Entered catch in mergepatcher");
-      System.out.println("Entered catch in mergepatcher");
-      System.out.println("Entered catch in mergepatcher");
-      System.out.println("Entered catch in mergepatcher");
-      System.out.println("Entered catch in mergepatcher");
       throw new RuntimeException(e);
     }
     return Optional.ofNullable(mapper.convertValue(patchedNode, target.getClass()));

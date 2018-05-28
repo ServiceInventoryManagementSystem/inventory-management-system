@@ -59,7 +59,6 @@ public class ServiceController implements Serializable {
   private JsonMergePatcher jsonMergePatcher;
 
   private SpecificNotificationRepository specificNotificationRepository;
-//  private SpecificEventRepository specificEventRepository;
 
 
   @Autowired
@@ -72,8 +71,7 @@ public class ServiceController implements Serializable {
                            SupportingResourceRepository supportingResourceRepository,
                            SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
                            JsonMergePatcher jsonMergePatcher,
-                           SpecificNotificationRepository specificNotificationRepository/*,
-                           SpecificEventRepository specificEventRepository*/,
+                           SpecificNotificationRepository specificNotificationRepository,
                            ObjectMapper objectMapper,
                            HubRepository hubRepository) {
     this.serviceRepository = serviceRepository;
@@ -89,13 +87,12 @@ public class ServiceController implements Serializable {
     this.supportingServiceRepository = supportingServiceRepository;
     this.jsonPatcher = jsonPatcher;
     this.jsonMergePatcher = jsonMergePatcher;
-    this.specificNotificationRepository = specificNotificationRepository;/*
-    this.specificEventRepository = specificEventRepository;*/
+    this.specificNotificationRepository = specificNotificationRepository;
     this.objectMapper = objectMapper;
     this.hubRepository = hubRepository;
   }
 
-  //Method to return only the specified fields
+  // Method to return only the specified fields
   private MappingJacksonValue applyFieldFiltering(MappingJacksonValue mappingJacksonValue, MultiValueMap<String,
           String> params) {
     SimpleFilterProvider filters = new SimpleFilterProvider();
@@ -112,18 +109,18 @@ public class ServiceController implements Serializable {
   }
 
 
-
-
-  @ApiOperation(value = "Returns all service entities. ?fields= determines the fields that are returned. Querying is currently not supported in Swagger UI")
+  // Returns all services matching a query. Pagination has been added for better efficiency on the front end.
+  // The following request returns the 10 first services where category = CFS. Only the id and category fields of each service is returned.
+  // localhost:3000/api/service?fields=id,category&category=CFS&page=0&size=10
+  @ApiOperation(value = "Returns all service entities. ?fields= determines the fields that are returned. " +
+          "Querying is currently not supported in Swagger UI")
   @GetMapping("/service")
   @ResponseBody
   public MappingJacksonValue getServices(
           @ApiParam(name = "fields", value = "Fields to return", defaultValue = "")
           @RequestParam(value = "fields", required = false) String fields,
-//          @RequestParam(required = false)
           @QuerydslPredicate(root = Service.class) Predicate predicate,
           @PageableDefault(size = 1000000) Pageable pageable) {
-
     Iterable<Service> services = serviceRepository.findAll(predicate, pageable);
     List<Service> servicePage = ((Page<Service>) services).getContent();
 
@@ -324,7 +321,7 @@ public class ServiceController implements Serializable {
     String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
     Boolean[] booleanArray = {true, false};
     String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
-    String[] stateArray = {"active", "inactive", "terminated", "reserved", "designed", "feasabilityChecked"};
+    String[] stateArray = {"active", "inactive", "terminated", "reserved", "designed", "feasibilityChecked"};
     String[] typeArray = {"type1", "type2", "type3"};
 
     ServiceSpecification[] serviceSpecificationArray = new ServiceSpecification[count];
