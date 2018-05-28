@@ -327,7 +327,6 @@ public class ServiceController implements Serializable {
 
     String[] categoryArray = {"CFS", "RFS"};
     String[] nameArray = {"serviceName1", "serviceName2", "serviceName3", "serviceName4", "serviceName5"};
-    String[] descriptionArray = {};
     String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
     Boolean[] booleanArray = {true, false};
     String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
@@ -347,7 +346,7 @@ public class ServiceController implements Serializable {
       Service service = new Service();
       service.setName(nameArray[random.nextInt(nameArray.length)]);
       service.setCategory(categoryArray[random.nextInt(categoryArray.length)]);
-      service.setDescription("empty");
+      service.setDescription("Description of service");
       service.setHref(hrefArray[random.nextInt(hrefArray.length)]);
       service.setHasStarted(booleanArray[random.nextInt(2)]);
       service.setIsServiceEnabled(booleanArray[random.nextInt(2)]);
