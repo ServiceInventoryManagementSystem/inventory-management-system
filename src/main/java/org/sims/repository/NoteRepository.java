@@ -10,10 +10,5 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NoteRepository extends JpaRepository<Note, Long>, QuerydslPredicateExecutor<Note>, QuerydslBinderCustomizer<QNote> {
-  @Override
-  default public void customize(QuerydslBindings bindings, QNote root) {
-    bindings.bind(String.class).first(
-            (StringPath path, String value) -> path.containsIgnoreCase(value));
-  }
+public interface NoteRepository extends JpaRepository<Note, Long> {
 }

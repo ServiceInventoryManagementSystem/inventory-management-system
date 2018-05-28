@@ -350,8 +350,8 @@ public class ServiceController implements Serializable {
       service.setDescription("empty");
       service.setHref(hrefArray[random.nextInt(hrefArray.length)]);
       service.setHasStarted(booleanArray[random.nextInt(2)]);
-      service.setServiceEnabled(booleanArray[random.nextInt(2)]);
-      service.setStateful(booleanArray[random.nextInt(2)]);
+      service.setIsServiceEnabled(booleanArray[random.nextInt(2)]);
+      service.setIsStateful(booleanArray[random.nextInt(2)]);
       service.setStartMode(startModeArray[random.nextInt(startModeArray.length)]);
       service.setState(stateArray[random.nextInt(stateArray.length)]);
       service.setType(typeArray[random.nextInt(typeArray.length)]);

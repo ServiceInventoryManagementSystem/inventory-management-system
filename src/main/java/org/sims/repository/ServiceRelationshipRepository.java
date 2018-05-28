@@ -10,12 +10,7 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ServiceRelationshipRepository extends JpaRepository<ServiceRelationship, Long>,
-        QuerydslPredicateExecutor<ServiceRelationship>, QuerydslBinderCustomizer<QServiceRelationship> {
-  @Override
-  default public void customize(QuerydslBindings bindings, QServiceRelationship root) {
-    bindings.bind(String.class).first(
-            (StringPath path, String value) -> path.containsIgnoreCase(value));
-  }
+public interface ServiceRelationshipRepository extends JpaRepository<ServiceRelationship, Long> {
+
 
 }

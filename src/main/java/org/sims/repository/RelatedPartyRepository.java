@@ -10,11 +10,5 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RelatedPartyRepository extends JpaRepository<RelatedParty, Long>, QuerydslPredicateExecutor<RelatedParty>, QuerydslBinderCustomizer<QRelatedParty> {
-  @Override
-  default public void customize(QuerydslBindings bindings, QRelatedParty root) {
-    bindings.bind(String.class).first(
-            (StringPath path, String value) -> path.containsIgnoreCase(value));
-  }
-
+public interface RelatedPartyRepository extends JpaRepository<RelatedParty, Long> {
 }

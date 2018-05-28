@@ -34,4 +34,8 @@ public class Hub {
   public void setCallback(String callback) {
     this.callback = callback;
   }
+
+  public void setQuery(String query) {
+    this.query = query;
+  }
 }

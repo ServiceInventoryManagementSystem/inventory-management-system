@@ -100,7 +100,8 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
 
 
-    compile(group: "com.github.fge", name: "json-patch", version: "1.9");
+    compile(group: "com.github.fge", name: "json-patch", version: "1.9")
+    testCompile group: 'com.openpojo', name: 'openpojo', version: '0.8.10'
 
 
 //    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5'

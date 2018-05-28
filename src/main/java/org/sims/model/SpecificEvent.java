@@ -24,7 +24,8 @@ public class SpecificEvent implements Serializable {
     return specificNotification;
   }
 
-  public void setSpecificNotifications(SpecificNotification specificNotification) {
+  public void setSpecificNotification(SpecificNotification specificNotification) {
     this.specificNotification = specificNotification;
   }
+
 }

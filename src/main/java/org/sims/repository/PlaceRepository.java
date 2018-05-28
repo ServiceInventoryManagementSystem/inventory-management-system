@@ -10,11 +10,6 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PlaceRepository extends JpaRepository<Place, Long>, QuerydslPredicateExecutor<Place>, QuerydslBinderCustomizer<QPlace> {
-  @Override
-  default public void customize(QuerydslBindings bindings, QPlace root) {
-    bindings.bind(String.class).first(
-            (StringPath path, String value) -> path.containsIgnoreCase(value));
-  }
+public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 }

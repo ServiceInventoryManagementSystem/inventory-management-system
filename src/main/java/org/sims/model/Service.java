@@ -173,20 +173,20 @@ public class Service implements Serializable {
   }
 
   @JsonProperty("isServiceEnabled")
-  public Boolean getServiceEnabled() {
+  public Boolean getIsServiceEnabled() {
     return isServiceEnabled;
   }
   @JsonProperty("isServiceEnabled")
-  public void setServiceEnabled(Boolean serviceEnabled) {
+  public void setIsServiceEnabled(Boolean serviceEnabled) {
     isServiceEnabled = serviceEnabled;
   }
 
   @JsonProperty("isStateful")
-  public Boolean getStateful() {
+  public Boolean getIsStateful() {
     return isStateful;
   }
   @JsonProperty("isStateful")
-  public void setStateful(Boolean stateful) {
+  public void setIsStateful(Boolean stateful) {
     isStateful = stateful;
   }
 

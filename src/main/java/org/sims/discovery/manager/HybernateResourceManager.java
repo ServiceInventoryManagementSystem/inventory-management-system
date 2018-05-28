@@ -112,8 +112,8 @@ public class HybernateResourceManager extends BasicResourceManager{
         model.setEndDate(endDate);
       }*/
       //model.setStartDate(service.getStartDate().toGMTString());
-      model.setStateful(service.isStateful());
-      model.setServiceEnabled(service.isServiceEnabled());
+      model.setIsStateful(service.isStateful());
+      model.setIsServiceEnabled(service.isServiceEnabled());
       model.setHasStarted(service.hasStarted());
       model.setState(service.getState());
       model.setCategory(service.getCategory());

@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-//import org.sims.repository.SpecificNotificationRepository;
-
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api")
@@ -37,7 +35,7 @@ public class HubController {
 
   @GetMapping("/hub")
   @ApiOperation("Returns a list of all listeners")
-  public List<Hub> getHub() {
+  public List<Hub> getHubs() {
     return hubRepository.findAll();
   }
 
