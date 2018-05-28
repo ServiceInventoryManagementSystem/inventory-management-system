@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class Service implements Serializable {
   @ApiModelProperty(notes="This is a Boolean attribute that, if TRUE, means that this Service can be changed without affecting any other services.")
   private Boolean isStateful;
   @ApiModelProperty(notes="'Name' is the name of the service.")
+  @NotNull
   private String name;
   @ApiModelProperty(notes="orderDate is the date when the service was ordered.")
   private OffsetDateTime orderDate;

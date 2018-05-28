@@ -102,7 +102,7 @@ public class ServiceControllerTest {
 
   @Test
   @DirtiesContext
-  public void patchServiceTest() {
+  public void patchMergeServiceTest() {
     QService qService = QService.service;
     Predicate predicate = qService.isNotNull();
 
@@ -118,6 +118,37 @@ public class ServiceControllerTest {
     assertEquals("Email", preService.getName());
 
     serviceController.patchService("application/merge-patch+json", "1", "{\"name\": \"postPatchName\"}");
+    MappingJacksonValue postMappingJacksonValue = serviceController.getService("1", args, predicate);
+    Object postObject = postMappingJacksonValue.getValue();
+    Optional<Service> postOptionalService = postObject instanceof Optional ? ((Optional) postObject) : Optional.empty();
+
+    if (!postOptionalService.isPresent()) {
+      fail();
+    }
+
+    Service postService = postOptionalService.get();
+    assertEquals("postPatchName", postService.getName());
+  }
+
+  @Test
+  @DirtiesContext
+  public void patchServiceTest() {
+    QService qService = QService.service;
+    Predicate predicate = qService.isNotNull();
+
+    String args = "";
+    MappingJacksonValue preMappingJacksonValue = serviceController.getService("1", args, predicate);
+    Object preObject = preMappingJacksonValue.getValue();
+    Optional<Service> preOptionalService = preObject instanceof Optional ? ((Optional) preObject) : Optional.empty();
+
+    if(!preOptionalService.isPresent()) {
+      fail();
+    }
+    Service preService = preOptionalService.get();
+    assertEquals("Email", preService.getName());
+
+    serviceController.patchService("application/json-patch+json", "1",
+            "{\"path\": \"/name\", \"value\": \"postPatchName\", \"op\": \"replace\"}");
     MappingJacksonValue postMappingJacksonValue = serviceController.getService("1", args, predicate);
     Object postObject = postMappingJacksonValue.getValue();
     Optional<Service> postOptionalService = postObject instanceof Optional ? ((Optional) postObject) : Optional.empty();
@@ -196,7 +227,7 @@ public class ServiceControllerTest {
 
     int preSeedCount = serv.size();
 
-    serviceController.seed(50);
+    serviceController.seed(51);
 
     mjv = serviceController.getServices(args, predicate, abstractPageRequest);
 
