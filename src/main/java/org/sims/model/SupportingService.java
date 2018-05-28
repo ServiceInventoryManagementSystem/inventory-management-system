@@ -2,7 +2,6 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SupportingService implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

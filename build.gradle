@@ -53,9 +53,9 @@ repositories {
 dependencies {
 
     //---------------------------Spring Framework----------------------------
-    compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.2.2.Final'
-    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.2.Final'
-    compile group: 'org.hibernate', name: 'hibernate-ehcache', version: '5.2.2.Final'
+//    compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.2.2.Final'
+//    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.2.Final'
+//    compile group: 'org.hibernate', name: 'hibernate-ehcache', version: '5.2.2.Final'
     compile group: 'org.springframework', name: 'spring-core'
 //    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
 //    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.2.BUILD-SNAPSHOT'

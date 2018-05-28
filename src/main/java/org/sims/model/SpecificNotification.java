@@ -2,7 +2,6 @@ package org.sims.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,15 +9,13 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 @Entity
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SpecificNotification implements Serializable {
   @JsonProperty("eventId")
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private String id;
 
-//  @CreationTimestamp
+  @CreationTimestamp
   private OffsetDateTime eventTime;
   private String eventType;
 
