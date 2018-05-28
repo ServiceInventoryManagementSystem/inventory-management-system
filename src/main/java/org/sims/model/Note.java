@@ -3,6 +3,7 @@ package org.sims.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class Note implements Serializable {
   private OffsetDateTime date;
 
   @ApiModelProperty(notes="Text of the note.")
+  @Type(type="text")
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY)

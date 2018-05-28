@@ -53,6 +53,9 @@ repositories {
 dependencies {
 
     //---------------------------Spring Framework----------------------------
+//    compile group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.2.2.Final'
+//    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.2.Final'
+//    compile group: 'org.hibernate', name: 'hibernate-ehcache', version: '5.2.2.Final'
     compile group: 'org.springframework', name: 'spring-core'
 //    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
 //    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.2.BUILD-SNAPSHOT'
@@ -99,8 +102,10 @@ dependencies {
     compile("org.apache.commons:commons-lang3:3.0")
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
 
+    compile(group: "com.github.fge", name: "json-patch", version: "1.9")
+    testCompile group: 'com.openpojo', name: 'openpojo', version: '0.8.10'
 
-    compile(group: "com.github.fge", name: "json-patch", version: "1.9");
+
 
 
 //    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5'

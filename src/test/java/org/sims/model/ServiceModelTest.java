@@ -46,11 +46,11 @@ public class ServiceModelTest {
     service.setEndDate(odt);
     assertEquals(odt, service.getEndDate());
 
-    service.setServiceEnabled(true);
-    assertEquals(true, service.getServiceEnabled());
+    service.setIsServiceEnabled(true);
+    assertEquals(true, service.getIsServiceEnabled());
 
-    service.setStateful(true);
-    assertEquals(true, service.getStateful());
+    service.setIsStateful(true);
+    assertEquals(true, service.getIsStateful());
 
     service.setOrderDate(odt);
     assertEquals(odt, service.getOrderDate());

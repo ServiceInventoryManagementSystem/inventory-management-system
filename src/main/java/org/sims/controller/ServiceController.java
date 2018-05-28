@@ -1,7 +1,6 @@
 package org.sims.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.github.fge.jsonpatch.JsonPatchException;
@@ -42,54 +41,60 @@ import java.util.*;
 public class ServiceController implements Serializable {
 
   private final ServiceRepository serviceRepository;
+  private final RelatedPartyRepository relatedPartyRepository;
+  private final ServiceSpecificationRepository serviceSpecificationRepository;
+  private final HubRepository hubRepository;
+  private JsonPatcher jsonPatcher;
+  private JsonMergePatcher jsonMergePatcher;
+  private SpecificNotificationRepository specificNotificationRepository;
   private final NoteRepository noteRepository;
   private final PlaceRepository placeRepository;
-  private final RelatedPartyRepository relatedPartyRepository;
   private final ServiceCharacteristicRepository serviceCharacteristicRepository;
+
+  // Repositories are commented out because they're not used. Uncomment to implement in seed method.
+  /*
   private final ServiceOrderRepository serviceOrderRepository;
   private final ServiceRefRepository serviceRefRepository;
   private final ServiceRelationshipRepository serviceRelationshipRepository;
-  private final ServiceSpecificationRepository serviceSpecificationRepository;
   private final SupportingResourceRepository supportingResourceRepository;
   private final SupportingServiceRepository supportingServiceRepository;
-  private final ObjectMapper objectMapper;
-  private final HubRepository hubRepository;
-
-  private JsonPatcher jsonPatcher;
-  private JsonMergePatcher jsonMergePatcher;
-
-  private SpecificNotificationRepository specificNotificationRepository;
-
+  */
 
   @Autowired
-  public ServiceController(ServiceRepository serviceRepository, NoteRepository noteRepository,
-                           PlaceRepository placeRepository, RelatedPartyRepository relatedPartyRepository,
-                           ServiceCharacteristicRepository serviceCharacteristicRepository,
-                           ServiceOrderRepository serviceOrderRepository, ServiceRefRepository serviceRefRepository,
-                           ServiceRelationshipRepository serviceRelationshipRepository,
+  public ServiceController(ServiceRepository serviceRepository,
+                           RelatedPartyRepository relatedPartyRepository,
                            ServiceSpecificationRepository serviceSpecificationRepository,
-                           SupportingResourceRepository supportingResourceRepository,
-                           SupportingServiceRepository supportingServiceRepository, JsonPatcher jsonPatcher,
+                           JsonPatcher jsonPatcher,
                            JsonMergePatcher jsonMergePatcher,
                            SpecificNotificationRepository specificNotificationRepository,
-                           ObjectMapper objectMapper,
-                           HubRepository hubRepository) {
+                           HubRepository hubRepository,
+                           NoteRepository noteRepository,
+                           PlaceRepository placeRepository,
+                           ServiceCharacteristicRepository serviceCharacteristicRepository
+
+                           /*
+                           ServiceOrderRepository serviceOrderRepository,
+                           ServiceRefRepository serviceRefRepository,
+                           ServiceRelationshipRepository serviceRelationshipRepository,
+                           SupportingResourceRepository supportingResourceRepository,
+                           SupportingServiceRepository supportingServiceRepository*/) {
     this.serviceRepository = serviceRepository;
-    this.noteRepository = noteRepository;
-    this.placeRepository = placeRepository;
     this.relatedPartyRepository = relatedPartyRepository;
-    this.serviceCharacteristicRepository = serviceCharacteristicRepository;
-    this.serviceOrderRepository = serviceOrderRepository;
-    this.serviceRefRepository = serviceRefRepository;
-    this.serviceRelationshipRepository = serviceRelationshipRepository;
     this.serviceSpecificationRepository = serviceSpecificationRepository;
-    this.supportingResourceRepository = supportingResourceRepository;
-    this.supportingServiceRepository = supportingServiceRepository;
     this.jsonPatcher = jsonPatcher;
     this.jsonMergePatcher = jsonMergePatcher;
     this.specificNotificationRepository = specificNotificationRepository;
-    this.objectMapper = objectMapper;
     this.hubRepository = hubRepository;
+    this.noteRepository = noteRepository;
+    this.placeRepository = placeRepository;
+    this.serviceCharacteristicRepository = serviceCharacteristicRepository;
+    /*
+    this.serviceOrderRepository = serviceOrderRepository;
+    this.serviceRefRepository = serviceRefRepository;
+    this.serviceRelationshipRepository = serviceRelationshipRepository;
+    this.supportingResourceRepository = supportingResourceRepository;
+    this.supportingServiceRepository = supportingServiceRepository;
+    */
   }
 
   // Method to return only the specified fields
@@ -125,18 +130,18 @@ public class ServiceController implements Serializable {
     List<Service> servicePage = ((Page<Service>) services).getContent();
 
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(servicePage);
-
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     if(fields != null) {
       params.add("fields", fields);
     }
-
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 
 
 
-  //Returns the service resource of the given id
+  // Returns the service resource of the given id. Querying and specifying fields to be returned is also possible
+  // The following request returns the service with id of 1 and category = CFS. Only the id and category fields are returned.
+  // localhost:3000/api/service/1?fields=category,id&category=CFS
   @ApiOperation(value = "Returns the service entity with the given id. ?fields= determines the fields that are returned. Querying is currently not supported in Swagger UI")
   @GetMapping("/service/{id}")
   @ResponseBody
@@ -145,26 +150,22 @@ public class ServiceController implements Serializable {
           @ApiParam(name = "fields", value = "fields", defaultValue = "")
           @RequestParam(value = "fields", required = false) String fields,
           @QuerydslPredicate(root = Service.class) Predicate predicate) {
-
     QService qService = QService.service;
     Predicate p = new BooleanBuilder(predicate);
     ((BooleanBuilder) p).and(qService.id.eq(id));
     Optional<Service> service = serviceRepository.findOne(p);
-    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
-
     if(!service.isPresent()) {
       throw new ResourceNotFoundException();
     }
-
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(service);
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     if (fields != null) {
       params.add("fields", fields);
     }
-
     return applyFieldFiltering(mappingJacksonValue, params);
   }
 
-  //Creates a service in the database from the service JSON passed. Returns the created object.
+  // Creates a service in the database. Returns the created object. Sends a "ServiceCreationNotification" to all listeners in the hub.
   @ApiOperation(value = "Creates a service entity")
   @PostMapping("/service")
   @Transactional
@@ -175,9 +176,7 @@ public class ServiceController implements Serializable {
     Service newService = serviceRepository.save(service);
     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(newService);
     mappingJacksonValue.setFilters(filters);
-
     sendNotification("ServiceCreationNotification", newService, filters);
-
     return mappingJacksonValue;
   }
 
@@ -185,7 +184,6 @@ public class ServiceController implements Serializable {
   private void sendNotification(String eventType, Service service, SimpleFilterProvider filters) {
     Event event = new Event();
     event.setEventType(eventType);
-
     SpecificNotification specificNotification = new SpecificNotification();
     specificNotification.setEventType(eventType);
     SpecificEvent specificEvent = new SpecificEvent();
@@ -197,10 +195,8 @@ public class ServiceController implements Serializable {
     headers.setContentType(MediaType.APPLICATION_JSON);
     MappingJacksonValue mjv = new MappingJacksonValue(event);
     mjv.setFilters(filters);
-
     HttpEntity<MappingJacksonValue> request = new HttpEntity<>(mjv, headers);
     RestTemplate restTemplate = new RestTemplate();
-
     Iterable<Hub> hubIterable = hubRepository.findAll();
     for (Hub hub: hubIterable) {
       try {
@@ -213,6 +209,7 @@ public class ServiceController implements Serializable {
   }
 
 
+  // Partially updates a service in the database. Sends a "ServiceAttributeValueChangeNotification" or "ServiceStateChangeNotification" to all listeners in the hub.
   @ApiOperation(value = "Partially updates a service resource with the given id. Currently only RFC 7386 is supported in Swagger UI",
           consumes = "application/merge-patch+json")
   @Transactional
@@ -226,13 +223,18 @@ public class ServiceController implements Serializable {
       throw new ResourceNotFoundException();
     }
     Service resource = optionalService.get();
+    String preState = resource.getState();
     if (contentType.equals("application/merge-patch+json")) {
       Optional<Service> patched = jsonMergePatcher.mergePatch(updateResource, resource);
       SimpleFilterProvider filters = new SimpleFilterProvider();
       filters.setFailOnUnknownId(false);
       Service patchedService = serviceRepository.save(patched.get());
-      sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
-
+      if (stringCompare(preState, patchedService.getState())) {
+        sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+      }
+      else {
+        sendNotification("ServiceStateChangeNotification", patchedService, filters);
+      }
       MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(patchedService);
       mappingJacksonValue.setFilters(filters);
       return mappingJacksonValue;
@@ -244,7 +246,13 @@ public class ServiceController implements Serializable {
         if (updateResource.startsWith("[")) {
           Optional<Service> patched = jsonPatcher.patch(updateResource, resource);
           Service patchedService = serviceRepository.save(patched.get());
-          sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+
+          if (stringCompare(preState, patchedService.getState())) {
+            sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+          }
+          else {
+            sendNotification("ServiceStateChangeNotification", patchedService, filters);
+          }
 
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(patchedService);
           mappingJacksonValue.setFilters(filters);
@@ -254,8 +262,12 @@ public class ServiceController implements Serializable {
           String updateResourceAsArray = "[" + updateResource + "]";
           Optional<Service> patched = jsonPatcher.patch(updateResourceAsArray, resource);
           Service patchedService = serviceRepository.save(patched.get());
-          sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
-
+          if (stringCompare(preState, patchedService.getState())) {
+            sendNotification("ServiceAttributeValueChangeNotification", patchedService, filters);
+          }
+          else {
+            sendNotification("ServiceStateChangeNotification", patchedService, filters);
+          }
           MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(patchedService);
           mappingJacksonValue.setFilters(filters);
           return mappingJacksonValue;
@@ -271,7 +283,13 @@ public class ServiceController implements Serializable {
     throw new MediaTypeNotSupportedStatusException("Content-Type not supported");
   }
 
-  //Deletes the service at the given id
+  // Method used to check if the state is the same before and after a PATCH request
+  private Boolean stringCompare(String str1, String str2) {
+    return (str1 == null ? str2 == null : str1.equals(str2));
+  }
+
+
+  // Deletes the service at the given id. Sends a "ServiceRemoveNotification" to all listeners in the hub.
   @ApiOperation(value = "Deletes the service with the given id from the database.")
   @DeleteMapping("/service/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -289,11 +307,7 @@ public class ServiceController implements Serializable {
     filters.setFailOnUnknownId(false);
     sendNotification("ServiceRemoveNotification", optionalService.get(), filters);
 
-
-
     serviceRepository.delete(service);
-
-
   }
 
   //Deletes all services in the database
@@ -305,6 +319,7 @@ public class ServiceController implements Serializable {
   }
 
 
+  // Seeds the database with some randomly generated services.
   @ApiOperation(value= "Seeds the database with some randomly generated services. Count is the number of services.")
   @GetMapping("/seed/{count}")
   @Transactional
@@ -317,7 +332,6 @@ public class ServiceController implements Serializable {
 
     String[] categoryArray = {"CFS", "RFS"};
     String[] nameArray = {"serviceName1", "serviceName2", "serviceName3", "serviceName4", "serviceName5"};
-    String[] descriptionArray = {};
     String[] hrefArray = {"http://server:port/serviceInventory/service/id"};
     Boolean[] booleanArray = {true, false};
     String[] startModeArray = {"0", "1", "2", "3", "4", "5", "6"};
@@ -337,11 +351,11 @@ public class ServiceController implements Serializable {
       Service service = new Service();
       service.setName(nameArray[random.nextInt(nameArray.length)]);
       service.setCategory(categoryArray[random.nextInt(categoryArray.length)]);
-      service.setDescription("empty");
+      service.setDescription("Description of service");
       service.setHref(hrefArray[random.nextInt(hrefArray.length)]);
       service.setHasStarted(booleanArray[random.nextInt(2)]);
-      service.setServiceEnabled(booleanArray[random.nextInt(2)]);
-      service.setStateful(booleanArray[random.nextInt(2)]);
+      service.setIsServiceEnabled(booleanArray[random.nextInt(2)]);
+      service.setIsStateful(booleanArray[random.nextInt(2)]);
       service.setStartMode(startModeArray[random.nextInt(startModeArray.length)]);
       service.setState(stateArray[random.nextInt(stateArray.length)]);
       service.setType(typeArray[random.nextInt(typeArray.length)]);
@@ -359,8 +373,35 @@ public class ServiceController implements Serializable {
       Set<Service> services = new HashSet<>();
       services.add(service);
       relatedParty.setServices(services);
-
       relatedPartyRepository.save(relatedParty);
+
+      Place place = new Place();
+      place.setHref("http://place.com");
+      place.setRole("role");
+      place.setService(service);
+      placeRepository.save(place);
+      Set<Place> places = new HashSet<>();
+      places.add(place);
+      service.setPlaces(places);
+
+      Note note = new Note();
+      note.setAuthor("Author");
+      note.setText("Note text");
+      note.setService(service);
+      noteRepository.save(note);
+      Set<Note> notes = new HashSet<>();
+      notes.add(note);
+      service.setNotes(notes);
+
+      ServiceCharacteristic serviceCharacteristic = new ServiceCharacteristic();
+      serviceCharacteristic.setService(service);
+      serviceCharacteristic.setName("Speed");
+      serviceCharacteristic.setValue("16M");
+      serviceCharacteristicRepository.save(serviceCharacteristic);
+      List<ServiceCharacteristic> serviceCharacteristics = new ArrayList<>();
+      serviceCharacteristics.add(serviceCharacteristic);
+      service.setServiceCharacteristics(serviceCharacteristics);
+
 
       serviceRepository.save(service);
     }

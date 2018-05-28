@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -36,6 +37,13 @@ public class SimsSecurityConfig extends WebSecurityConfigurerAdapter {
       .and().httpBasic()
       .authenticationEntryPoint(authEntryPoint);
   }
+
+  @Override
+  public void configure(WebSecurity web) throws Exception {
+    web.ignoring().antMatchers("/api/hub");
+    web.ignoring().antMatchers("/api/hub/**");
+  }
+
 
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

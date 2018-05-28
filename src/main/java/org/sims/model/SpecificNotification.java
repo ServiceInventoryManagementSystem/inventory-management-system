@@ -58,5 +58,13 @@ public class SpecificNotification implements Serializable {
   public void setEvent(Event event) {
     this.event = event;
   }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 }
 
