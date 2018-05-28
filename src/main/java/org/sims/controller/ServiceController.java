@@ -33,9 +33,7 @@ import org.springframework.web.server.MediaTypeNotSupportedStatusException;
 
 import javax.validation.Valid;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 
 @RestController
@@ -351,6 +349,22 @@ public class ServiceController implements Serializable {
       service.setState(stateArray[random.nextInt(stateArray.length)]);
       service.setType(typeArray[random.nextInt(typeArray.length)]);
       service.setServiceSpecification(serviceSpecificationArray[j]);
+
+      RelatedParty relatedParty = new RelatedParty();
+      relatedParty.setHref("http://serverlocation:port/partyManagement/organisation/" + Integer.toString(j));
+      relatedParty.setJsonId(Integer.toString(j));
+      relatedParty.setRole("partner");
+
+      Set<RelatedParty> relatedParties = new HashSet<>();
+      relatedParties.add(relatedParty);
+      service.setRelatedParties(relatedParties);
+
+      Set<Service> services = new HashSet<>();
+      services.add(service);
+      relatedParty.setServices(services);
+
+      relatedPartyRepository.save(relatedParty);
+
       serviceRepository.save(service);
     }
   }
