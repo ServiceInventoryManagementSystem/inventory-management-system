@@ -61,18 +61,24 @@ public class Main {
       
       try{
         if(!iface.isEmpty()){
+          System.out.println("Using if: " + iface);
           networkInterface = NetworkInterface.getByName(iface);
-          Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-          while(addresses.hasMoreElements()){
-            InetAddress addr = addresses.nextElement();
-            if(!addr.isLoopbackAddress()){
-              address = addr;
-              break;
+          if(networkInterface != null) {
+            Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+            while (addresses.hasMoreElements()) {
+              InetAddress addr = addresses.nextElement();
+              if (!addr.isLoopbackAddress()) {
+                address = addr;
+                break;
+              }
             }
+          }else {
+            System.err.println("Could not find interface! Trying with ip...");
           }
         }
   
         if(!ip.isEmpty()){
+          System.out.println("Using ip: " + ip);
           address = Inet4Address.getByName(ip);
         }
   
