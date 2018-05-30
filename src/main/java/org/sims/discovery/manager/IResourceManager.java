@@ -20,4 +20,6 @@ public interface IResourceManager{
 
   // Finish anything important
   public void dispose();
+
+  public void postInit();
 }

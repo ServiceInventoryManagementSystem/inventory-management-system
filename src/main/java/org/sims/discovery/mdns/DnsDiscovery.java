@@ -25,6 +25,7 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
   private boolean alive = false;
   private boolean running = false;
   private Subject<IService> dnsSubject;
+  private Thread probeThread;
   private Subject<IService> serviceAddSubject = PublishSubject.create();
   private Subject<IService> serviceUpdateSubject = PublishSubject.create();
   private Subject<IService> serviceRemoveSubject = PublishSubject.create();
@@ -66,17 +67,18 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
     if(!alive){
       return Single.just(new ArrayList<IService>(0));
     }
-    if(dnsSubject == null){
-      dnsSubject = PublishSubject.create();
+    if(dnsSubject == null && probeThread == null){
+      final Subject<IService> dnssub = PublishSubject.create();
+      dnsSubject = dnssub;
       if(!jmdns.isProbing()){
         jmdns.startProber();
       }
-      Thread t = new Thread(){
+      final Thread t = new Thread(){
         public void run(){
           try{
           
             while(jmdns.isProbing()){
-              sleep(100);
+              sleep(500);
             }
           }catch(Exception e){
             System.err.println(e);
@@ -84,14 +86,16 @@ public class DnsDiscovery implements IDiscoveryService, ServiceListener{
           for(String type : settings.types){
             for(ServiceInfo info : jmdns.list(type)){
               DnsService service = new DnsService(info);
-              dnsSubject.onNext(service);
+              dnssub.onNext(service);
             }
           }
-          dnsSubject.onComplete();
+          dnssub.onComplete();
           dnsSubject = null;
+          probeThread = null;
         }
       };
       t.start();
+      probeThread = t; 
     }
 
     

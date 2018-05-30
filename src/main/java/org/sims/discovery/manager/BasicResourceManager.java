@@ -9,7 +9,9 @@ import org.sims.discovery.models.IService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public abstract class BasicResourceManager implements IResourceManager{
@@ -71,6 +73,7 @@ public abstract class BasicResourceManager implements IResourceManager{
       serviceMap.remove(localRef);
       reverseMap.remove(remoteId);
       System.out.println("Removed service from map " + remoteId + " " + localRef);
+      flush();
     }
   }
 
@@ -95,6 +98,9 @@ public abstract class BasicResourceManager implements IResourceManager{
     this.remove(id);
   }
 
+  public List<String> getAllServiceIds(){
+    return new ArrayList<String>(this.serviceMap.values());
+  }
 
   @Override
   public void dispose(){
