@@ -20,7 +20,7 @@ public class DnsService extends ServiceAdapter{
 
   @Override
   public String getHref(){
-    return info.getPropertyString("path");
+    return info.getURLs()[0];
   }
 
   @Override
