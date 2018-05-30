@@ -30,6 +30,8 @@ public class Main {
       resourceManager, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true
     );
     
+    resourceManager.postInit();
+    
     DiscoveryManager manager = new DiscoveryManager(resourceManager, config.probeInterval);
 
     WsDiscovery.WsSettings wsSettings = new WsDiscovery.WsSettings(config.address);

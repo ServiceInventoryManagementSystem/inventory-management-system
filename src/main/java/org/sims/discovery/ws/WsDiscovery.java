@@ -10,6 +10,8 @@ import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.ReplaySubject;
 import io.reactivex.subjects.Subject;
+
+import org.hibernate.cfg.annotations.Nullability;
 import org.sims.discovery.IDiscoveryService;
 import org.sims.discovery.models.IService;
 
@@ -35,6 +37,7 @@ public class WsDiscovery implements IDiscoveryService{
 
   private boolean run = false;
   private Thread notifyThread;
+  private Thread probeThread;
   private WsSettings settings;
   public WsDiscovery(DiscoverySettings settings){
     WsDiscoveryConstants.loggerLevel = Level.OFF;
@@ -137,8 +140,9 @@ public class WsDiscovery implements IDiscoveryService{
     if(!alive){
       return Single.just(new ArrayList<IService>(0));
     }
-    if(wsSubject == null){
-      wsSubject = ReplaySubject.create();
+    if(wsSubject == null && probeThread == null){
+      final Subject<IService> wssub = ReplaySubject.create();
+      wsSubject = wssub;
       try{
         //Clear out service inventory
         server.getServiceDirectory().clear();
@@ -148,6 +152,7 @@ public class WsDiscovery implements IDiscoveryService{
         System.err.println(e);
       }
       /* Create thread that waits 2 seconds for services to accumelate */
+      
       final Thread t = new Thread(){
         public void run(){
           try{
@@ -155,16 +160,18 @@ public class WsDiscovery implements IDiscoveryService{
             
             for(WsDiscoveryService service : server.getServiceDirectory().matchAll()){
               IService iservice = new WsService(service);
-              wsSubject.onNext(iservice);
+              wssub.onNext(iservice);
             }
           } catch(Exception e){
             System.err.println(e);
           }
-          wsSubject.onComplete();
+          wssub.onComplete();
           wsSubject = null;
+          probeThread = null;
         }
       };
       t.start();
+      probeThread = t;
     }
 
     return wsSubject.buffer(Integer.MAX_VALUE).first(new ArrayList<IService>(0));

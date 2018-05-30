@@ -14,6 +14,7 @@ import org.springframework.data.domain.Example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HybernateResourceManager extends BasicResourceManager{
   @Autowired
@@ -22,7 +23,20 @@ public class HybernateResourceManager extends BasicResourceManager{
 
   public HybernateResourceManager(){
     super();
+
   }
+
+  public void postInit(){
+    for(String id : getAllServiceIds()){
+      Optional<Service> optional = serviceRepo.findOne(getExample(id));
+      if(!optional.isPresent()){
+        stopWatching(id);
+      }else{
+        System.out.println("Service is present: " + id);
+      }
+    }
+  }
+
  
   private Example<Service> getExample(String id){
     Service exampleService = new Service();
@@ -59,7 +73,7 @@ public class HybernateResourceManager extends BasicResourceManager{
   }
 
   public Single<IService> getById(String id){
-    return null;
+    return null;//serviceRepo.findOne(getExample(id)).get();
   }
 
   public Single<List<IService>> getOwnedServices(){
